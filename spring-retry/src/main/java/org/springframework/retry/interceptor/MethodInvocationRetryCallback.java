@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2019 the original author or authors.
+ * Copyright 2006-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,17 @@
 package org.springframework.retry.interceptor;
 
 import org.aopalliance.intercept.MethodInvocation;
+
 import org.springframework.lang.Nullable;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryOperations;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
  * Callback class for a Spring AOP reflective `MethodInvocation` that can be retried using
  * a {@link RetryOperations}.
- *
+ * <p>
  * In a concrete {@link org.springframework.retry.RetryListener} implementation, the
  * `MethodInvocation` can be analysed for providing insights on the method called as well
  * as its parameter values which could then be used for monitoring purposes.
@@ -36,6 +38,7 @@ import org.springframework.util.StringUtils;
  * @see RetryOperationsInterceptor
  * @see org.springframework.retry.listener.MethodInvocationRetryListenerSupport
  * @author Marius Grama
+ * @author Artem Bilan
  * @since 1.3
  */
 public abstract class MethodInvocationRetryCallback<T, E extends Throwable> implements RetryCallback<T, E> {
@@ -55,16 +58,17 @@ public abstract class MethodInvocationRetryCallback<T, E extends Throwable> impl
 			this.label = label;
 		}
 		else {
-			this.label = invocation.getMethod().toGenericString();
+			this.label = ClassUtils.getQualifiedMethodName(invocation.getMethod());
 		}
 	}
 
 	public MethodInvocation getInvocation() {
-		return invocation;
+		return this.invocation;
 	}
 
+	@Override
 	public String getLabel() {
-		return label;
+		return this.label;
 	}
 
 }

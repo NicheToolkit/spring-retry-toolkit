@@ -16,10 +16,13 @@
 
 package org.springframework.retry.support;
 
+import java.util.concurrent.CompletableFuture;
+
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,13 +32,12 @@ import org.springframework.retry.RetryException;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.retry.policy.SimpleRetryPolicy;
-import org.springframework.retry.support.MetricsRetryListener;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import java.util.concurrent.CompletableFuture;
-
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 /**
  * @author Artem Bilan
@@ -51,7 +53,7 @@ public class RetryMetricsTests {
 	Service service;
 
 	@Autowired
-    MetricsRetryListener metricsRetryListener;
+	MetricsRetryListener metricsRetryListener;
 
 	@Test
 	void metricsAreCollectedForRetryable() {
@@ -59,22 +61,14 @@ public class RetryMetricsTests {
 		executor.setCorePoolSize(4);
 		executor.afterPropertiesSet();
 
-		CompletableFuture<?> future1 = CompletableFuture.runAsync(
-				() -> assertThatNoException().isThrownBy(this.service::service1),
-				executor
-		);
-		CompletableFuture<?> future2 = CompletableFuture.runAsync(
-				() -> assertThatNoException().isThrownBy(this.service::service1),
-				executor
-		);
-		CompletableFuture<?> future3 = CompletableFuture.runAsync(
-				() -> assertThatNoException().isThrownBy(this.service::service2),
-				executor
-		);
-		CompletableFuture<?> future4 = CompletableFuture.runAsync(
-				() -> assertThatExceptionOfType(RetryException.class).isThrownBy(this.service::service3),
-				executor
-		);
+		CompletableFuture<?> future1 = executor
+			.submitCompletable(() -> assertThatNoException().isThrownBy(this.service::service1));
+		CompletableFuture<?> future2 = executor
+			.submitCompletable(() -> assertThatNoException().isThrownBy(this.service::service1));
+		CompletableFuture<?> future3 = executor
+			.submitCompletable(() -> assertThatNoException().isThrownBy(this.service::service2));
+		CompletableFuture<?> future4 = executor.submitCompletable(
+				() -> assertThatExceptionOfType(RetryException.class).isThrownBy(this.service::service3));
 
 		CompletableFuture.allOf(future1, future2, future3, future4).join();
 

@@ -16,14 +16,15 @@
 
 package org.springframework.retry.backoff;
 
-import org.springframework.util.Assert;
-
 import java.util.Random;
 import java.util.function.Supplier;
+
+import org.springframework.util.Assert;
 
 /**
  * Implementation of {@link BackOffPolicy} that pauses for a random period of time before
  * continuing. A pause is implemented using {@link Sleeper#sleep(long)}.
+ *
  * {@link #setMinBackOffPeriod(long)} is thread-safe and it is safe to call
  * {@link #setMaxBackOffPeriod(long)} during execution from multiple threads, however this
  * may cause a single retry operation to have pauses of different intervals.

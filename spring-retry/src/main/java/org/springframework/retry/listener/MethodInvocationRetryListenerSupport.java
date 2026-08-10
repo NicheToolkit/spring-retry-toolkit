@@ -16,7 +16,11 @@
 
 package org.springframework.retry.listener;
 
-import org.springframework.retry.*;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.RetryContext;
+import org.springframework.retry.RetryListener;
+import org.springframework.retry.RetryOperations;
+import org.springframework.retry.TerminatedRetryException;
 import org.springframework.retry.interceptor.MethodInvocationRetryCallback;
 
 /**

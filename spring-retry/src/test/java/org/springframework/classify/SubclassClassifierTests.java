@@ -16,11 +16,10 @@
 
 package org.springframework.classify;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.classify.SubclassClassifier;
-
 import java.util.Collections;
 import java.util.function.Supplier;
+
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

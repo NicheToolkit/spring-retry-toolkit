@@ -16,13 +16,14 @@
 
 package org.springframework.retry.backoff;
 
+import java.util.function.Supplier;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springframework.retry.RetryContext;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
-
-import java.util.function.Supplier;
 
 /**
  * Implementation of {@link BackOffPolicy} that increases the back off period for each

@@ -16,12 +16,13 @@
 
 package org.springframework.retry.policy;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.retry.RetryContext;
-import org.springframework.retry.RetryPolicy;
-
 import java.util.Collections;
 import java.util.HashMap;
+
+import org.junit.jupiter.api.Test;
+
+import org.springframework.retry.RetryContext;
+import org.springframework.retry.RetryPolicy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;

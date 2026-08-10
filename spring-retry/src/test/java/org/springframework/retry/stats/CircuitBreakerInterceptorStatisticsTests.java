@@ -28,9 +28,6 @@ import org.springframework.retry.RetryStatistics;
 import org.springframework.retry.annotation.CircuitBreaker;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.stats.DefaultStatisticsRepository;
-import org.springframework.retry.stats.StatisticsListener;
-import org.springframework.retry.stats.StatisticsRepository;
 import org.springframework.retry.support.RetrySynchronizationManager;
 
 import static org.assertj.core.api.Assertions.assertThat;

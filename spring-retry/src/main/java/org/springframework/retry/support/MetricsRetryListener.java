@@ -16,18 +16,19 @@
 
 package org.springframework.retry.support;
 
+import java.util.*;
+import java.util.function.Function;
+
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
+
 import org.springframework.lang.Nullable;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryListener;
 import org.springframework.util.Assert;
-
-import java.util.*;
-import java.util.function.Function;
 
 /**
  * The {@link RetryListener} implementation for Micrometer {@link Timer}s around retry

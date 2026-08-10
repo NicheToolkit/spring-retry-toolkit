@@ -16,10 +16,19 @@
 
 package org.springframework.retry.policy;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.classify.SubclassClassifier;
@@ -30,15 +39,6 @@ import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryPolicy;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.SerializationUtils;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,7 +62,7 @@ public class RetryContextSerializationTests {
 		for (BeanDefinition beanDefinition : candidates) {
 			try {
 				result.add(new Object[] { BeanUtils
-					.instantiateClass(ClassUtils.resolveClassName(Objects.requireNonNull(beanDefinition.getBeanClassName()), null)) });
+					.instantiateClass(ClassUtils.resolveClassName(beanDefinition.getBeanClassName(), null)) });
 			}
 			catch (Exception e) {
 				logger.info("Cannot create instance of " + beanDefinition.getBeanClassName(), e);

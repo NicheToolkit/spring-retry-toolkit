@@ -15,20 +15,17 @@
  */
 package org.springframework.retry.policy;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryState;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
-import org.springframework.retry.policy.AbstractMapRetryContextCache;
-import org.springframework.retry.policy.MapRetryContextCache;
-import org.springframework.retry.policy.RetryContextCache;
-import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.DefaultRetryState;
 import org.springframework.retry.support.RetryTemplate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -196,11 +193,6 @@ public class StatefulRetryIntegrationTests {
 
 		public SerializedMapRetryContextCache() {
 			super(DEFAULT_CAPACITY, true);
-		}
-
-		@Override
-		public void setCapacity(int capacity) {
-			super.setCapacity(capacity);
 		}
 
 		@Override

@@ -16,16 +16,11 @@
 
 package org.springframework.retry.annotation;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.core.annotation.AliasFor;
-import org.springframework.retry.ExhaustedRetryException;
-import org.springframework.retry.annotation.Recover;
-import org.springframework.retry.annotation.RecoverAnnotationRecoveryHandler;
-import org.springframework.retry.annotation.Retryable;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.ReflectionUtils;
-
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -33,6 +28,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.junit.jupiter.api.Test;
+
+import org.springframework.core.annotation.AliasFor;
+import org.springframework.retry.ExhaustedRetryException;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ReflectionUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

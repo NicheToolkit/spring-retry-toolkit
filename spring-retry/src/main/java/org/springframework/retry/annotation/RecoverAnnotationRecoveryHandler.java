@@ -16,6 +16,17 @@
 
 package org.springframework.retry.annotation;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.classify.SubclassClassifier;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.retry.ExhaustedRetryException;
@@ -25,12 +36,6 @@ import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * A recoverer for method invocations based on the <code>@Recover</code> annotation. A

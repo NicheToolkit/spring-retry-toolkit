@@ -17,11 +17,13 @@
 package org.springframework.retry.stats;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.retry.*;
+
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.RetryContext;
+import org.springframework.retry.RetryListener;
+import org.springframework.retry.RetryState;
+import org.springframework.retry.RetryStatistics;
 import org.springframework.retry.policy.SimpleRetryPolicy;
-import org.springframework.retry.stats.DefaultStatisticsRepository;
-import org.springframework.retry.stats.StatisticsListener;
-import org.springframework.retry.stats.StatisticsRepository;
 import org.springframework.retry.support.DefaultRetryState;
 import org.springframework.retry.support.RetryTemplate;
 

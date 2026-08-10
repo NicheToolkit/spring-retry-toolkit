@@ -16,10 +16,10 @@
 
 package org.springframework.retry.backoff;
 
-import org.springframework.retry.RetryContext;
-
 import java.util.Random;
 import java.util.function.Supplier;
+
+import org.springframework.retry.RetryContext;
 
 /**
  * Implementation of {@link ExponentialBackOffPolicy}

@@ -17,10 +17,6 @@
 package org.springframework.retry.backoff;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.retry.backoff.BackOffInterruptedException;
-import org.springframework.retry.backoff.DummySleeper;
-import org.springframework.retry.backoff.FixedBackOffPolicy;
-import org.springframework.retry.backoff.Sleeper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

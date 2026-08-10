@@ -16,14 +16,14 @@
 
 package org.springframework.classify;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.classify.BinaryExceptionClassifier;
-import org.springframework.retry.support.RetryTemplate;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StreamCorruptedException;
 import java.util.concurrent.TimeoutException;
+
+import org.junit.jupiter.api.Test;
+
+import org.springframework.retry.support.RetryTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

@@ -17,7 +17,6 @@
 package org.springframework.retry.backoff;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.retry.backoff.ThreadWaitSleeper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

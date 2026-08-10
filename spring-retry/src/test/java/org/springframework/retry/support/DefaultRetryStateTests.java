@@ -16,7 +16,6 @@
 package org.springframework.retry.support;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.retry.support.DefaultRetryState;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,7 +28,7 @@ public class DefaultRetryStateTests {
 
 	/**
 	 * Test method for
-	 * {@link org.springframework.retry.support.DefaultRetryState#DefaultRetryState(Object, boolean, org.springframework.classify.Classifier)}.
+	 * {@link DefaultRetryState#DefaultRetryState(Object, boolean, org.springframework.classify.Classifier)}.
 	 */
 	@SuppressWarnings("serial")
 	@Test

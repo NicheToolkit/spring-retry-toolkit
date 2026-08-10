@@ -17,7 +17,6 @@
 package org.springframework.classify;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.classify.ClassifierSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

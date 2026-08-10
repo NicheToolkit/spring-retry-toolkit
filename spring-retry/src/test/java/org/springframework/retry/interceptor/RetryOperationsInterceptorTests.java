@@ -16,10 +16,19 @@
 
 package org.springframework.retry.interceptor;
 
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.target.SingletonTargetSource;
@@ -37,15 +46,9 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.ClassUtils;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -148,7 +151,7 @@ public class RetryOperationsInterceptorTests {
 
 			@Override
 			protected <T, E extends Throwable> void doClose(RetryContext context,
-                                                            MethodInvocationRetryCallback<T, E> callback, Throwable throwable) {
+					MethodInvocationRetryCallback<T, E> callback, Throwable throwable) {
 				monitoringTags.put(labelTagName, callback.getLabel());
 				Method method = callback.getInvocation().getMethod();
 				monitoringTags.put(classTagName, method.getDeclaringClass().getSimpleName());
@@ -156,7 +159,8 @@ public class RetryOperationsInterceptorTests {
 			}
 
 			@Override
-			protected <T, E extends Throwable> void doOnSuccess(RetryContext context, MethodInvocationRetryCallback<T, E> callback, T result) {
+			protected <T, E extends Throwable> void doOnSuccess(RetryContext context,
+					MethodInvocationRetryCallback<T, E> callback, T result) {
 
 				argumentsAsExpected.set(callback.getInvocation().getArguments().length == 0);
 			}
@@ -300,7 +304,7 @@ public class RetryOperationsInterceptorTests {
 		RetrySynchronizationManager.clear();
 	}
 
-	public interface Service {
+	public static interface Service {
 
 		void service() throws Exception;
 

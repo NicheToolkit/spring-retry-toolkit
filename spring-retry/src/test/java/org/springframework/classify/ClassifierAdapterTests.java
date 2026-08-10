@@ -16,10 +16,12 @@
 package org.springframework.classify;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.classify.ClassifierAdapter;
+
 import org.springframework.classify.annotation.Classifier;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
 /**
  * @author Dave Syer

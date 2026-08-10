@@ -16,6 +16,8 @@
 
 package org.springframework.retry;
 
+import org.springframework.retry.RetryException;
+
 public class RetryExceptionTests extends AbstractExceptionTests {
 
 	public Exception getException(String msg) {

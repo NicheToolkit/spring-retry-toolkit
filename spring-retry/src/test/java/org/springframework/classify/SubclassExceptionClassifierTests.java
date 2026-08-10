@@ -16,15 +16,14 @@
 
 package org.springframework.classify;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.classify.SubclassClassifier;
-
 import java.io.FileNotFoundException;
 import java.net.ConnectException;
 import java.net.SocketException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
+
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

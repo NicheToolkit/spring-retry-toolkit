@@ -19,9 +19,6 @@ package org.springframework.retry.annotation;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,20 +27,11 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author Artem Bilan
  * @since 2.0.9
  */
-@SpringJUnitConfig(RetryableXmlConfigTests.TestConfig.class)
+@SpringJUnitConfig
 public class RetryableXmlConfigTests {
 
 	@Autowired
 	Service service;
-
-	@EnableRetry
-	static class TestConfig {
-
-		@Bean
-		public Service service() {
-			return new Service();
-		}
-	}
 
 	@Test
 	void serviceCallIsRetied() {

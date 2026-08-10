@@ -19,10 +19,6 @@ package org.springframework.retry.policy;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.retry.RetryContext;
-import org.springframework.retry.policy.AbstractMapRetryContextCache;
-import org.springframework.retry.policy.MapRetryContextCache;
-import org.springframework.retry.policy.RetryCacheCapacityExceededException;
-import org.springframework.retry.policy.SoftReferenceMapRetryContextCache;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -115,11 +111,7 @@ public abstract class AbstractMapRetryContextCacheTests {
 		cache.put("1", createRetryContext());
 		RetryContext context2 = createRetryContext();
 		assertThatExceptionOfType(RetryCacheCapacityExceededException.class).isThrownBy(() -> cache.put("2", context2));
-		if (cache instanceof MapRetryContextCache) {
-			((MapRetryContextCache)cache).setCapacity(2);
-		} else if (cache instanceof SoftReferenceMapRetryContextCache) {
-			((SoftReferenceMapRetryContextCache)cache).setCapacity(2);
-		}
+		cache.setCapacity(2);
 		cache.put("2", context2);
 	}
 

@@ -16,12 +16,12 @@
 
 package org.springframework.retry.policy;
 
+import java.util.function.Predicate;
+
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.context.RetryContextSupport;
 import org.springframework.util.Assert;
-
-import java.util.function.Predicate;
 
 /**
  * A policy, that is based on {@link Predicate<Throwable>}. Usually, binary classification
@@ -34,10 +34,6 @@ import java.util.function.Predicate;
 public class PredicateRetryPolicy implements RetryPolicy {
 
 	private final Predicate<Throwable> predicate;
-
-	public PredicateRetryPolicy() {
-		this.predicate = t -> true;
-	}
 
 	public PredicateRetryPolicy(Predicate<Throwable> predicate) {
 		Assert.notNull(predicate, "'predicate' must not be null");

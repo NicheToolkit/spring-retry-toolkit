@@ -16,17 +16,17 @@
 
 package org.springframework.retry.policy;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.springframework.classify.BinaryExceptionClassifier;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.context.RetryContextSupport;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
 
 /**
  * Simple retry policy that retries a fixed number of times for a set of named exceptions
@@ -114,7 +114,7 @@ public class SimpleRetryPolicy implements RetryPolicy {
 	 * exception is found or the root cause is reached.
 	 */
 	public SimpleRetryPolicy(int maxAttempts, Map<Class<? extends Throwable>, Boolean> retryableExceptions,
-                             boolean traverseCauses) {
+			boolean traverseCauses) {
 		this(maxAttempts, retryableExceptions, traverseCauses, false);
 	}
 
@@ -131,7 +131,7 @@ public class SimpleRetryPolicy implements RetryPolicy {
 	 * @param defaultValue the default action.
 	 */
 	public SimpleRetryPolicy(int maxAttempts, Map<Class<? extends Throwable>, Boolean> retryableExceptions,
-                             boolean traverseCauses, boolean defaultValue) {
+			boolean traverseCauses, boolean defaultValue) {
 		super();
 		this.maxAttempts = maxAttempts;
 		this.retryableClassifier = new BinaryExceptionClassifier(retryableExceptions, defaultValue);

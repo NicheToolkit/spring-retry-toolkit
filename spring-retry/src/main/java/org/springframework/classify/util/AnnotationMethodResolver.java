@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.springframework.util.ReflectionUtils;
  */
 public class AnnotationMethodResolver implements MethodResolver {
 
-	private Class<? extends Annotation> annotationType;
+	private final Class<? extends Annotation> annotationType;
 
 	/**
 	 * Create a MethodResolver for the specified Method-level annotation type
@@ -79,15 +79,13 @@ public class AnnotationMethodResolver implements MethodResolver {
 	 */
 	public Method findMethod(final Class<?> clazz) {
 		Assert.notNull(clazz, "class must not be null");
-		final AtomicReference<Method> annotatedMethod = new AtomicReference<Method>();
-		ReflectionUtils.doWithMethods(clazz, new ReflectionUtils.MethodCallback() {
-			public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-				Annotation annotation = AnnotationUtils.findAnnotation(method, annotationType);
-				if (annotation != null) {
-					Assert.isNull(annotatedMethod.get(), "found more than one method on target class [" + clazz
-							+ "] with the annotation type [" + annotationType + "]");
-					annotatedMethod.set(method);
-				}
+		final AtomicReference<Method> annotatedMethod = new AtomicReference<>();
+		ReflectionUtils.doWithMethods(clazz, method -> {
+			Annotation annotation = AnnotationUtils.findAnnotation(method, annotationType);
+			if (annotation != null) {
+				Assert.isNull(annotatedMethod.get(), "found more than one method on target class [" + clazz
+						+ "] with the annotation type [" + annotationType + "]");
+				annotatedMethod.set(method);
 			}
 		});
 		return annotatedMethod.get();

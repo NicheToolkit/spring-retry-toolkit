@@ -16,9 +16,9 @@
 
 package org.springframework.retry.backoff;
 
-import org.springframework.util.Assert;
-
 import java.util.function.Supplier;
+
+import org.springframework.util.Assert;
 
 /**
  * Implementation of {@link BackOffPolicy} that pauses for a fixed period of time before

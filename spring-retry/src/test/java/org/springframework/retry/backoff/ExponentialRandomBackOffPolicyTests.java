@@ -16,14 +16,13 @@
 
 package org.springframework.retry.backoff;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
-import org.springframework.retry.backoff.ExponentialBackOffPolicy;
-import org.springframework.retry.backoff.ExponentialRandomBackOffPolicy;
+
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetrySimulation;
 import org.springframework.retry.support.RetrySimulator;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

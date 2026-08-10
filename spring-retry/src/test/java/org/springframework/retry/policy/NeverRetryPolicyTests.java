@@ -19,7 +19,6 @@ package org.springframework.retry.policy;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.retry.RetryContext;
-import org.springframework.retry.policy.NeverRetryPolicy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

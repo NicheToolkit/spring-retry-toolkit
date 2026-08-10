@@ -16,16 +16,6 @@
 
 package org.springframework.retry.support;
 
-import org.apache.commons.logging.Log;
-import org.junit.jupiter.api.Test;
-import org.springframework.classify.BinaryExceptionClassifier;
-import org.springframework.retry.RetryListener;
-import org.springframework.retry.RetryPolicy;
-import org.springframework.retry.backoff.*;
-import org.springframework.retry.policy.*;
-import org.springframework.retry.support.RetryTemplate;
-import org.springframework.retry.util.test.TestUtils;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Duration;
@@ -33,6 +23,25 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+
+import org.apache.commons.logging.Log;
+import org.junit.jupiter.api.Test;
+import org.springframework.classify.BinaryExceptionClassifier;
+import org.springframework.retry.RetryListener;
+import org.springframework.retry.RetryPolicy;
+import org.springframework.retry.backoff.ExponentialBackOffPolicy;
+import org.springframework.retry.backoff.ExponentialRandomBackOffPolicy;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.backoff.NoBackOffPolicy;
+import org.springframework.retry.backoff.UniformRandomBackOffPolicy;
+import org.springframework.retry.policy.AlwaysRetryPolicy;
+import org.springframework.retry.policy.BinaryExceptionClassifierRetryPolicy;
+import org.springframework.retry.policy.CompositeRetryPolicy;
+import org.springframework.retry.policy.MapRetryContextCache;
+import org.springframework.retry.policy.MaxAttemptsRetryPolicy;
+import org.springframework.retry.policy.PredicateRetryPolicy;
+import org.springframework.retry.policy.TimeoutRetryPolicy;
+import org.springframework.retry.util.test.TestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;

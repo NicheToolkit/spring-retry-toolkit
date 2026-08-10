@@ -15,8 +15,6 @@
  */
 package org.springframework.retry.backoff;
 
-import org.springframework.retry.backoff.Sleeper;
-
 import java.util.ArrayList;
 import java.util.List;
 

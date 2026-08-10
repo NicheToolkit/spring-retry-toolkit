@@ -16,11 +16,11 @@
 
 package org.springframework.retry.stats;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.retry.stats.ExponentialAverageRetryStatistics;
-import org.springframework.test.util.ReflectionTestUtils;
-
 import java.util.Arrays;
+
+import org.junit.jupiter.api.Test;
+
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

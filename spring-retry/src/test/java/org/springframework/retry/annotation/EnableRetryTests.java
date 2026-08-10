@@ -16,15 +16,21 @@
 
 package org.springframework.retry.annotation;
 
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Properties;
+
 import org.aopalliance.intercept.MethodInterceptor;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.ApplicationContext;
+import java.util.function.BiConsumer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -32,23 +38,23 @@ import org.springframework.core.Ordered;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryListener;
-import org.springframework.retry.annotation.*;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.backoff.Sleeper;
 import org.springframework.retry.interceptor.RetryInterceptorBuilder;
+import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.policy.MapRetryContextCache;
 import org.springframework.retry.policy.RetryContextCache;
-import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Properties;
-import java.util.function.BiConsumer;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.setMaxStackTraceElementsDisplayed;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Dave Syer
@@ -132,10 +138,10 @@ public class EnableRetryTests {
 		service.service();
 		assertThat(service.getCount()).isEqualTo(3);
 		assertThat(service.getCause()).isExactlyInstanceOf(RuntimeException.class);
-		assertThatIllegalArgumentException().isThrownBy(service::service);
+		assertThatIllegalArgumentException().isThrownBy(() -> service.service());
 		assertThat(service.getCount()).isEqualTo(6);
 		assertThat(service.getCause()).isExactlyInstanceOf(RuntimeException.class);
-		assertThatIllegalStateException().isThrownBy(service::service);
+		assertThatIllegalStateException().isThrownBy(() -> service.service());
 		assertThat(service.getCount()).isEqualTo(7);
 		assertThat(service.getCause()).isExactlyInstanceOf(RuntimeException.class);
 		context.close();
@@ -201,7 +207,8 @@ public class EnableRetryTests {
 		for (int i = 0; i < 3; i++) {
 			try {
 				service.service(1);
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				assertThat(e.getMessage()).isEqualTo("Planned");
 			}
 		}

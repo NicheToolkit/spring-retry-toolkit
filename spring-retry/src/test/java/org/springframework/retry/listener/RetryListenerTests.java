@@ -16,7 +16,11 @@
 
 package org.springframework.retry.listener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryListener;
@@ -24,10 +28,10 @@ import org.springframework.retry.TerminatedRetryException;
 import org.springframework.retry.policy.NeverRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 /**
  * @author Dave Syer
@@ -67,28 +71,28 @@ public class RetryListenerTests {
 
 	@Test
 	public void testOpenDefaultImplementation() {
-		RetryListener retryListener = new RetryListener() {
+		var retryListener = new RetryListener() {
 		};
 		assertThat(retryListener.open(null, null)).isTrue();
 	}
 
 	@Test
 	public void testCloseDefaultImplementation() {
-		RetryListener retryListener = new RetryListener() {
+		var retryListener = new RetryListener() {
 		};
 		assertThatNoException().isThrownBy(() -> retryListener.close(null, null, null));
 	}
 
 	@Test
 	public void testOnSuccessDefaultImplementation() {
-		RetryListener retryListener = new RetryListener() {
+		var retryListener = new RetryListener() {
 		};
 		assertThatNoException().isThrownBy(() -> retryListener.onError(null, null, null));
 	}
 
 	@Test
 	public void testOnErrorDefaultImplementation() {
-		RetryListener retryListener = new RetryListener() {
+		var retryListener = new RetryListener() {
 		};
 		assertThatNoException().isThrownBy(() -> retryListener.onError(null, null, null));
 	}

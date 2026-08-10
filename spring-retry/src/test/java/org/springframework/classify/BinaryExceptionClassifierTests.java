@@ -16,14 +16,14 @@
 
 package org.springframework.classify;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.DirectFieldAccessor;
-import org.springframework.classify.BinaryExceptionClassifier;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.jupiter.api.Test;
+
+import org.springframework.beans.DirectFieldAccessor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

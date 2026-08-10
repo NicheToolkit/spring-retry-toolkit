@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 package org.springframework.classify;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +29,9 @@ import org.springframework.util.Assert;
  */
 public class PatternMatcher<S> {
 
-	private Map<String, S> map = new HashMap<String, S>();
+	private Map<String, S> map = new HashMap<>();
 
-	private List<String> sorted = new ArrayList<String>();
+	private List<String> sorted = new ArrayList<>();
 
 	/**
 	 * Initialize a new {@link PatternMatcher} with a map of patterns to values
@@ -43,14 +41,11 @@ public class PatternMatcher<S> {
 		super();
 		this.map = map;
 		// Sort keys to start with the most specific
-		this.sorted = new ArrayList<String>(map.keySet());
-		Collections.sort(this.sorted, new Comparator<String>() {
-			@Override
-			public int compare(String o1, String o2) {
-				String s1 = o1; // .replace('?', '{');
-				String s2 = o2; // .replace('*', '}');
-				return s2.compareTo(s1);
-			}
+		this.sorted = new ArrayList<>(map.keySet());
+		this.sorted.sort((o1, o2) -> {
+			String s1 = o1; // .replace('?', '{');
+			String s2 = o2; // .replace('*', '}');
+			return s2.compareTo(s1);
 		});
 	}
 

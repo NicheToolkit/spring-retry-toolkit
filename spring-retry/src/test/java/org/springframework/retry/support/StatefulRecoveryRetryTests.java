@@ -16,17 +16,24 @@
 
 package org.springframework.retry.support;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.classify.BinaryExceptionClassifier;
-import org.springframework.dao.DataAccessException;
-import org.springframework.retry.*;
-import org.springframework.retry.policy.MapRetryContextCache;
-import org.springframework.retry.policy.NeverRetryPolicy;
-import org.springframework.retry.policy.SimpleRetryPolicy;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
+
+import org.springframework.classify.BinaryExceptionClassifier;
+import org.springframework.dao.DataAccessException;
+import org.springframework.retry.ExhaustedRetryException;
+import org.springframework.retry.RecoveryCallback;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.RetryContext;
+import org.springframework.retry.RetryException;
+import org.springframework.retry.RetryPolicy;
+import org.springframework.retry.RetryState;
+import org.springframework.retry.policy.MapRetryContextCache;
+import org.springframework.retry.policy.NeverRetryPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.springframework.retry.context.RetryContextSupport;
  *
  * @author Dave Syer
  * @author Michael Minella
+ * @author Emanuele Ivaldi
  *
  */
 @SuppressWarnings("serial")
@@ -123,7 +124,7 @@ public class CompositeRetryPolicy implements RetryPolicy {
 	 */
 	@Override
 	public RetryContext open(RetryContext parent) {
-		List<RetryContext> list = new ArrayList<RetryContext>();
+		List<RetryContext> list = new ArrayList<>();
 		for (RetryPolicy policy : this.policies) {
 			list.add(policy.open(parent));
 		}
@@ -143,6 +144,22 @@ public class CompositeRetryPolicy implements RetryPolicy {
 			policies[i].registerThrowable(contexts[i], throwable);
 		}
 		((RetryContextSupport) context).registerThrowable(throwable);
+	}
+
+	/**
+	 * @return the lower 'maximum number of attempts before failure' between all policies
+	 * that have a 'maximum number of attempts before failure' set, if at least one is
+	 * present among the policies, return {@link RetryPolicy#NO_MAXIMUM_ATTEMPTS_SET}
+	 * otherwise
+	 */
+	@Override
+	public int getMaxAttempts() {
+		return Arrays.stream(policies)
+			.map(RetryPolicy::getMaxAttempts)
+			.filter(maxAttempts -> maxAttempts != NO_MAXIMUM_ATTEMPTS_SET)
+			.sorted()
+			.findFirst()
+			.orElse(NO_MAXIMUM_ATTEMPTS_SET);
 	}
 
 	private static class CompositeRetryContext extends RetryContextSupport {

@@ -49,7 +49,6 @@ import org.springframework.core.OrderComparator;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.retry.RetryListener;
 import org.springframework.retry.backoff.Sleeper;
@@ -92,7 +91,9 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 
 	private RetryContextCache circuitBreakerRetryContextCache;
 
-    private MethodArgumentsKeyGenerator methodArgumentsKeyGenerator;
+	private List<RetryListener> retryListeners;
+
+	private MethodArgumentsKeyGenerator methodArgumentsKeyGenerator;
 
 	private NewMethodArgumentsIdentifier newMethodArgumentsIdentifier;
 
@@ -103,7 +104,7 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 	@Override
 	public void setImportMetadata(AnnotationMetadata importMetadata) {
 		this.enableRetry = AnnotationAttributes
-				.fromMap(importMetadata.getAnnotationAttributes(EnableRetry.class.getName()));
+			.fromMap(importMetadata.getAnnotationAttributes(EnableRetry.class.getName()));
 	}
 
 	@Override
@@ -126,9 +127,9 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 
 	@Override
 	public void afterSingletonsInstantiated() {
-        List<RetryListener> retryListeners = findBeans(RetryListener.class);
-		if (retryListeners != null) {
-			this.advice.setListeners(retryListeners);
+		this.retryListeners = findBeans(RetryListener.class);
+		if (this.retryListeners != null) {
+			this.advice.setListeners(this.retryListeners);
 		}
 	}
 
@@ -166,17 +167,15 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 	 * Set the {@code BeanFactory} to be used when looking up executors by qualifier.
 	 */
 	@Override
-	public void setBeanFactory(@NonNull BeanFactory beanFactory) {
+	public void setBeanFactory(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
 
-	@NonNull
 	@Override
 	public ClassFilter getClassFilter() {
 		return this.pointcut.getClassFilter();
 	}
 
-	@NonNull
 	@Override
 	public Class<?>[] getInterfaces() {
 		return new Class[] { org.springframework.retry.interceptor.Retryable.class };
@@ -186,13 +185,11 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 	public void validateInterfaces() throws IllegalArgumentException {
 	}
 
-	@NonNull
 	@Override
 	public Advice getAdvice() {
 		return this.advice;
 	}
 
-	@NonNull
 	@Override
 	public Pointcut getPointcut() {
 		return this.pointcut;
@@ -237,7 +234,7 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 		return result;
 	}
 
-	private static final class AnnotationClassOrMethodPointcut extends StaticMethodMatcherPointcut {
+	private final class AnnotationClassOrMethodPointcut extends StaticMethodMatcherPointcut {
 
 		private final MethodMatcher methodResolver;
 
@@ -247,7 +244,7 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 		}
 
 		@Override
-		public boolean matches(@NonNull Method method, @NonNull Class<?> targetClass) {
+		public boolean matches(Method method, Class<?> targetClass) {
 			return getClassFilter().matches(targetClass) || this.methodResolver.matches(method, targetClass);
 		}
 
@@ -270,7 +267,7 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 
 	}
 
-	private static final class AnnotationClassOrMethodFilter extends AnnotationClassFilter {
+	private final class AnnotationClassOrMethodFilter extends AnnotationClassFilter {
 
 		private final AnnotationMethodsResolver methodResolver;
 
@@ -280,7 +277,7 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 		}
 
 		@Override
-		public boolean matches(@NonNull Class<?> clazz) {
+		public boolean matches(Class<?> clazz) {
 			return super.matches(clazz) || this.methodResolver.hasAnnotatedMethods(clazz);
 		}
 

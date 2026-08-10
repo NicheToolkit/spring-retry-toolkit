@@ -16,8 +16,12 @@
 
 package org.springframework.retry.annotation;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.aopalliance.intercept.MethodInterceptor;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.aop.Advisor;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
@@ -27,14 +31,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.ExhaustedRetryException;
 import org.springframework.retry.RetryContext;
-import org.springframework.retry.annotation.CircuitBreaker;
-import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.policy.CircuitBreakerRetryPolicy;
 import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.retry.util.test.TestUtils;
-
-import java.util.Map;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

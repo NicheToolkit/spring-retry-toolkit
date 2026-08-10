@@ -16,13 +16,13 @@
 
 package org.springframework.retry.listener;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.jupiter.api.Test;
+
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.interceptor.MethodInvocationRetryCallback;
-import org.springframework.retry.listener.MethodInvocationRetryListenerSupport;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;

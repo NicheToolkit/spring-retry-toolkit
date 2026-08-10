@@ -15,15 +15,14 @@
  */
 package org.springframework.classify;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.classify.BackToBackPatternClassifier;
-import org.springframework.classify.PatternMatchingClassifier;
-import org.springframework.classify.annotation.Classifier;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import org.springframework.classify.annotation.Classifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
