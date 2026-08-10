@@ -100,7 +100,8 @@
         <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
 
         <springframework.version>5.3.39</springframework.version>
-
+        <log4j.version>2.24.3</log4j.version>
+        <junit-jupiter.version>5.12.2</junit-jupiter.version>
     </properties>
 
     <dependencyManagement>
@@ -109,6 +110,20 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
                 <version>${springframework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-jupiter.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2022 the original author or authors.
+ * Copyright 2006-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,11 @@ import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.expression.Expression;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryListener;
 import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.backoff.BackOffPolicy;
@@ -59,6 +61,8 @@ import org.springframework.retry.policy.ExpressionRetryPolicy;
 import org.springframework.retry.policy.MapRetryContextCache;
 import org.springframework.retry.policy.RetryContextCache;
 import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.Args;
+import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.ReflectionUtils;
@@ -71,6 +75,8 @@ import org.springframework.util.StringUtils;
  * @author Dave Syer
  * @author Artem Bilan
  * @author Gary Russell
+ * @author Roman Akentev
+ * @author Aftab Shaikh
  * @since 1.1
  */
 public class AnnotationAwareRetryOperationsInterceptor implements IntroductionInterceptor, BeanFactoryAware {
@@ -79,18 +85,18 @@ public class AnnotationAwareRetryOperationsInterceptor implements IntroductionIn
 
 	private static final SpelExpressionParser PARSER = new SpelExpressionParser();
 
-	private static final MethodInterceptor NULL_INTERCEPTOR = new MethodInterceptor() {
-		@Override
-		public Object invoke(MethodInvocation methodInvocation) throws Throwable {
-			throw new OperationNotSupportedException("Not supported");
-		}
+	private static final MethodInterceptor NULL_INTERCEPTOR = methodInvocation -> {
+		throw new OperationNotSupportedException("Not supported");
 	};
 
 	private final StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
 
-	private final ConcurrentReferenceHashMap<Object, ConcurrentMap<Method, MethodInterceptor>> delegates = new ConcurrentReferenceHashMap<Object, ConcurrentMap<Method, MethodInterceptor>>();
+	private final ConcurrentReferenceHashMap<Object, ConcurrentMap<Method, MethodInterceptor>> delegates = new ConcurrentReferenceHashMap<>();
 
-	private RetryContextCache retryContextCache = new MapRetryContextCache();
+	private RetryContextCache retryContextCache = new MapRetryContextCache(MapRetryContextCache.DEFAULT_CAPACITY, true);
+
+	private RetryContextCache circuitBreakerRetryContextCache = new MapRetryContextCache(
+			MapRetryContextCache.DEFAULT_CAPACITY, false);
 
 	private MethodArgumentsKeyGenerator methodArgumentsKeyGenerator;
 
@@ -118,6 +124,16 @@ public class AnnotationAwareRetryOperationsInterceptor implements IntroductionIn
 	}
 
 	/**
+	 * Set the {@link RetryContextCache} to use for stateful retries that are used by
+	 * circuit breakers.
+	 * @param circuitBreakerRetryContextCache the {@link RetryContextCache} to use
+	 * @since 1.3.5
+	 */
+	public void setCircuitBreakerRetryContextCache(RetryContextCache circuitBreakerRetryContextCache) {
+		this.circuitBreakerRetryContextCache = circuitBreakerRetryContextCache;
+	}
+
+	/**
 	 * @param methodArgumentsKeyGenerator the {@link MethodArgumentsKeyGenerator}
 	 */
 	public void setKeyGenerator(MethodArgumentsKeyGenerator methodArgumentsKeyGenerator) {
@@ -136,7 +152,7 @@ public class AnnotationAwareRetryOperationsInterceptor implements IntroductionIn
 	 * @param globalListeners the default listeners
 	 */
 	public void setListeners(Collection<RetryListener> globalListeners) {
-		ArrayList<RetryListener> retryListeners = new ArrayList<RetryListener>(globalListeners);
+		ArrayList<RetryListener> retryListeners = new ArrayList<>(globalListeners);
 		AnnotationAwareOrderComparator.sort(retryListeners);
 		this.globalListeners = retryListeners.toArray(new RetryListener[0]);
 	}
@@ -166,7 +182,7 @@ public class AnnotationAwareRetryOperationsInterceptor implements IntroductionIn
 	private MethodInterceptor getDelegate(Object target, Method method) {
 		ConcurrentMap<Method, MethodInterceptor> cachedMethods = this.delegates.get(target);
 		if (cachedMethods == null) {
-			cachedMethods = new ConcurrentHashMap<Method, MethodInterceptor>();
+			cachedMethods = new ConcurrentHashMap<>();
 		}
 		MethodInterceptor delegate = cachedMethods.get(method);
 		if (delegate == null) {
@@ -225,82 +241,91 @@ public class AnnotationAwareRetryOperationsInterceptor implements IntroductionIn
 
 	private MethodInterceptor getStatelessInterceptor(Object target, Method method, Retryable retryable) {
 		RetryTemplate template = createTemplate(retryable.listeners());
-		template.setRetryPolicy(getRetryPolicy(retryable));
-		template.setBackOffPolicy(getBackoffPolicy(retryable.backoff()));
-		return RetryInterceptorBuilder.stateless().retryOperations(template).label(retryable.label())
-				.recoverer(getRecoverer(target, method)).build();
+		template.setRetryPolicy(getRetryPolicy(retryable, true));
+		template.setBackOffPolicy(getBackoffPolicy(retryable.backoff(), true));
+		return RetryInterceptorBuilder.stateless()
+			.retryOperations(template)
+			.label(retryable.label())
+			.recoverer(getRecoverer(target, method))
+			.build();
 	}
 
 	private MethodInterceptor getStatefulInterceptor(Object target, Method method, Retryable retryable) {
 		RetryTemplate template = createTemplate(retryable.listeners());
 		template.setRetryContextCache(this.retryContextCache);
+		template.setCircuitBreakerRetryContextCache(this.circuitBreakerRetryContextCache);
 
 		CircuitBreaker circuit = AnnotatedElementUtils.findMergedAnnotation(method, CircuitBreaker.class);
 		if (circuit == null) {
 			circuit = findAnnotationOnTarget(target, method, CircuitBreaker.class);
 		}
 		if (circuit != null) {
-			RetryPolicy policy = getRetryPolicy(circuit);
+			RetryPolicy policy = getRetryPolicy(circuit, false);
 			CircuitBreakerRetryPolicy breaker = new CircuitBreakerRetryPolicy(policy);
-			breaker.setOpenTimeout(getOpenTimeout(circuit));
-			breaker.setResetTimeout(getResetTimeout(circuit));
+			openTimeout(breaker, circuit);
+			resetTimeout(breaker, circuit);
 			template.setRetryPolicy(breaker);
 			template.setBackOffPolicy(new NoBackOffPolicy());
+			template.setThrowLastExceptionOnExhausted(circuit.throwLastExceptionOnExhausted());
 			String label = circuit.label();
 			if (!StringUtils.hasText(label)) {
 				label = method.toGenericString();
 			}
-			return RetryInterceptorBuilder.circuitBreaker().keyGenerator(new FixedKeyGenerator("circuit"))
-					.retryOperations(template).recoverer(getRecoverer(target, method)).label(label).build();
+			return RetryInterceptorBuilder.circuitBreaker()
+				.keyGenerator(new FixedKeyGenerator("circuit"))
+				.retryOperations(template)
+				.recoverer(getRecoverer(target, method))
+				.label(label)
+				.build();
 		}
-		RetryPolicy policy = getRetryPolicy(retryable);
+		RetryPolicy policy = getRetryPolicy(retryable, false);
 		template.setRetryPolicy(policy);
-		template.setBackOffPolicy(getBackoffPolicy(retryable.backoff()));
+		template.setBackOffPolicy(getBackoffPolicy(retryable.backoff(), false));
 		String label = retryable.label();
-		return RetryInterceptorBuilder.stateful().keyGenerator(this.methodArgumentsKeyGenerator)
-				.newMethodArgumentsIdentifier(this.newMethodArgumentsIdentifier).retryOperations(template).label(label)
-				.recoverer(getRecoverer(target, method)).build();
+		return RetryInterceptorBuilder.stateful()
+			.keyGenerator(this.methodArgumentsKeyGenerator)
+			.newMethodArgumentsIdentifier(this.newMethodArgumentsIdentifier)
+			.retryOperations(template)
+			.label(label)
+			.recoverer(getRecoverer(target, method))
+			.build();
 	}
 
-	private long getOpenTimeout(CircuitBreaker circuit) {
-		if (StringUtils.hasText(circuit.openTimeoutExpression())) {
-			Long value = null;
-			if (isTemplate(circuit.openTimeoutExpression())) {
-				value = PARSER.parseExpression(resolve(circuit.openTimeoutExpression()), PARSER_CONTEXT)
-						.getValue(this.evaluationContext, Long.class);
+	private void openTimeout(CircuitBreakerRetryPolicy breaker, CircuitBreaker circuit) {
+		String expression = circuit.openTimeoutExpression();
+		if (StringUtils.hasText(expression)) {
+			Expression parsed = parse(expression);
+			if (isTemplate(expression)) {
+				Long value = parsed.getValue(this.evaluationContext, Long.class);
+				if (value != null) {
+					breaker.setOpenTimeout(value);
+					return;
+				}
 			}
 			else {
-				value = PARSER.parseExpression(resolve(circuit.openTimeoutExpression()))
-						.getValue(this.evaluationContext, Long.class);
-			}
-			if (value != null) {
-				return value;
+				breaker.openTimeoutSupplier(() -> evaluate(parsed, Long.class, false));
+				return;
 			}
 		}
-		return circuit.openTimeout();
+		breaker.setOpenTimeout(circuit.openTimeout());
 	}
 
-	private long getResetTimeout(CircuitBreaker circuit) {
-		if (StringUtils.hasText(circuit.resetTimeoutExpression())) {
-			Long value = null;
-			if (isTemplate(circuit.openTimeoutExpression())) {
-				value = PARSER.parseExpression(resolve(circuit.resetTimeoutExpression()), PARSER_CONTEXT)
-						.getValue(this.evaluationContext, Long.class);
+	private void resetTimeout(CircuitBreakerRetryPolicy breaker, CircuitBreaker circuit) {
+		String expression = circuit.resetTimeoutExpression();
+		if (StringUtils.hasText(expression)) {
+			Expression parsed = parse(expression);
+			if (isTemplate(expression)) {
+				Long value = parsed.getValue(this.evaluationContext, Long.class);
+				if (value != null) {
+					breaker.setResetTimeout(value);
+					return;
+				}
 			}
 			else {
-				value = PARSER.parseExpression(resolve(circuit.resetTimeoutExpression()))
-						.getValue(this.evaluationContext, Long.class);
-			}
-			if (value != null) {
-				return value;
+				breaker.resetTimeoutSupplier(() -> evaluate(parsed, Long.class, false));
 			}
 		}
-		return circuit.resetTimeout();
-	}
-
-	private boolean isTemplate(String expression) {
-		return expression.contains(PARSER_CONTEXT.getExpressionPrefix())
-				&& expression.contains(PARSER_CONTEXT.getExpressionSuffix());
+		breaker.setResetTimeout(circuit.resetTimeout());
 	}
 
 	private RetryTemplate createTemplate(String[] listenersBeanNames) {
@@ -315,6 +340,9 @@ public class AnnotationAwareRetryOperationsInterceptor implements IntroductionIn
 	}
 
 	private RetryListener[] getListenersBeans(String[] listenersBeanNames) {
+		if (listenersBeanNames.length == 1 && "".equals(listenersBeanNames[0].trim())) {
+			return new RetryListener[0];
+		}
 		RetryListener[] listeners = new RetryListener[listenersBeanNames.length];
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i] = this.beanFactory.getBean(listenersBeanNames[i], RetryListener.class);
@@ -327,54 +355,55 @@ public class AnnotationAwareRetryOperationsInterceptor implements IntroductionIn
 			return (MethodInvocationRecoverer<?>) target;
 		}
 		final AtomicBoolean foundRecoverable = new AtomicBoolean(false);
-		ReflectionUtils.doWithMethods(target.getClass(), new ReflectionUtils.MethodCallback() {
-			@Override
-			public void doWith(Method method) throws IllegalArgumentException {
-				if (AnnotatedElementUtils.findMergedAnnotation(method, Recover.class) != null) {
-					foundRecoverable.set(true);
-				}
+		ReflectionUtils.doWithMethods(target.getClass(), candidate -> {
+			if (AnnotatedElementUtils.findMergedAnnotation(candidate, Recover.class) != null) {
+				foundRecoverable.set(true);
 			}
 		});
 
 		if (!foundRecoverable.get()) {
 			return null;
 		}
-		return new RecoverAnnotationRecoveryHandler<Object>(target, method);
+		return new RecoverAnnotationRecoveryHandler<>(target, method);
 	}
 
-	private RetryPolicy getRetryPolicy(Annotation retryable) {
+	private RetryPolicy getRetryPolicy(Annotation retryable, boolean stateless) {
 		Map<String, Object> attrs = AnnotationUtils.getAnnotationAttributes(retryable);
 		@SuppressWarnings("unchecked")
 		Class<? extends Throwable>[] includes = (Class<? extends Throwable>[]) attrs.get("value");
 		String exceptionExpression = (String) attrs.get("exceptionExpression");
-		boolean hasExpression = StringUtils.hasText(exceptionExpression);
+		boolean hasExceptionExpression = StringUtils.hasText(exceptionExpression);
 		if (includes.length == 0) {
 			@SuppressWarnings("unchecked")
-			Class<? extends Throwable>[] value = (Class<? extends Throwable>[]) attrs.get("include");
+			Class<? extends Throwable>[] value = (Class<? extends Throwable>[]) attrs.get("retryFor");
 			includes = value;
 		}
 		@SuppressWarnings("unchecked")
-		Class<? extends Throwable>[] excludes = (Class<? extends Throwable>[]) attrs.get("exclude");
+		Class<? extends Throwable>[] excludes = (Class<? extends Throwable>[]) attrs.get("noRetryFor");
 		Integer maxAttempts = (Integer) attrs.get("maxAttempts");
 		String maxAttemptsExpression = (String) attrs.get("maxAttemptsExpression");
+		Expression parsedExpression = null;
 		if (StringUtils.hasText(maxAttemptsExpression)) {
-			if (ExpressionRetryPolicy.isTemplate(maxAttemptsExpression)) {
-				maxAttempts = PARSER.parseExpression(resolve(maxAttemptsExpression), PARSER_CONTEXT)
-						.getValue(this.evaluationContext, Integer.class);
-			}
-			else {
-				maxAttempts = PARSER.parseExpression(resolve(maxAttemptsExpression)).getValue(this.evaluationContext,
-						Integer.class);
+			parsedExpression = parse(maxAttemptsExpression);
+			if (isTemplate(maxAttemptsExpression)) {
+				maxAttempts = parsedExpression.getValue(this.evaluationContext, Integer.class);
+				parsedExpression = null;
 			}
 		}
+		final Expression maxAttExpression = parsedExpression;
+		SimpleRetryPolicy simple = null;
 		if (includes.length == 0 && excludes.length == 0) {
-			SimpleRetryPolicy simple = hasExpression
+			simple = hasExceptionExpression
 					? new ExpressionRetryPolicy(resolve(exceptionExpression)).withBeanFactory(this.beanFactory)
 					: new SimpleRetryPolicy();
-			simple.setMaxAttempts(maxAttempts);
-			return simple;
+			if (maxAttExpression != null) {
+				simple.maxAttemptsSupplier(() -> evaluate(maxAttExpression, Integer.class, stateless));
+			}
+			else {
+				simple.setMaxAttempts(maxAttempts);
+			}
 		}
-		Map<Class<? extends Throwable>, Boolean> policyMap = new HashMap<Class<? extends Throwable>, Boolean>();
+		Map<Class<? extends Throwable>, Boolean> policyMap = new HashMap<>();
 		for (Class<? extends Throwable> type : includes) {
 			policyMap.put(type, true);
 		}
@@ -382,68 +411,135 @@ public class AnnotationAwareRetryOperationsInterceptor implements IntroductionIn
 			policyMap.put(type, false);
 		}
 		boolean retryNotExcluded = includes.length == 0;
-		if (hasExpression) {
-			return new ExpressionRetryPolicy(maxAttempts, policyMap, true, exceptionExpression, retryNotExcluded)
+		if (simple == null) {
+			if (hasExceptionExpression) {
+				simple = new ExpressionRetryPolicy(maxAttempts, policyMap, true, resolve(exceptionExpression),
+						retryNotExcluded)
 					.withBeanFactory(this.beanFactory);
+			}
+			else {
+				simple = new SimpleRetryPolicy(maxAttempts, policyMap, true, retryNotExcluded);
+			}
+			if (maxAttExpression != null) {
+				simple.maxAttemptsSupplier(() -> evaluate(maxAttExpression, Integer.class, stateless));
+			}
 		}
-		else {
-			return new SimpleRetryPolicy(maxAttempts, policyMap, true, retryNotExcluded);
+		@SuppressWarnings("unchecked")
+		Class<? extends Throwable>[] noRecovery = (Class<? extends Throwable>[]) attrs.get("notRecoverable");
+		if (noRecovery != null && noRecovery.length > 0) {
+			simple.setNotRecoverable(noRecovery);
 		}
+		return simple;
 	}
 
-	private BackOffPolicy getBackoffPolicy(Backoff backoff) {
+	private BackOffPolicy getBackoffPolicy(Backoff backoff, boolean stateless) {
 		Map<String, Object> attrs = AnnotationUtils.getAnnotationAttributes(backoff);
 		long min = backoff.delay() == 0 ? backoff.value() : backoff.delay();
 		String delayExpression = (String) attrs.get("delayExpression");
+		Expression parsedMinExp = null;
 		if (StringUtils.hasText(delayExpression)) {
-			if (ExpressionRetryPolicy.isTemplate(delayExpression)) {
-				min = PARSER.parseExpression(resolve(delayExpression), PARSER_CONTEXT).getValue(this.evaluationContext,
-						Long.class);
-			}
-			else {
-				min = PARSER.parseExpression(resolve(delayExpression)).getValue(this.evaluationContext, Long.class);
+			parsedMinExp = parse(delayExpression);
+			if (isTemplate(delayExpression)) {
+				min = parsedMinExp.getValue(this.evaluationContext, Long.class);
+				parsedMinExp = null;
 			}
 		}
 		long max = backoff.maxDelay();
 		String maxDelayExpression = (String) attrs.get("maxDelayExpression");
+		Expression parsedMaxExp = null;
 		if (StringUtils.hasText(maxDelayExpression)) {
-			if (ExpressionRetryPolicy.isTemplate(maxDelayExpression)) {
-				max = PARSER.parseExpression(resolve(maxDelayExpression), PARSER_CONTEXT)
-						.getValue(this.evaluationContext, Long.class);
-			}
-			else {
-				max = PARSER.parseExpression(resolve(maxDelayExpression)).getValue(this.evaluationContext, Long.class);
+			parsedMaxExp = parse(maxDelayExpression);
+			if (isTemplate(maxDelayExpression)) {
+				max = parsedMaxExp.getValue(this.evaluationContext, Long.class);
+				parsedMaxExp = null;
 			}
 		}
 		double multiplier = backoff.multiplier();
 		String multiplierExpression = (String) attrs.get("multiplierExpression");
+		Expression parsedMultExp = null;
 		if (StringUtils.hasText(multiplierExpression)) {
-			if (ExpressionRetryPolicy.isTemplate(multiplierExpression)) {
-				multiplier = PARSER.parseExpression(resolve(multiplierExpression), PARSER_CONTEXT)
-						.getValue(this.evaluationContext, Double.class);
-			}
-			else {
-				multiplier = PARSER.parseExpression(resolve(multiplierExpression)).getValue(this.evaluationContext,
-						Double.class);
+			parsedMultExp = parse(multiplierExpression);
+			if (isTemplate(multiplierExpression)) {
+				multiplier = parsedMultExp.getValue(this.evaluationContext, Double.class);
+				parsedMultExp = null;
 			}
 		}
 		boolean isRandom = false;
-		if (multiplier > 0) {
+		String randomExpression = (String) attrs.get("randomExpression");
+		Expression parsedRandomExp = null;
+
+		if (multiplier > 0 || parsedMultExp != null) {
 			isRandom = backoff.random();
-			String randomExpression = (String) attrs.get("randomExpression");
 			if (StringUtils.hasText(randomExpression)) {
-				if (ExpressionRetryPolicy.isTemplate(randomExpression)) {
-					isRandom = PARSER.parseExpression(resolve(randomExpression), PARSER_CONTEXT)
-							.getValue(this.evaluationContext, Boolean.class);
-				}
-				else {
-					isRandom = PARSER.parseExpression(resolve(randomExpression)).getValue(this.evaluationContext,
-							Boolean.class);
+				parsedRandomExp = parse(randomExpression);
+				if (isTemplate(randomExpression)) {
+					isRandom = parsedRandomExp.getValue(this.evaluationContext, Boolean.class);
+					parsedRandomExp = null;
 				}
 			}
 		}
-		return BackOffPolicyBuilder.newBuilder().delay(min).maxDelay(max).multiplier(multiplier).random(isRandom)
-				.sleeper(this.sleeper).build();
+		return buildBackOff(min, parsedMinExp, max, parsedMaxExp, multiplier, parsedMultExp, isRandom, parsedRandomExp,
+				stateless);
+	}
+
+	private BackOffPolicy buildBackOff(long min, Expression minExp, long max, Expression maxExp, double multiplier,
+			Expression multExp, boolean isRandom, Expression randomExp, boolean stateless) {
+
+		BackOffPolicyBuilder builder = BackOffPolicyBuilder.newBuilder();
+		if (minExp != null) {
+			builder.delaySupplier(() -> evaluate(minExp, Long.class, stateless));
+		}
+		else {
+			builder.delay(min);
+		}
+		if (maxExp != null) {
+			builder.maxDelaySupplier(() -> evaluate(maxExp, Long.class, stateless));
+		}
+		else {
+			builder.maxDelay(max);
+		}
+		if (multExp != null) {
+			builder.multiplierSupplier(() -> evaluate(multExp, Double.class, stateless));
+		}
+		else {
+			builder.multiplier(multiplier);
+		}
+		if (randomExp != null) {
+			builder.randomSupplier(() -> evaluate(randomExp, Boolean.class, stateless));
+		}
+		else {
+			builder.random(isRandom);
+		}
+		builder.sleeper(this.sleeper);
+		return builder.build();
+	}
+
+	private Expression parse(String expression) {
+		if (isTemplate(expression)) {
+			return PARSER.parseExpression(resolve(expression), PARSER_CONTEXT);
+		}
+		else {
+			return PARSER.parseExpression(resolve(expression));
+		}
+	}
+
+	private boolean isTemplate(String expression) {
+		return expression.contains(PARSER_CONTEXT.getExpressionPrefix())
+				&& expression.contains(PARSER_CONTEXT.getExpressionSuffix());
+	}
+
+	private <T> T evaluate(Expression expression, Class<T> type, boolean stateless) {
+		Args args = null;
+		if (stateless) {
+			RetryContext context = RetrySynchronizationManager.getContext();
+			if (context != null) {
+				args = (Args) context.getAttribute("ARGS");
+			}
+			if (args == null) {
+				args = Args.NO_ARGS;
+			}
+		}
+		return expression.getValue(this.evaluationContext, args, type);
 	}
 
 	/**

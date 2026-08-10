@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,26 @@
 
 package org.springframework.retry;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class AbstractExceptionTests {
 
 	@Test
 	public void testExceptionString() throws Exception {
 		Exception exception = getException("foo");
-		assertEquals("foo", exception.getMessage());
+		assertThat(exception.getMessage()).isEqualTo("foo");
 	}
 
 	@Test
 	public void testExceptionStringThrowable() throws Exception {
 		Exception exception = getException("foo", new IllegalStateException());
-		assertEquals("foo", exception.getMessage().substring(0, 3));
+		assertThat(exception.getMessage().substring(0, 3)).isEqualTo("foo");
 	}
 
-	public abstract Exception getException(String msg) throws Exception;
+	public abstract Exception getException(String msg);
 
-	public abstract Exception getException(String msg, Throwable t) throws Exception;
+	public abstract Exception getException(String msg, Throwable t);
 
 }

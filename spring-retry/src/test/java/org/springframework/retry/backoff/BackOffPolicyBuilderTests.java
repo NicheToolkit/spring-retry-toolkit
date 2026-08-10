@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2022 the original author or authors.
+ * Copyright 2006-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,18 @@
 
 package org.springframework.retry.backoff;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.DirectFieldAccessor;
+import org.springframework.retry.backoff.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**
  * @author Tomaz Fernandes
+ * @author Gary Russell
+ * @author Aftab Shaikh
  * @since 1.3.3
  */
 public class BackOffPolicyBuilderTests {
@@ -33,67 +35,153 @@ public class BackOffPolicyBuilderTests {
 	@Test
 	public void shouldCreateDefaultBackOffPolicy() {
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newDefaultPolicy();
-		assertTrue(FixedBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass()));
+		assertThat(FixedBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass())).isTrue();
 		FixedBackOffPolicy policy = (FixedBackOffPolicy) backOffPolicy;
-		assertEquals(1000, policy.getBackOffPeriod());
+		assertThat(policy.getBackOffPeriod()).isEqualTo(1000);
 	}
 
 	@Test
 	public void shouldCreateDefaultBackOffPolicyViaNewBuilder() {
 		Sleeper mockSleeper = mock(Sleeper.class);
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder().sleeper(mockSleeper).build();
-		assertTrue(FixedBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass()));
+		assertThat(FixedBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass())).isTrue();
 		FixedBackOffPolicy policy = (FixedBackOffPolicy) backOffPolicy;
-		assertEquals(1000, policy.getBackOffPeriod());
-		assertEquals(mockSleeper, new DirectFieldAccessor(policy).getPropertyValue("sleeper"));
+		assertThat(policy.getBackOffPeriod()).isEqualTo(1000);
+		assertThat(new DirectFieldAccessor(policy).getPropertyValue("sleeper")).isEqualTo(mockSleeper);
 	}
 
 	@Test
 	public void shouldCreateFixedBackOffPolicy() {
 		Sleeper mockSleeper = mock(Sleeper.class);
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder().delay(3500).sleeper(mockSleeper).build();
-		assertTrue(FixedBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass()));
+		assertThat(FixedBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass())).isTrue();
 		FixedBackOffPolicy policy = (FixedBackOffPolicy) backOffPolicy;
-		assertEquals(3500, policy.getBackOffPeriod());
-		assertEquals(mockSleeper, new DirectFieldAccessor(policy).getPropertyValue("sleeper"));
+		assertThat(policy.getBackOffPeriod()).isEqualTo(3500);
+		assertThat(new DirectFieldAccessor(policy).getPropertyValue("sleeper")).isEqualTo(mockSleeper);
 	}
 
 	@Test
 	public void shouldCreateUniformRandomBackOffPolicy() {
 		Sleeper mockSleeper = mock(Sleeper.class);
-		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder().delay(1).maxDelay(5000).sleeper(mockSleeper)
-				.build();
-		assertTrue(UniformRandomBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass()));
+		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
+			.delay(1)
+			.maxDelay(5000)
+			.sleeper(mockSleeper)
+			.build();
+		assertThat(UniformRandomBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass())).isTrue();
 		UniformRandomBackOffPolicy policy = (UniformRandomBackOffPolicy) backOffPolicy;
-		assertEquals(1, policy.getMinBackOffPeriod());
-		assertEquals(5000, policy.getMaxBackOffPeriod());
-		assertEquals(mockSleeper, new DirectFieldAccessor(policy).getPropertyValue("sleeper"));
+		assertThat(policy.getMinBackOffPeriod()).isEqualTo(1);
+		assertThat(policy.getMaxBackOffPeriod()).isEqualTo(5000);
+		assertThat(new DirectFieldAccessor(policy).getPropertyValue("sleeper")).isEqualTo(mockSleeper);
 	}
 
 	@Test
 	public void shouldCreateExponentialBackOff() {
 		Sleeper mockSleeper = mock(Sleeper.class);
-		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder().delay(100).maxDelay(1000).multiplier(2)
-				.random(false).sleeper(mockSleeper).build();
-		assertTrue(ExponentialBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass()));
+		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
+			.delay(100)
+			.maxDelay(1000)
+			.multiplier(2)
+			.random(false)
+			.sleeper(mockSleeper)
+			.build();
+		assertThat(ExponentialBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass())).isTrue();
 		ExponentialBackOffPolicy policy = (ExponentialBackOffPolicy) backOffPolicy;
-		assertEquals(100, policy.getInitialInterval());
-		assertEquals(1000, policy.getMaxInterval());
-		assertEquals(2, policy.getMultiplier(), 0);
-		assertEquals(mockSleeper, new DirectFieldAccessor(policy).getPropertyValue("sleeper"));
+		assertThat(policy.getInitialInterval()).isEqualTo(100);
+		assertThat(policy.getMaxInterval()).isEqualTo(1000);
+		assertThat(policy.getMultiplier()).isEqualTo(2);
+		assertThat(new DirectFieldAccessor(policy).getPropertyValue("sleeper")).isEqualTo(mockSleeper);
 	}
 
 	@Test
 	public void shouldCreateExponentialRandomBackOff() {
 		Sleeper mockSleeper = mock(Sleeper.class);
-		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder().delay(10000).maxDelay(100000).multiplier(10)
-				.random(true).sleeper(mockSleeper).build();
-		assertTrue(ExponentialRandomBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass()));
+		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
+			.delay(10000)
+			.maxDelay(100000)
+			.multiplier(10)
+			.random(true)
+			.sleeper(mockSleeper)
+			.build();
+		assertThat(ExponentialRandomBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass())).isTrue();
 		ExponentialRandomBackOffPolicy policy = (ExponentialRandomBackOffPolicy) backOffPolicy;
-		assertEquals(10000, policy.getInitialInterval());
-		assertEquals(100000, policy.getMaxInterval());
-		assertEquals(10, policy.getMultiplier(), 0);
-		assertEquals(mockSleeper, new DirectFieldAccessor(policy).getPropertyValue("sleeper"));
+		assertThat(policy.getInitialInterval()).isEqualTo(10000);
+		assertThat(policy.getMaxInterval()).isEqualTo(100000);
+		assertThat(policy.getMultiplier()).isEqualTo(10);
+		assertThat(new DirectFieldAccessor(policy).getPropertyValue("sleeper")).isEqualTo(mockSleeper);
+	}
+
+	@Test
+	public void shouldCreateExponentialRandomBackOffWhenProvidedRandomSupplier() {
+		Sleeper mockSleeper = mock(Sleeper.class);
+		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
+			.delay(10000)
+			.maxDelay(100000)
+			.multiplier(10)
+			.randomSupplier(() -> true)
+			.sleeper(mockSleeper)
+			.build();
+
+		assertThat(ExponentialRandomBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass())).isTrue();
+		ExponentialRandomBackOffPolicy policy = (ExponentialRandomBackOffPolicy) backOffPolicy;
+		assertThat(policy.getInitialInterval()).isEqualTo(10000);
+		assertThat(policy.getMaxInterval()).isEqualTo(100000);
+		assertThat(policy.getMultiplier()).isEqualTo(10);
+	}
+
+	@Test
+	public void shouldCreateExponentialRandomBackOffWithProvidedSuppliers() {
+		Sleeper mockSleeper = mock(Sleeper.class);
+		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
+			.delaySupplier(() -> 10000L)
+			.maxDelaySupplier(() -> 100000L)
+			.multiplierSupplier(() -> 10d)
+			.randomSupplier(() -> true)
+			.sleeper(mockSleeper)
+			.build();
+
+		assertThat(ExponentialRandomBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass())).isTrue();
+		ExponentialRandomBackOffPolicy policy = (ExponentialRandomBackOffPolicy) backOffPolicy;
+		assertThat(policy.getInitialInterval()).isEqualTo(10000);
+		assertThat(policy.getMaxInterval()).isEqualTo(100000);
+		assertThat(policy.getMultiplier()).isEqualTo(10);
+	}
+
+	@Test
+	public void shouldCreateExponentialBackOffWhenProvidedRandomSupplier() {
+		Sleeper mockSleeper = mock(Sleeper.class);
+		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
+			.delay(100)
+			.maxDelay(1000)
+			.multiplier(2)
+			.randomSupplier(() -> false)
+			.sleeper(mockSleeper)
+			.build();
+		assertThat(backOffPolicy instanceof ExponentialRandomBackOffPolicy).isFalse();
+		assertThat(ExponentialBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass())).isTrue();
+		ExponentialBackOffPolicy policy = (ExponentialBackOffPolicy) backOffPolicy;
+		assertThat(policy.getInitialInterval()).isEqualTo(100);
+		assertThat(policy.getMaxInterval()).isEqualTo(1000);
+		assertThat(policy.getMultiplier()).isEqualTo(2);
+	}
+
+	@Test
+	public void shouldCreateExponentialBackOffWithProvidedSuppliers() {
+		Sleeper mockSleeper = mock(Sleeper.class);
+		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
+			.delaySupplier(() -> 10000L)
+			.maxDelaySupplier(() -> 100000L)
+			.multiplierSupplier(() -> 10d)
+			.randomSupplier(() -> false)
+			.sleeper(mockSleeper)
+			.build();
+
+		assertThat(backOffPolicy instanceof ExponentialRandomBackOffPolicy).isFalse();
+		assertThat(ExponentialBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass())).isTrue();
+		ExponentialBackOffPolicy policy = (ExponentialBackOffPolicy) backOffPolicy;
+		assertThat(policy.getInitialInterval()).isEqualTo(10000);
+		assertThat(policy.getMaxInterval()).isEqualTo(100000);
+		assertThat(policy.getMultiplier()).isEqualTo(10);
 	}
 
 }

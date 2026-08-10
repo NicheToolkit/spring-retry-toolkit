@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,10 @@
 
 package org.springframework.retry.backoff;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -37,22 +29,26 @@ import org.springframework.retry.context.RetryContextSupport;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.SerializationUtils;
 
-import static org.junit.Assert.assertTrue;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dave Syer
+ * @author Gary Russell
  *
  */
-@RunWith(Parameterized.class)
 public class BackOffPolicySerializationTests {
 
-	private static Log logger = LogFactory.getLog(BackOffPolicySerializationTests.class);
+	private static final Log logger = LogFactory.getLog(BackOffPolicySerializationTests.class);
 
-	private BackOffPolicy policy;
-
-	@Parameters(name = "{index}: {0}")
-	public static List<Object[]> policies() {
-		List<Object[]> result = new ArrayList<Object[]>();
+	@SuppressWarnings("deprecation")
+	public static Stream<Object[]> policies() {
+		List<Object[]> result = new ArrayList<>();
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(true);
 		scanner.addIncludeFilter(new AssignableTypeFilter(BackOffPolicy.class));
 		scanner.addExcludeFilter(new RegexPatternTypeFilter(Pattern.compile(".*Test.*")));
@@ -68,15 +64,13 @@ public class BackOffPolicySerializationTests {
 				logger.warn("Cannot create instance of " + beanDefinition.getBeanClassName());
 			}
 		}
-		return result;
+		return result.stream();
 	}
 
-	public BackOffPolicySerializationTests(BackOffPolicy policy) {
-		this.policy = policy;
-	}
-
-	@Test
-	public void testSerializationCycleForContext() {
+	@ParameterizedTest
+	@MethodSource("policies")
+	@SuppressWarnings("deprecation")
+	public void testSerializationCycleForContext(BackOffPolicy policy) {
 		BackOffContext context = policy.start(new RetryContextSupport(null));
 		if (context != null) {
 			assertTrue(SerializationUtils.deserialize(SerializationUtils.serialize(context)) instanceof BackOffContext);

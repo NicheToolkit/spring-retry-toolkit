@@ -63,7 +63,7 @@ public class ExceptionClassifierRetryPolicy implements RetryPolicy {
 	/**
 	 * Delegate to the policy currently activated in the context.
 	 *
-	 * @see org.springframework.retry.RetryPolicy#canRetry(org.springframework.retry.RetryContext)
+	 * @see RetryPolicy#canRetry(RetryContext)
 	 */
 	public boolean canRetry(RetryContext context) {
 		RetryPolicy policy = (RetryPolicy) context;
@@ -73,7 +73,7 @@ public class ExceptionClassifierRetryPolicy implements RetryPolicy {
 	/**
 	 * Delegate to the policy currently activated in the context.
 	 *
-	 * @see org.springframework.retry.RetryPolicy#close(org.springframework.retry.RetryContext)
+	 * @see RetryPolicy#close(RetryContext)
 	 */
 	public void close(RetryContext context) {
 		RetryPolicy policy = (RetryPolicy) context;
@@ -84,7 +84,7 @@ public class ExceptionClassifierRetryPolicy implements RetryPolicy {
 	 * Create an active context that proxies a retry policy by choosing a target from the
 	 * policy map.
 	 *
-	 * @see org.springframework.retry.RetryPolicy#open(RetryContext)
+	 * @see RetryPolicy#open(RetryContext)
 	 */
 	public RetryContext open(RetryContext parent) {
 		return new ExceptionClassifierRetryContext(parent, exceptionClassifier).open(parent);
@@ -93,7 +93,7 @@ public class ExceptionClassifierRetryPolicy implements RetryPolicy {
 	/**
 	 * Delegate to the policy currently activated in the context.
 	 *
-	 * @see org.springframework.retry.RetryPolicy#registerThrowable(org.springframework.retry.RetryContext,
+	 * @see RetryPolicy#registerThrowable(RetryContext,
 	 * Throwable)
 	 */
 	public void registerThrowable(RetryContext context, Throwable throwable) {
@@ -112,7 +112,12 @@ public class ExceptionClassifierRetryPolicy implements RetryPolicy {
 		// Dynamic: depends on the policy:
 		private RetryContext context;
 
-		final private Map<RetryPolicy, RetryContext> contexts = new HashMap<RetryPolicy, RetryContext>();
+		final private Map<RetryPolicy, RetryContext> contexts = new HashMap<>();
+
+		public ExceptionClassifierRetryContext() {
+			super(null);
+			this.exceptionClassifier = new ClassifierSupport<>(new NeverRetryPolicy());
+		}
 
 		public ExceptionClassifierRetryContext(RetryContext parent,
 				Classifier<Throwable, RetryPolicy> exceptionClassifier) {

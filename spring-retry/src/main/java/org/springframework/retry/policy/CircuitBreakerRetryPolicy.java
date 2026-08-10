@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@
 
 package org.springframework.retry.policy;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.context.RetryContextSupport;
+
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 /**
  * @author Dave Syer
@@ -36,13 +36,17 @@ public class CircuitBreakerRetryPolicy implements RetryPolicy {
 
 	public static final String CIRCUIT_SHORT_COUNT = "circuit.shortCount";
 
-	private static Log logger = LogFactory.getLog(CircuitBreakerRetryPolicy.class);
+	private static final Log logger = LogFactory.getLog(CircuitBreakerRetryPolicy.class);
 
 	private final RetryPolicy delegate;
 
 	private long resetTimeout = 20000;
 
 	private long openTimeout = 5000;
+
+	private Supplier<Long> resetTimeoutSupplier;
+
+	private Supplier<Long> openTimeoutSupplier;
 
 	public CircuitBreakerRetryPolicy() {
 		this(new SimpleRetryPolicy());
@@ -62,6 +66,17 @@ public class CircuitBreakerRetryPolicy implements RetryPolicy {
 	}
 
 	/**
+	 * A supplier for the timeout for resetting circuit in milliseconds. After the circuit
+	 * opens it will re-close after this time has elapsed and the context will be
+	 * restarted.
+	 * @param timeoutSupplier a supplier for the timeout to set in milliseconds
+	 * @since 2.0
+	 */
+	public void resetTimeoutSupplier(Supplier<Long> timeoutSupplier) {
+		this.resetTimeoutSupplier = timeoutSupplier;
+	}
+
+	/**
 	 * Timeout for tripping the open circuit. If the delegate policy cannot retry and the
 	 * time elapsed since the context was started is less than this window, then the
 	 * circuit is opened.
@@ -69,6 +84,17 @@ public class CircuitBreakerRetryPolicy implements RetryPolicy {
 	 */
 	public void setOpenTimeout(long timeout) {
 		this.openTimeout = timeout;
+	}
+
+	/**
+	 * A supplier for the Timeout for tripping the open circuit. If the delegate policy
+	 * cannot retry and the time elapsed since the context was started is less than this
+	 * window, then the circuit is opened.
+	 * @param timeoutSupplier a supplier for the timeout to set in milliseconds
+	 * @since 2.0
+	 */
+	public void openTimeoutSupplier(Supplier<Long> timeoutSupplier) {
+		this.openTimeoutSupplier = timeoutSupplier;
 	}
 
 	@Override
@@ -86,7 +112,15 @@ public class CircuitBreakerRetryPolicy implements RetryPolicy {
 
 	@Override
 	public RetryContext open(RetryContext parent) {
-		return new CircuitBreakerRetryContext(parent, this.delegate, this.resetTimeout, this.openTimeout);
+		long resetTimeout = this.resetTimeout;
+		if (this.resetTimeoutSupplier != null) {
+			resetTimeout = this.resetTimeoutSupplier.get();
+		}
+		long openTimeout = this.openTimeout;
+		if (this.openTimeoutSupplier != null) {
+			openTimeout = this.openTimeoutSupplier.get();
+		}
+		return new CircuitBreakerRetryContext(parent, this.delegate, resetTimeout, openTimeout);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.springframework.retry.backoff.BackOffPolicyBuilderTests
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.096 s -- in org.springframework.retry.backoff.BackOffPolicyBuilderTests
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.010 s -- in org.springframework.retry.backoff.BackOffPolicyBuilderTests

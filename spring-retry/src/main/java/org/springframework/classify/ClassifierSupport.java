@@ -41,7 +41,7 @@ public class ClassifierSupport<C, T> implements Classifier<C, T> {
 	 * Always returns the default value. This is the main extension point for subclasses,
 	 * so it must be able to classify null.
 	 *
-	 * @see org.springframework.classify.Classifier#classify(Object)
+	 * @see Classifier#classify(Object)
 	 */
 	@Override
 	public T classify(C throwable) {

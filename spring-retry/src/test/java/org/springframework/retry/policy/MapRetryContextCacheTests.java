@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,40 +16,11 @@
 
 package org.springframework.retry.policy;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+public class MapRetryContextCacheTests extends AbstractMapRetryContextCacheTests {
 
-import org.junit.Test;
-import org.springframework.retry.context.RetryContextSupport;
-
-public class MapRetryContextCacheTests {
-
-	MapRetryContextCache cache = new MapRetryContextCache();
-
-	@Test
-	public void testPut() {
-		RetryContextSupport context = new RetryContextSupport(null);
-		cache.put("foo", context);
-		assertEquals(context, cache.get("foo"));
-	}
-
-	@Test(expected = RetryCacheCapacityExceededException.class)
-	public void testPutOverLimit() {
-		RetryContextSupport context = new RetryContextSupport(null);
-		cache.setCapacity(1);
-		cache.put("foo", context);
-		cache.put("foo", context);
-	}
-
-	@Test
-	public void testRemove() {
-		assertFalse(cache.containsKey("foo"));
-		RetryContextSupport context = new RetryContextSupport(null);
-		cache.put("foo", context);
-		assertTrue(cache.containsKey("foo"));
-		cache.remove("foo");
-		assertFalse(cache.containsKey("foo"));
+	@Override
+	protected AbstractMapRetryContextCache<?> createCache(int capacity, boolean removeEldestEntries) {
+		return new MapRetryContextCache(capacity, removeEldestEntries);
 	}
 
 }

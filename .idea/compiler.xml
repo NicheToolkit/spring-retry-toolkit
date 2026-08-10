@@ -7,19 +7,15 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="spring-retry" />
-        <module name="spring-retry (1)" />
-      </profile>
-      <profile name="Annotation profile for spring-retry-parent" enabled="true">
-        <sourceOutputDir name="../target/generated-sources/annotations" />
-        <sourceTestOutputDir name="../target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <module name="spring-retry-parent (1) (org.springframework.retry)" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="spring-retry (1)" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="spring-retry" options="-parameters" />
+      <module name="spring-retry" options="-XDignore.symbol.file" />
       <module name="spring-retry (1)" options="-XDignore.symbol.file" />
     </option>
   </component>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2023 the original author or authors.
+ * Copyright 2006-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ package org.springframework.retry.annotation;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,6 +41,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ImportAware;
 import org.springframework.context.annotation.Role;
@@ -46,6 +49,8 @@ import org.springframework.core.OrderComparator;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.retry.RetryListener;
 import org.springframework.retry.backoff.Sleeper;
 import org.springframework.retry.interceptor.MethodArgumentsKeyGenerator;
@@ -54,7 +59,6 @@ import org.springframework.retry.policy.RetryContextCache;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.ReflectionUtils.MethodCallback;
 
 /**
  * Basic configuration for <code>@Retryable</code> processing. For stateful retry, if
@@ -65,7 +69,9 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
  * @author Dave Syer
  * @author Artem Bilan
  * @author Markus Heiden
+ * @author Gary Russell
  * @author Yanming Zhou
+ * @author Evgeny Lazarev
  * @since 1.1
  *
  */
@@ -73,19 +79,20 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 @Component
 public class RetryConfiguration extends AbstractPointcutAdvisor
-		implements IntroductionAdvisor, BeanFactoryAware, InitializingBean, ImportAware {
+		implements IntroductionAdvisor, BeanFactoryAware, InitializingBean, SmartInitializingSingleton, ImportAware {
 
+	@Nullable
 	protected AnnotationAttributes enableRetry;
 
-	private Advice advice;
+	private AnnotationAwareRetryOperationsInterceptor advice;
 
 	private Pointcut pointcut;
 
 	private RetryContextCache retryContextCache;
 
-	private List<RetryListener> retryListeners;
+	private RetryContextCache circuitBreakerRetryContextCache;
 
-	private MethodArgumentsKeyGenerator methodArgumentsKeyGenerator;
+    private MethodArgumentsKeyGenerator methodArgumentsKeyGenerator;
 
 	private NewMethodArgumentsIdentifier newMethodArgumentsIdentifier;
 
@@ -101,20 +108,27 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.retryContextCache = findBean(RetryContextCache.class);
+		this.retryContextCache = findBean(RetryContextCache.class, "retryContextCache", true);
+		this.circuitBreakerRetryContextCache = findBean(RetryContextCache.class, "circuitBreakerRetryContextCache",
+				false);
 		this.methodArgumentsKeyGenerator = findBean(MethodArgumentsKeyGenerator.class);
 		this.newMethodArgumentsIdentifier = findBean(NewMethodArgumentsIdentifier.class);
-		this.retryListeners = findBeans(RetryListener.class);
 		this.sleeper = findBean(Sleeper.class);
-		Set<Class<? extends Annotation>> retryableAnnotationTypes = new LinkedHashSet<Class<? extends Annotation>>(1);
+		Set<Class<? extends Annotation>> retryableAnnotationTypes = new LinkedHashSet<>(1);
 		retryableAnnotationTypes.add(Retryable.class);
 		this.pointcut = buildPointcut(retryableAnnotationTypes);
 		this.advice = buildAdvice();
-		if (this.advice instanceof BeanFactoryAware) {
-			((BeanFactoryAware) this.advice).setBeanFactory(this.beanFactory);
-		}
+		this.advice.setBeanFactory(this.beanFactory);
 		if (this.enableRetry != null) {
-			setOrder(enableRetry.getNumber("order").intValue());
+			setOrder(enableRetry.getNumber("order"));
+		}
+	}
+
+	@Override
+	public void afterSingletonsInstantiated() {
+        List<RetryListener> retryListeners = findBeans(RetryListener.class);
+		if (retryListeners != null) {
+			this.advice.setListeners(retryListeners);
 		}
 	}
 
@@ -122,7 +136,7 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 		if (this.beanFactory instanceof ListableBeanFactory) {
 			ListableBeanFactory listable = (ListableBeanFactory) this.beanFactory;
 			if (listable.getBeanNamesForType(type).length > 0) {
-				ArrayList<T> list = new ArrayList<T>(listable.getBeansOfType(type, false, false).values());
+				ArrayList<T> list = new ArrayList<>(listable.getBeansOfType(type, false, false).values());
 				OrderComparator.sort(list);
 				return list;
 			}
@@ -131,10 +145,18 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 	}
 
 	private <T> T findBean(Class<? extends T> type) {
+		return findBean(type, null, true);
+	}
+
+	private <T> T findBean(Class<? extends T> type, String beanNameQualifier, boolean allowUnique) {
 		if (this.beanFactory instanceof ListableBeanFactory) {
 			ListableBeanFactory listable = (ListableBeanFactory) this.beanFactory;
-			if (listable.getBeanNamesForType(type, false, false).length == 1) {
-				return listable.getBean(type);
+			List<String> beanNames = Arrays.asList(listable.getBeanNamesForType(type, false, false));
+			if (beanNameQualifier != null && beanNames.contains(beanNameQualifier)) {
+				return this.beanFactory.getBean(beanNameQualifier, type);
+			}
+			if (allowUnique && beanNames.size() == 1) {
+				return this.beanFactory.getBean(beanNames.get(0), type);
 			}
 		}
 		return null;
@@ -144,15 +166,17 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 	 * Set the {@code BeanFactory} to be used when looking up executors by qualifier.
 	 */
 	@Override
-	public void setBeanFactory(BeanFactory beanFactory) {
+	public void setBeanFactory(@NonNull BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
 	}
 
+	@NonNull
 	@Override
 	public ClassFilter getClassFilter() {
 		return this.pointcut.getClassFilter();
 	}
 
+	@NonNull
 	@Override
 	public Class<?>[] getInterfaces() {
 		return new Class[] { org.springframework.retry.interceptor.Retryable.class };
@@ -162,23 +186,25 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 	public void validateInterfaces() throws IllegalArgumentException {
 	}
 
+	@NonNull
 	@Override
 	public Advice getAdvice() {
 		return this.advice;
 	}
 
+	@NonNull
 	@Override
 	public Pointcut getPointcut() {
 		return this.pointcut;
 	}
 
-	protected Advice buildAdvice() {
+	protected AnnotationAwareRetryOperationsInterceptor buildAdvice() {
 		AnnotationAwareRetryOperationsInterceptor interceptor = new AnnotationAwareRetryOperationsInterceptor();
 		if (this.retryContextCache != null) {
 			interceptor.setRetryContextCache(this.retryContextCache);
 		}
-		if (this.retryListeners != null) {
-			interceptor.setListeners(this.retryListeners);
+		if (this.circuitBreakerRetryContextCache != null) {
+			interceptor.setCircuitBreakerRetryContextCache(this.circuitBreakerRetryContextCache);
 		}
 		if (this.methodArgumentsKeyGenerator != null) {
 			interceptor.setKeyGenerator(this.methodArgumentsKeyGenerator);
@@ -211,7 +237,7 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 		return result;
 	}
 
-	private final class AnnotationClassOrMethodPointcut extends StaticMethodMatcherPointcut {
+	private static final class AnnotationClassOrMethodPointcut extends StaticMethodMatcherPointcut {
 
 		private final MethodMatcher methodResolver;
 
@@ -221,7 +247,7 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 		}
 
 		@Override
-		public boolean matches(Method method, Class<?> targetClass) {
+		public boolean matches(@NonNull Method method, @NonNull Class<?> targetClass) {
 			return getClassFilter().matches(targetClass) || this.methodResolver.matches(method, targetClass);
 		}
 
@@ -237,9 +263,14 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 			return ObjectUtils.nullSafeEquals(this.methodResolver, otherAdvisor.methodResolver);
 		}
 
+		@Override
+		public int hashCode() {
+			return Objects.hash(this.methodResolver);
+		}
+
 	}
 
-	private final class AnnotationClassOrMethodFilter extends AnnotationClassFilter {
+	private static final class AnnotationClassOrMethodFilter extends AnnotationClassFilter {
 
 		private final AnnotationMethodsResolver methodResolver;
 
@@ -249,7 +280,7 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 		}
 
 		@Override
-		public boolean matches(Class<?> clazz) {
+		public boolean matches(@NonNull Class<?> clazz) {
 			return super.matches(clazz) || this.methodResolver.hasAnnotatedMethods(clazz);
 		}
 
@@ -257,7 +288,7 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 
 	private static class AnnotationMethodsResolver {
 
-		private Class<? extends Annotation> annotationType;
+		private final Class<? extends Annotation> annotationType;
 
 		public AnnotationMethodsResolver(Class<? extends Annotation> annotationType) {
 			this.annotationType = annotationType;
@@ -265,17 +296,14 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 
 		public boolean hasAnnotatedMethods(Class<?> clazz) {
 			final AtomicBoolean found = new AtomicBoolean(false);
-			ReflectionUtils.doWithMethods(clazz, new MethodCallback() {
-				@Override
-				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					if (found.get()) {
-						return;
-					}
-					Annotation annotation = AnnotationUtils.findAnnotation(method,
-							AnnotationMethodsResolver.this.annotationType);
-					if (annotation != null) {
-						found.set(true);
-					}
+			ReflectionUtils.doWithMethods(clazz, method -> {
+				if (found.get()) {
+					return;
+				}
+				Annotation annotation = AnnotationUtils.findAnnotation(method,
+						AnnotationMethodsResolver.this.annotationType);
+				if (annotation != null) {
+					found.set(true);
 				}
 			});
 			return found.get();

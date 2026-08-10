@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,23 @@
 
 package org.springframework.classify;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.springframework.classify.ClassifierSupport;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ClassifierSupportTests {
 
 	@Test
 	public void testClassifyNullIsDefault() {
-		ClassifierSupport<String, String> classifier = new ClassifierSupport<String, String>("foo");
-		assertEquals(classifier.classify(null), "foo");
+		ClassifierSupport<String, String> classifier = new ClassifierSupport<>("foo");
+		assertThat(classifier.classify(null)).isEqualTo("foo");
 	}
 
 	@Test
 	public void testClassifyRandomException() {
-		ClassifierSupport<Throwable, String> classifier = new ClassifierSupport<Throwable, String>("foo");
-		assertEquals(classifier.classify(new IllegalStateException("Foo")), classifier.classify(null));
+		ClassifierSupport<Throwable, String> classifier = new ClassifierSupport<>("foo");
+		assertThat(classifier.classify(new IllegalStateException("Foo"))).isEqualTo(classifier.classify(null));
 	}
 
 }

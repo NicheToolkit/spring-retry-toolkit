@@ -34,7 +34,7 @@ public class NeverRetryPolicy implements RetryPolicy {
 	 * Returns false after the first exception. So there is always one try, and then the
 	 * retry is prevented.
 	 *
-	 * @see org.springframework.retry.RetryPolicy#canRetry(org.springframework.retry.RetryContext)
+	 * @see RetryPolicy#canRetry(RetryContext)
 	 */
 	public boolean canRetry(RetryContext context) {
 		return !((NeverRetryContext) context).isFinished();
@@ -43,7 +43,7 @@ public class NeverRetryPolicy implements RetryPolicy {
 	/**
 	 * Do nothing.
 	 *
-	 * @see org.springframework.retry.RetryPolicy#close(org.springframework.retry.RetryContext)
+	 * @see RetryPolicy#close(RetryContext)
 	 */
 	public void close(RetryContext context) {
 		// no-op
@@ -53,7 +53,7 @@ public class NeverRetryPolicy implements RetryPolicy {
 	 * Return a context that can respond to early termination requests, but does nothing
 	 * else.
 	 *
-	 * @see org.springframework.retry.RetryPolicy#open(RetryContext)
+	 * @see RetryPolicy#open(RetryContext)
 	 */
 	public RetryContext open(RetryContext parent) {
 		return new NeverRetryContext(parent);
@@ -61,7 +61,7 @@ public class NeverRetryPolicy implements RetryPolicy {
 
 	/**
 	 * Make the throwable available for downstream use through the context.
-	 * @see org.springframework.retry.RetryPolicy#registerThrowable(org.springframework.retry.RetryContext,
+	 * @see RetryPolicy#registerThrowable(RetryContext,
 	 * Throwable)
 	 */
 	public void registerThrowable(RetryContext context, Throwable throwable) {

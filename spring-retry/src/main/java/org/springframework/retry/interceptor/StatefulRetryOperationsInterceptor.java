@@ -140,7 +140,7 @@ public class StatefulRetryOperationsInterceptor implements MethodInterceptor {
 	 * case the value returned from the method invocation will be the value returned by
 	 * the recoverer (so the return type for that should be the same as the intercepted
 	 * method).
-	 * @see org.aopalliance.intercept.MethodInterceptor#invoke(org.aopalliance.intercept.MethodInvocation)
+	 * @see MethodInterceptor#invoke(MethodInvocation)
 	 * @see MethodInvocationRecoverer#recover(Object[], Throwable)
 	 *
 	 */

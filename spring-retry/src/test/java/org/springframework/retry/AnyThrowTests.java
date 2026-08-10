@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 the original author or authors.
+ * Copyright 2006-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,35 +16,32 @@
 
 package org.springframework.retry;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Dave Syer
+ * @author Gary Russell
  *
  */
 public class AnyThrowTests {
 
-	@Rule
-	public ExpectedException expected = ExpectedException.none();
-
 	@Test
-	public void testRuntimeException() throws Throwable {
-		expected.expect(RuntimeException.class);
-		AnyThrow.throwAny(new RuntimeException("planned"));
+	public void testRuntimeException() {
+		assertThatExceptionOfType(RuntimeException.class)
+			.isThrownBy(() -> AnyThrow.throwAny(new RuntimeException("planned")));
 	}
 
 	@Test
-	public void testUncheckedRuntimeException() throws Throwable {
-		expected.expect(RuntimeException.class);
-		AnyThrow.throwUnchecked(new RuntimeException("planned"));
+	public void testUncheckedRuntimeException() {
+		assertThatExceptionOfType(RuntimeException.class)
+			.isThrownBy(() -> AnyThrow.throwUnchecked(new RuntimeException("planned")));
 	}
 
 	@Test
-	public void testCheckedException() throws Throwable {
-		expected.expect(Exception.class);
-		AnyThrow.throwAny(new Exception("planned"));
+	public void testCheckedException() {
+		assertThatExceptionOfType(Exception.class).isThrownBy(() -> AnyThrow.throwAny(new Exception("planned")));
 	}
 
 	private static class AnyThrow {

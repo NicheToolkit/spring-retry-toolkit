@@ -18,7 +18,7 @@ package org.springframework.retry.backoff;
 /**
  * Simple {@link Sleeper} implementation that just waits on a local Object.
  *
- * @deprecated in favor of {@link org.springframework.retry.backoff.ThreadWaitSleeper}
+ * @deprecated in favor of {@link ThreadWaitSleeper}
  * @author Dave Syer
  *
  */

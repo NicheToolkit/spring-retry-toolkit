@@ -17,6 +17,7 @@
 package org.springframework.retry.interceptor;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.lang.Nullable;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryOperations;
 import org.springframework.util.StringUtils;
@@ -48,7 +49,7 @@ public abstract class MethodInvocationRetryCallback<T, E extends Throwable> impl
 	 * @param invocation the method invocation
 	 * @param label a unique label for statistics reporting.
 	 */
-	public MethodInvocationRetryCallback(MethodInvocation invocation, String label) {
+	public MethodInvocationRetryCallback(MethodInvocation invocation, @Nullable String label) {
 		this.invocation = invocation;
 		if (StringUtils.hasText(label)) {
 			this.label = label;

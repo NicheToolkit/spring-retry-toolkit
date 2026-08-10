@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,18 @@
  */
 package org.springframework.classify;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.classify.BackToBackPatternClassifier;
+import org.springframework.classify.PatternMatchingClassifier;
+import org.springframework.classify.annotation.Classifier;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.classify.annotation.Classifier;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Dave Syer
@@ -31,28 +34,28 @@ import org.springframework.classify.annotation.Classifier;
  */
 public class BackToBackPatternClassifierTests {
 
-	private BackToBackPatternClassifier<String, String> classifier = new BackToBackPatternClassifier<String, String>();
+	private BackToBackPatternClassifier<String, String> classifier = new BackToBackPatternClassifier<>();
 
 	private Map<String, String> map;
 
-	@Before
+	@BeforeEach
 	public void createMap() {
-		map = new HashMap<String, String>();
+		map = new HashMap<>();
 		map.put("foo", "bar");
 		map.put("*", "spam");
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void testNoClassifiers() {
-		classifier.classify("foo");
+		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> classifier.classify("foo"));
 	}
 
 	@Test
 	public void testCreateFromConstructor() {
-		classifier = new BackToBackPatternClassifier<String, String>(
-				new PatternMatchingClassifier<String>(Collections.singletonMap("oof", "bucket")),
-				new PatternMatchingClassifier<String>(map));
-		assertEquals("spam", classifier.classify("oof"));
+		classifier = new BackToBackPatternClassifier<>(
+				new PatternMatchingClassifier<>(Collections.singletonMap("oof", "bucket")),
+				new PatternMatchingClassifier<>(map));
+		assertThat(classifier.classify("oof")).isEqualTo("spam");
 	}
 
 	@Test
@@ -64,15 +67,15 @@ public class BackToBackPatternClassifierTests {
 			}
 		});
 		classifier.setMatcherMap(map);
-		assertEquals("spam", classifier.classify("oof"));
+		assertThat(classifier.classify("oof")).isEqualTo("spam");
 	}
 
 	@Test
 	public void testSingleMethodWithNoAnnotation() {
-		classifier = new BackToBackPatternClassifier<String, String>();
+		classifier = new BackToBackPatternClassifier<>();
 		classifier.setRouterDelegate(new RouterDelegate());
 		classifier.setMatcherMap(map);
-		assertEquals("spam", classifier.classify("oof"));
+		assertThat(classifier.classify("oof")).isEqualTo("spam");
 	}
 
 	@SuppressWarnings("serial")

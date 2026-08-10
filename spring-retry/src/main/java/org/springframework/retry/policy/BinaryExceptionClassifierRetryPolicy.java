@@ -33,6 +33,10 @@ public class BinaryExceptionClassifierRetryPolicy implements RetryPolicy {
 
 	private final BinaryExceptionClassifier exceptionClassifier;
 
+	public BinaryExceptionClassifierRetryPolicy() {
+		this.exceptionClassifier = new BinaryExceptionClassifier(true);
+	}
+
 	public BinaryExceptionClassifierRetryPolicy(BinaryExceptionClassifier exceptionClassifier) {
 		this.exceptionClassifier = exceptionClassifier;
 	}

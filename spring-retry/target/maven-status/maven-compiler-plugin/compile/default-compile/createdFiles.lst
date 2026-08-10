@@ -1,4 +1,5 @@
 org\springframework\retry\backoff\ExponentialRandomBackOffPolicy.class
+org\springframework\retry\policy\AbstractMapRetryContextCache$1.class
 org\springframework\retry\policy\MapRetryContextCache.class
 org\springframework\classify\annotation\Classifier.class
 org\springframework\retry\interceptor\RetryOperationsInterceptor$ItemRecovererCallback.class
@@ -32,8 +33,8 @@ org\springframework\retry\backoff\BackOffPolicy.class
 org\springframework\retry\policy\CompositeRetryPolicy$CompositeRetryContext.class
 org\springframework\classify\util\MethodInvokerUtils$2.class
 org\springframework\retry\policy\RetryCacheCapacityExceededException.class
+org\springframework\retry\support\Args.class
 org\springframework\retry\annotation\Backoff.class
-org\springframework\retry\annotation\RetryConfiguration$AnnotationMethodsResolver$1.class
 org\springframework\retry\RecoveryCallback.class
 org\springframework\retry\backoff\ExponentialRandomBackOffPolicy$ExponentialRandomBackOffContext.class
 org\springframework\retry\annotation\Retryable.class
@@ -59,15 +60,17 @@ org\springframework\retry\stats\DefaultRetryStatistics.class
 org\springframework\retry\backoff\ExponentialBackOffPolicy.class
 org\springframework\retry\annotation\RetryConfiguration$AnnotationMethodsResolver.class
 org\springframework\retry\backoff\BackOffPolicyBuilder.class
+org\springframework\retry\support\RetryTemplate$CompositeRetryContextCache.class
+org\springframework\retry\policy\AbstractMapRetryContextCache.class
 org\springframework\retry\stats\RetryStatisticsFactory.class
 org\springframework\classify\ClassifierAdapter.class
-org\springframework\retry\annotation\RecoverAnnotationRecoveryHandler$1.class
 org\springframework\classify\PatternMatcher.class
 org\springframework\retry\policy\SimpleRetryPolicy.class
 org\springframework\retry\interceptor\RetryInterceptorBuilder$StatefulRetryInterceptorBuilder.class
 org\springframework\retry\policy\SoftReferenceMapRetryContextCache.class
 org\springframework\retry\interceptor\StatefulRetryOperationsInterceptor$ItemRecovererCallback.class
 org\springframework\classify\PatternMatchingClassifier.class
+org\springframework\retry\policy\PredicateRetryPolicy.class
 org\springframework\classify\util\MethodInvoker.class
 org\springframework\retry\stats\ExponentialAverageRetryStatistics.class
 org\springframework\retry\stats\MutableRetryStatistics.class
@@ -91,7 +94,6 @@ org\springframework\retry\backoff\FixedBackOffPolicy.class
 org\springframework\retry\interceptor\NewMethodArgumentsIdentifier.class
 org\springframework\retry\interceptor\RetryInterceptorBuilder$StatelessRetryInterceptorBuilder.class
 org\springframework\classify\BackToBackPatternClassifier.class
-org\springframework\retry\annotation\AnnotationAwareRetryOperationsInterceptor$1.class
 org\springframework\retry\policy\NeverRetryPolicy$NeverRetryContext.class
 org\springframework\retry\context\RetryContextSupport.class
 org\springframework\classify\util\AnnotationMethodResolver$1.class
@@ -110,13 +112,13 @@ org\springframework\retry\interceptor\RetryInterceptorBuilder$1.class
 org\springframework\retry\annotation\AnnotationAwareRetryOperationsInterceptor.class
 org\springframework\retry\policy\RetryContextCache.class
 org\springframework\retry\RetryException.class
+org\springframework\retry\support\MetricsRetryListener.class
 org\springframework\retry\annotation\RetryConfiguration$AnnotationClassOrMethodFilter.class
 org\springframework\retry\support\RetrySimulator$FailingRetryCallback.class
 org\springframework\retry\interceptor\StatefulRetryOperationsInterceptor.class
 org\springframework\retry\support\RetryTemplate.class
 org\springframework\retry\support\RetrySimulation$SleepSequence.class
 org\springframework\classify\BinaryExceptionClassifierBuilder.class
-org\springframework\retry\annotation\AnnotationAwareRetryOperationsInterceptor$2.class
 org\springframework\retry\backoff\Sleeper.class
 org\springframework\retry\policy\NeverRetryPolicy.class
 org\springframework\classify\PatternMatcher$1.class

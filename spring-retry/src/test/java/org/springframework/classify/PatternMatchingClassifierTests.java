@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
  */
 package org.springframework.classify;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.classify.PatternMatchingClassifier;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.classify.PatternMatchingClassifier;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Dave Syer
@@ -30,13 +30,13 @@ import org.springframework.classify.PatternMatchingClassifier;
  */
 public class PatternMatchingClassifierTests {
 
-	private PatternMatchingClassifier<String> classifier = new PatternMatchingClassifier<String>();
+	private PatternMatchingClassifier<String> classifier = new PatternMatchingClassifier<>();
 
 	private Map<String, String> map;
 
-	@Before
+	@BeforeEach
 	public void createMap() {
-		map = new HashMap<String, String>();
+		map = new HashMap<>();
 		map.put("foo", "bar");
 		map.put("*", "spam");
 	}
@@ -44,15 +44,15 @@ public class PatternMatchingClassifierTests {
 	@Test
 	public void testSetPatternMap() {
 		classifier.setPatternMap(map);
-		assertEquals("bar", classifier.classify("foo"));
-		assertEquals("spam", classifier.classify("bucket"));
+		assertThat(classifier.classify("foo")).isEqualTo("bar");
+		assertThat(classifier.classify("bucket")).isEqualTo("spam");
 	}
 
 	@Test
 	public void testCreateFromMap() {
-		classifier = new PatternMatchingClassifier<String>(map);
-		assertEquals("bar", classifier.classify("foo"));
-		assertEquals("spam", classifier.classify("bucket"));
+		classifier = new PatternMatchingClassifier<>(map);
+		assertThat(classifier.classify("foo")).isEqualTo("bar");
+		assertThat(classifier.classify("bucket")).isEqualTo("spam");
 	}
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2020 the original author or authors.
+ * Copyright 2006-2026 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.springframework.retry.support;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.springframework.retry.backoff.NoBackOffPolicy;
 import org.springframework.retry.policy.MapRetryContextCache;
 import org.springframework.retry.policy.RetryContextCache;
 import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.util.Assert;
 
 /**
  * Template class that simplifies the execution of operations with retry semantics.
@@ -54,7 +56,7 @@ import org.springframework.retry.policy.SimpleRetryPolicy;
  * Also by default, each operation is retried for a maximum of three attempts with no back
  * off in between. This behaviour can be configured using the
  * {@link #setRetryPolicy(RetryPolicy)} and {@link #setBackOffPolicy(BackOffPolicy)}
- * properties. The {@link org.springframework.retry.backoff.BackOffPolicy} controls how
+ * properties. The {@link BackOffPolicy} controls how
  * long the pause is between each individual retry attempt.
  * <p>
  * A new instance can be fluently configured via {@link #builder}, e.g: <pre> {@code
@@ -75,6 +77,8 @@ import org.springframework.retry.policy.SimpleRetryPolicy;
  * @author Artem Bilan
  * @author Josh Long
  * @author Aleksandr Shamukov
+ * @author Emanuele Ivaldi
+ * @author Tobias Soloschenko
  */
 public class RetryTemplate implements RetryOperations {
 
@@ -84,7 +88,7 @@ public class RetryTemplate implements RetryOperations {
 	 */
 	private static final String GLOBAL_STATE = "state.global";
 
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected Log logger = LogFactory.getLog(getClass());
 
 	private volatile BackOffPolicy backOffPolicy = new NoBackOffPolicy();
 
@@ -92,7 +96,7 @@ public class RetryTemplate implements RetryOperations {
 
 	private volatile RetryListener[] listeners = new RetryListener[0];
 
-	private RetryContextCache retryContextCache = new MapRetryContextCache();
+	private CompositeRetryContextCache retryContextCache = new CompositeRetryContextCache();
 
 	private boolean throwLastExceptionOnExhausted;
 
@@ -118,6 +122,10 @@ public class RetryTemplate implements RetryOperations {
 	}
 
 	/**
+	 * Whether to re-throw last exception or wrap into {@link ExhaustedRetryException}
+	 * when all retry attempts are exhausted. Defaults to {@code false}; applied only in
+	 * case of supplied state, e.g.
+	 * {@link org.springframework.retry.interceptor.StatefulRetryOperationsInterceptor}.
 	 * @param throwLastExceptionOnExhausted the throwLastExceptionOnExhausted to set
 	 */
 	public void setThrowLastExceptionOnExhausted(boolean throwLastExceptionOnExhausted) {
@@ -129,7 +137,17 @@ public class RetryTemplate implements RetryOperations {
 	 * @param retryContextCache the {@link RetryContextCache} to set.
 	 */
 	public void setRetryContextCache(RetryContextCache retryContextCache) {
-		this.retryContextCache = retryContextCache;
+		this.retryContextCache = this.retryContextCache.withStatefulCache(retryContextCache);
+	}
+
+	/**
+	 * Set the {@link RetryContextCache} to use for stateful retries that are used by
+	 * circuit breakers.
+	 * @param circuitBreakerRetryContextCache the {@link RetryContextCache} to use
+	 * @since 1.3.5
+	 */
+	public void setCircuitBreakerRetryContextCache(RetryContextCache circuitBreakerRetryContextCache) {
+		this.retryContextCache = retryContextCache.withCircuitBreakerCache(circuitBreakerRetryContextCache);
 	}
 
 	/**
@@ -139,7 +157,8 @@ public class RetryTemplate implements RetryOperations {
 	 * @see RetryListener
 	 */
 	public void setListeners(RetryListener[] listeners) {
-		this.listeners = Arrays.asList(listeners).toArray(new RetryListener[listeners.length]);
+		Assert.notNull(listeners, "'listeners' must not be null");
+		this.listeners = Arrays.copyOf(listeners, listeners.length);
 	}
 
 	/**
@@ -159,14 +178,14 @@ public class RetryTemplate implements RetryOperations {
 	 * @see #setListeners(RetryListener[])
 	 */
 	public void registerListener(RetryListener listener, int index) {
-		List<RetryListener> list = new ArrayList<RetryListener>(Arrays.asList(this.listeners));
+		List<RetryListener> list = new ArrayList<>(Arrays.asList(this.listeners));
 		if (index >= list.size()) {
 			list.add(listener);
 		}
 		else {
 			list.add(index, listener);
 		}
-		this.listeners = list.toArray(new RetryListener[list.size()]);
+		this.listeners = list.toArray(new RetryListener[0]);
 	}
 
 	/**
@@ -176,6 +195,18 @@ public class RetryTemplate implements RetryOperations {
 	 */
 	public boolean hasListeners() {
 		return this.listeners.length > 0;
+	}
+
+	/**
+	 * Setter for {@link Log}. If not applied the following is used:
+	 * <p>
+	 * {@code LogFactory.getLog(getClass())}
+	 * </p>
+	 * @param logger the logger the retry template uses for logging
+	 * @since 2.0.10
+	 */
+	public void setLogger(Log logger) {
+		this.logger = logger;
 	}
 
 	/**
@@ -296,6 +327,10 @@ public class RetryTemplate implements RetryOperations {
 				throw new TerminatedRetryException("Retry terminated abnormally by interceptor before first attempt");
 			}
 
+			if (!context.hasAttribute(RetryContext.MAX_ATTEMPTS)) {
+				context.setAttribute(RetryContext.MAX_ATTEMPTS, retryPolicy.getMaxAttempts());
+			}
+
 			// Get or Start the backoff context...
 			BackOffContext backOffContext = null;
 			Object resource = context.getAttribute("backOffContext");
@@ -311,6 +346,9 @@ public class RetryTemplate implements RetryOperations {
 				}
 			}
 
+			Object label = retryCallback.getLabel();
+			String labelMessage = (label != null) ? "; for: '" + label + "'" : "";
+
 			/*
 			 * We allow the whole loop to be skipped if the policy or context already
 			 * forbid the first try. This is used in the case of external retry to allow a
@@ -321,12 +359,14 @@ public class RetryTemplate implements RetryOperations {
 
 				try {
 					if (this.logger.isDebugEnabled()) {
-						this.logger.debug("Retry: count=" + context.getRetryCount());
+						this.logger.debug("Retry: count=" + context.getRetryCount() + labelMessage);
 					}
 					// Reset the last exception, so if we are successful
 					// the close interceptors will not think we failed...
 					lastException = null;
-					return retryCallback.doWithRetry(context);
+					T result = retryCallback.doWithRetry(context);
+					doOnSuccessInterceptors(retryCallback, context, result);
+					return result;
 				}
 				catch (Throwable e) {
 
@@ -347,22 +387,23 @@ public class RetryTemplate implements RetryOperations {
 							backOffPolicy.backOff(backOffContext);
 						}
 						catch (BackOffInterruptedException ex) {
-							lastException = e;
 							// back off was prevented by another thread - fail the retry
 							if (this.logger.isDebugEnabled()) {
-								this.logger.debug("Abort retry because interrupted: count=" + context.getRetryCount());
+								this.logger.debug("Abort retry because interrupted: count=" + context.getRetryCount()
+										+ labelMessage);
 							}
 							throw ex;
 						}
 					}
 
 					if (this.logger.isDebugEnabled()) {
-						this.logger.debug("Checking for rethrow: count=" + context.getRetryCount());
+						this.logger.debug("Checking for rethrow: count=" + context.getRetryCount() + labelMessage);
 					}
 
 					if (shouldRethrow(retryPolicy, context, state)) {
 						if (this.logger.isDebugEnabled()) {
-							this.logger.debug("Rethrow in retry for policy: count=" + context.getRetryCount());
+							this.logger
+								.debug("Rethrow in retry for policy: count=" + context.getRetryCount() + labelMessage);
 						}
 						throw RetryTemplate.<E>wrapIfNecessary(e);
 					}
@@ -380,7 +421,7 @@ public class RetryTemplate implements RetryOperations {
 			}
 
 			if (state == null && this.logger.isDebugEnabled()) {
-				this.logger.debug("Retry failed last attempt: count=" + context.getRetryCount());
+				this.logger.debug("Retry failed last attempt: count=" + context.getRetryCount() + labelMessage);
 			}
 
 			exhausted = true;
@@ -421,9 +462,7 @@ public class RetryTemplate implements RetryOperations {
 	protected void close(RetryPolicy retryPolicy, RetryContext context, RetryState state, boolean succeeded) {
 		if (state != null) {
 			if (succeeded) {
-				if (!context.hasAttribute(GLOBAL_STATE)) {
-					this.retryContextCache.remove(state.getKey());
-				}
+				this.retryContextCache.remove(state.getKey(), context);
 				retryPolicy.close(context);
 				context.setAttribute(RetryContext.CLOSED, true);
 			}
@@ -443,7 +482,7 @@ public class RetryTemplate implements RetryOperations {
 		if (state != null) {
 			Object key = state.getKey();
 			if (key != null) {
-				if (context.getRetryCount() > 1 && !this.retryContextCache.containsKey(key)) {
+				if (context.getRetryCount() > 1 && !this.retryContextCache.containsKey(key, context)) {
 					throw new RetryException("Inconsistent state for failed item key: cache key has changed. "
 							+ "Consider whether equals() or hashCode() for the key might be inconsistent, "
 							+ "or if you need to supply a better key");
@@ -517,7 +556,7 @@ public class RetryTemplate implements RetryOperations {
 	/**
 	 * Actions to take after final attempt has failed. If there is state clean up the
 	 * cache. If there is a recovery callback, execute that and return its result.
-	 * Otherwise throw an exception.
+	 * Otherwise, throw an exception.
 	 * @param recoveryCallback the callback for recovery (might be null)
 	 * @param context the current retry context
 	 * @param state the {@link RetryState}
@@ -532,23 +571,35 @@ public class RetryTemplate implements RetryOperations {
 	protected <T> T handleRetryExhausted(RecoveryCallback<T> recoveryCallback, RetryContext context, RetryState state)
 			throws Throwable {
 		context.setAttribute(RetryContext.EXHAUSTED, true);
-		if (state != null && !context.hasAttribute(GLOBAL_STATE)) {
-			this.retryContextCache.remove(state.getKey());
+		if (state != null) {
+			this.retryContextCache.remove(state.getKey(), context);
 		}
+		boolean doRecover = !Boolean.TRUE.equals(context.getAttribute(RetryContext.NO_RECOVERY));
 		if (recoveryCallback != null) {
-			T recovered = recoveryCallback.recover(context);
-			context.setAttribute(RetryContext.RECOVERED, true);
-			return recovered;
+			if (doRecover) {
+				try {
+					T recovered = recoveryCallback.recover(context);
+					context.setAttribute(RetryContext.RECOVERED, true);
+					return recovered;
+				}
+				catch (UndeclaredThrowableException undeclaredThrowableException) {
+					throw wrapIfNecessary(undeclaredThrowableException.getUndeclaredThrowable());
+				}
+			}
+			else {
+				logger.debug("Retry exhausted and recovery disabled for this throwable");
+			}
 		}
 		if (state != null) {
 			this.logger.debug("Retry exhausted after last attempt with no recovery path.");
-			rethrow(context, "Retry exhausted after last attempt with no recovery path");
+			rethrow(context, "Retry exhausted after last attempt with no recovery path",
+					this.throwLastExceptionOnExhausted || !doRecover);
 		}
 		throw wrapIfNecessary(context.getLastThrowable());
 	}
 
-	protected <E extends Throwable> void rethrow(RetryContext context, String message) throws E {
-		if (this.throwLastExceptionOnExhausted) {
+	protected <E extends Throwable> void rethrow(RetryContext context, String message, boolean wrap) throws E {
+		if (wrap) {
 			@SuppressWarnings("unchecked")
 			E rethrow = (E) context.getLastThrowable();
 			throw rethrow;
@@ -590,6 +641,13 @@ public class RetryTemplate implements RetryOperations {
 		}
 	}
 
+	private <T, E extends Throwable> void doOnSuccessInterceptors(RetryCallback<T, E> callback, RetryContext context,
+			T result) {
+		for (int i = this.listeners.length; i-- > 0;) {
+			this.listeners[i].onSuccess(context, callback, result);
+		}
+	}
+
 	private <T, E extends Throwable> void doOnErrorInterceptors(RetryCallback<T, E> callback, RetryContext context,
 			Throwable throwable) {
 		for (int i = this.listeners.length; i-- > 0;) {
@@ -613,6 +671,65 @@ public class RetryTemplate implements RetryOperations {
 		else {
 			throw new RetryException("Exception in retry", throwable);
 		}
+	}
+
+	private static class CompositeRetryContextCache {
+
+		private final RetryContextCache statefulCache;
+
+		private final RetryContextCache circuitBreakerCache;
+
+		public CompositeRetryContextCache() {
+			this(new MapRetryContextCache(MapRetryContextCache.DEFAULT_CAPACITY, true),
+					new MapRetryContextCache(MapRetryContextCache.DEFAULT_CAPACITY, false));
+		}
+
+		private CompositeRetryContextCache(RetryContextCache statefulCache, RetryContextCache circuitBreakerCache) {
+			this.statefulCache = statefulCache;
+			this.circuitBreakerCache = circuitBreakerCache;
+		}
+
+		CompositeRetryContextCache withStatefulCache(RetryContextCache statefulCache) {
+			return new CompositeRetryContextCache(statefulCache, this.circuitBreakerCache);
+		}
+
+		CompositeRetryContextCache withCircuitBreakerCache(RetryContextCache circuitBreakerCache) {
+			return new CompositeRetryContextCache(this.statefulCache, circuitBreakerCache);
+		}
+
+		public RetryContext get(Object key) {
+			RetryContext retryContext = this.statefulCache.get(key);
+			return (retryContext != null) ? retryContext : this.circuitBreakerCache.get(key);
+		}
+
+		public void put(Object key, RetryContext context) {
+			if (context.hasAttribute(GLOBAL_STATE)) {
+				this.circuitBreakerCache.put(key, context);
+			}
+			else {
+				this.statefulCache.put(key, context);
+			}
+		}
+
+		public void remove(Object key, RetryContext context) {
+			if (!context.hasAttribute(GLOBAL_STATE)) {
+				this.statefulCache.remove(key);
+			}
+		}
+
+		public boolean containsKey(Object key) {
+			return this.statefulCache.containsKey(key) || this.circuitBreakerCache.containsKey(key);
+		}
+
+		public boolean containsKey(Object key, RetryContext context) {
+			if (context.hasAttribute(GLOBAL_STATE)) {
+				return this.circuitBreakerCache.containsKey(key);
+			}
+			else {
+				return this.statefulCache.containsKey(key);
+			}
+		}
+
 	}
 
 }

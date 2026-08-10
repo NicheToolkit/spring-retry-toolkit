@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,23 @@ public class TimeoutRetryPolicy implements RetryPolicy {
 	 */
 	public static final long DEFAULT_TIMEOUT = 1000;
 
-	private long timeout = DEFAULT_TIMEOUT;
+	private long timeout;
+
+	/**
+	 * Create a new instance with the timeout set to {@link #DEFAULT_TIMEOUT}.
+	 */
+	public TimeoutRetryPolicy() {
+		this(DEFAULT_TIMEOUT);
+	}
+
+	/**
+	 * Create a new instance with a configurable timeout.
+	 * @param timeout timeout in milliseconds
+	 * @since 2.0.2
+	 */
+	public TimeoutRetryPolicy(long timeout) {
+		this.timeout = timeout;
+	}
 
 	/**
 	 * Setter for timeout in milliseconds. Default is {@link #DEFAULT_TIMEOUT}.
@@ -57,7 +73,7 @@ public class TimeoutRetryPolicy implements RetryPolicy {
 	 * Only permits a retry if the timeout has not expired. Does not check the exception
 	 * at all.
 	 *
-	 * @see org.springframework.retry.RetryPolicy#canRetry(org.springframework.retry.RetryContext)
+	 * @see RetryPolicy#canRetry(RetryContext)
 	 */
 	public boolean canRetry(RetryContext context) {
 		return ((TimeoutRetryContext) context).isAlive();
@@ -77,9 +93,9 @@ public class TimeoutRetryPolicy implements RetryPolicy {
 
 	private static class TimeoutRetryContext extends RetryContextSupport {
 
-		private long timeout;
+		private final long timeout;
 
-		private long start;
+		private final long start;
 
 		public TimeoutRetryContext(RetryContext parent, long timeout) {
 			super(parent);

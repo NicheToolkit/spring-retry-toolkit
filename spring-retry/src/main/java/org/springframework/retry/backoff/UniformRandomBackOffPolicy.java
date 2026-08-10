@@ -16,12 +16,14 @@
 
 package org.springframework.retry.backoff;
 
+import org.springframework.util.Assert;
+
 import java.util.Random;
+import java.util.function.Supplier;
 
 /**
  * Implementation of {@link BackOffPolicy} that pauses for a random period of time before
  * continuing. A pause is implemented using {@link Sleeper#sleep(long)}.
- *
  * {@link #setMinBackOffPeriod(long)} is thread-safe and it is safe to call
  * {@link #setMaxBackOffPeriod(long)} during execution from multiple threads, however this
  * may cause a single retry operation to have pauses of different intervals.
@@ -44,18 +46,18 @@ public class UniformRandomBackOffPolicy extends StatelessBackOffPolicy
 	 */
 	private static final long DEFAULT_BACK_OFF_MAX_PERIOD = 1500L;
 
-	private volatile long minBackOffPeriod = DEFAULT_BACK_OFF_MIN_PERIOD;
+	private Supplier<Long> minBackOffPeriod = () -> DEFAULT_BACK_OFF_MIN_PERIOD;
 
-	private volatile long maxBackOffPeriod = DEFAULT_BACK_OFF_MAX_PERIOD;
+	private Supplier<Long> maxBackOffPeriod = () -> DEFAULT_BACK_OFF_MAX_PERIOD;
 
-	private Random random = new Random(System.currentTimeMillis());
+	private final Random random = new Random(System.currentTimeMillis());
 
 	private Sleeper sleeper = new ThreadWaitSleeper();
 
 	public UniformRandomBackOffPolicy withSleeper(Sleeper sleeper) {
 		UniformRandomBackOffPolicy res = new UniformRandomBackOffPolicy();
-		res.setMinBackOffPeriod(minBackOffPeriod);
-		res.setMaxBackOffPeriod(maxBackOffPeriod);
+		res.minBackOffPeriodSupplier(minBackOffPeriod);
+		res.maxBackOffPeriodSupplier(maxBackOffPeriod);
 		res.setSleeper(sleeper);
 		return res;
 	}
@@ -74,7 +76,18 @@ public class UniformRandomBackOffPolicy extends StatelessBackOffPolicy
 	 * @param backOffPeriod the backoff period
 	 */
 	public void setMinBackOffPeriod(long backOffPeriod) {
-		this.minBackOffPeriod = (backOffPeriod > 0 ? backOffPeriod : 1);
+		this.minBackOffPeriod = () -> (backOffPeriod > 0 ? backOffPeriod : 1);
+	}
+
+	/**
+	 * Set a supplier for the minimum back off period in milliseconds. Cannot be &lt; 1.
+	 * Default supplier supplies 500ms.
+	 * @param backOffPeriodSupplier the backoff period
+	 * @since 2.0
+	 */
+	public void minBackOffPeriodSupplier(Supplier<Long> backOffPeriodSupplier) {
+		Assert.notNull(backOffPeriodSupplier, "'backOffPeriodSupplier' cannot be null");
+		this.minBackOffPeriod = backOffPeriodSupplier;
 	}
 
 	/**
@@ -82,7 +95,7 @@ public class UniformRandomBackOffPolicy extends StatelessBackOffPolicy
 	 * @return the backoff period
 	 */
 	public long getMinBackOffPeriod() {
-		return minBackOffPeriod;
+		return minBackOffPeriod.get();
 	}
 
 	/**
@@ -91,7 +104,18 @@ public class UniformRandomBackOffPolicy extends StatelessBackOffPolicy
 	 * @param backOffPeriod the back off period
 	 */
 	public void setMaxBackOffPeriod(long backOffPeriod) {
-		this.maxBackOffPeriod = (backOffPeriod > 0 ? backOffPeriod : 1);
+		this.maxBackOffPeriod = () -> (backOffPeriod > 0 ? backOffPeriod : 1);
+	}
+
+	/**
+	 * Set a supplier for the maximum back off period in milliseconds. Cannot be &lt; 1.
+	 * Default supplier supplies 1500ms.
+	 * @param backOffPeriodSupplier the back off period
+	 * @since 2.0
+	 */
+	public void maxBackOffPeriodSupplier(Supplier<Long> backOffPeriodSupplier) {
+		Assert.notNull(backOffPeriodSupplier, "'backOffPeriodSupplier' cannot be null");
+		this.maxBackOffPeriod = backOffPeriodSupplier;
 	}
 
 	/**
@@ -99,7 +123,7 @@ public class UniformRandomBackOffPolicy extends StatelessBackOffPolicy
 	 * @return the backoff period
 	 */
 	public long getMaxBackOffPeriod() {
-		return maxBackOffPeriod;
+		return maxBackOffPeriod.get();
 	}
 
 	/**
@@ -108,9 +132,10 @@ public class UniformRandomBackOffPolicy extends StatelessBackOffPolicy
 	 */
 	protected void doBackOff() throws BackOffInterruptedException {
 		try {
-			long delta = maxBackOffPeriod == minBackOffPeriod ? 0
-					: random.nextInt((int) (maxBackOffPeriod - minBackOffPeriod));
-			sleeper.sleep(minBackOffPeriod + delta);
+			Long min = this.minBackOffPeriod.get();
+			Long max = this.maxBackOffPeriod.get();
+			long delta = max <= min ? 0 : this.random.nextInt((int) (max - min));
+			this.sleeper.sleep(min + delta);
 		}
 		catch (InterruptedException e) {
 			Thread.currentThread().interrupt();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2013 the original author or authors.
+ * Copyright 2006-2023 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@
 
 package org.springframework.classify;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.DirectFieldAccessor;
+import org.springframework.classify.BinaryExceptionClassifier;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-
-import org.springframework.beans.DirectFieldAccessor;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BinaryExceptionClassifierTests {
 
@@ -34,75 +33,76 @@ public class BinaryExceptionClassifierTests {
 
 	@Test
 	public void testClassifyNullIsDefault() {
-		assertFalse(classifier.classify(null));
+		assertThat(classifier.classify(null)).isFalse();
 	}
 
 	@Test
 	public void testFalseIsDefault() {
-		assertFalse(classifier.getDefault());
+		assertThat(classifier.getDefault()).isFalse();
 	}
 
 	@Test
 	public void testDefaultProvided() {
 		classifier = new BinaryExceptionClassifier(true);
-		assertTrue(classifier.getDefault());
+		assertThat(classifier.getDefault()).isTrue();
 	}
 
 	@Test
 	public void testClassifyRandomException() {
-		assertFalse(classifier.classify(new IllegalStateException("foo")));
+		assertThat(classifier.classify(new IllegalStateException("foo"))).isFalse();
 	}
 
 	@Test
 	public void testClassifyExactMatch() {
 		Collection<Class<? extends Throwable>> set = Collections
-				.<Class<? extends Throwable>>singleton(IllegalStateException.class);
-		assertTrue(new BinaryExceptionClassifier(set).classify(new IllegalStateException("Foo")));
+			.<Class<? extends Throwable>>singleton(IllegalStateException.class);
+		assertThat(new BinaryExceptionClassifier(set).classify(new IllegalStateException("Foo"))).isTrue();
 	}
 
 	@Test
 	public void testClassifyExactMatchInCause() {
 		Collection<Class<? extends Throwable>> set = Collections
-				.<Class<? extends Throwable>>singleton(IllegalStateException.class);
+			.<Class<? extends Throwable>>singleton(IllegalStateException.class);
 		BinaryExceptionClassifier binaryExceptionClassifier = new BinaryExceptionClassifier(set);
 		binaryExceptionClassifier.setTraverseCauses(true);
-		assertTrue(binaryExceptionClassifier.classify(new RuntimeException(new IllegalStateException("Foo"))));
+		assertThat(binaryExceptionClassifier.classify(new RuntimeException(new IllegalStateException("Foo")))).isTrue();
 	}
 
 	@Test
 	public void testClassifySubclassMatchInCause() {
 		Collection<Class<? extends Throwable>> set = Collections
-				.<Class<? extends Throwable>>singleton(IllegalStateException.class);
+			.<Class<? extends Throwable>>singleton(IllegalStateException.class);
 		BinaryExceptionClassifier binaryExceptionClassifier = new BinaryExceptionClassifier(set);
 		binaryExceptionClassifier.setTraverseCauses(true);
-		assertTrue(binaryExceptionClassifier.classify(new RuntimeException(new FooException("Foo"))));
+		assertThat(binaryExceptionClassifier.classify(new RuntimeException(new FooException("Foo")))).isTrue();
 	}
 
 	@Test
 	public void testClassifySubclassMatchInCauseFalse() {
-		Map<Class<? extends Throwable>, Boolean> map = new HashMap<Class<? extends Throwable>, Boolean>();
+		Map<Class<? extends Throwable>, Boolean> map = new HashMap<>();
 		map.put(IllegalStateException.class, true);
 		map.put(BarException.class, false);
 		BinaryExceptionClassifier binaryExceptionClassifier = new BinaryExceptionClassifier(map, true);
 		binaryExceptionClassifier.setTraverseCauses(true);
-		assertTrue(
-				binaryExceptionClassifier.classify(new RuntimeException(new FooException("Foo", new BarException()))));
-		assertTrue(((Map<?, ?>) new DirectFieldAccessor(binaryExceptionClassifier).getPropertyValue("classified"))
-				.containsKey(FooException.class));
+		assertThat(
+				binaryExceptionClassifier.classify(new RuntimeException(new FooException("Foo", new BarException()))))
+			.isTrue();
+		assertThat(((Map<?, ?>) new DirectFieldAccessor(binaryExceptionClassifier).getPropertyValue("classified"))
+			.containsKey(FooException.class)).isTrue();
 	}
 
 	@Test
 	public void testTypesProvidedInConstructor() {
 		classifier = new BinaryExceptionClassifier(
 				Collections.<Class<? extends Throwable>>singleton(IllegalStateException.class));
-		assertTrue(classifier.classify(new IllegalStateException("Foo")));
+		assertThat(classifier.classify(new IllegalStateException("Foo"))).isTrue();
 	}
 
 	@Test
 	public void testTypesProvidedInConstructorWithNonDefault() {
 		classifier = new BinaryExceptionClassifier(
 				Collections.<Class<? extends Throwable>>singleton(IllegalStateException.class), false);
-		assertFalse(classifier.classify(new IllegalStateException("Foo")));
+		assertThat(classifier.classify(new IllegalStateException("Foo"))).isFalse();
 	}
 
 	@Test
@@ -110,7 +110,8 @@ public class BinaryExceptionClassifierTests {
 		classifier = new BinaryExceptionClassifier(
 				Collections.<Class<? extends Throwable>>singleton(IllegalStateException.class), false);
 		classifier.setTraverseCauses(true);
-		assertFalse(classifier.classify(new RuntimeException(new RuntimeException(new IllegalStateException("Foo")))));
+		assertThat(classifier.classify(new RuntimeException(new RuntimeException(new IllegalStateException("Foo")))))
+			.isFalse();
 	}
 
 	@SuppressWarnings("serial")

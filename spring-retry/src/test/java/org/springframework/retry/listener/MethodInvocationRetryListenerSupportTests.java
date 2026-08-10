@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2019 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 
 package org.springframework.retry.listener;
 
-import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.interceptor.MethodInvocationRetryCallback;
+import org.springframework.retry.listener.MethodInvocationRetryListenerSupport;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.Mockito.mock;
 
 public class MethodInvocationRetryListenerSupportTests {
@@ -32,12 +33,7 @@ public class MethodInvocationRetryListenerSupportTests {
 	@Test
 	public void testClose() {
 		MethodInvocationRetryListenerSupport support = new MethodInvocationRetryListenerSupport();
-		try {
-			support.close(null, null, null);
-		}
-		catch (Exception e) {
-			fail("Unexpected exception");
-		}
+		assertThatNoException().isThrownBy(() -> support.close(null, null, null));
 	}
 
 	@Test
@@ -51,10 +47,9 @@ public class MethodInvocationRetryListenerSupportTests {
 			}
 		};
 		RetryContext context = mock(RetryContext.class);
-		MethodInvocationRetryCallback callback = mock(MethodInvocationRetryCallback.class);
-		support.close(context, callback, null);
+		support.close(context, mockMethodInvocationRetryCallback(), null);
 
-		assertEquals(1, callsOnDoCloseMethod.get());
+		assertThat(callsOnDoCloseMethod.get()).isEqualTo(1);
 	}
 
 	@Test
@@ -68,21 +63,16 @@ public class MethodInvocationRetryListenerSupportTests {
 			}
 		};
 		RetryContext context = mock(RetryContext.class);
-		RetryCallback callback = mock(RetryCallback.class);
+		RetryCallback<?, ?> callback = mock(RetryCallback.class);
 		support.close(context, callback, null);
 
-		assertEquals(0, callsOnDoCloseMethod.get());
+		assertThat(callsOnDoCloseMethod.get()).isEqualTo(0);
 	}
 
 	@Test
 	public void testOnError() {
 		MethodInvocationRetryListenerSupport support = new MethodInvocationRetryListenerSupport();
-		try {
-			support.onError(null, null, null);
-		}
-		catch (Exception e) {
-			fail("Unexpected exception");
-		}
+		assertThatNoException().isThrownBy(() -> support.onError(null, null, null));
 	}
 
 	@Test
@@ -96,16 +86,15 @@ public class MethodInvocationRetryListenerSupportTests {
 			}
 		};
 		RetryContext context = mock(RetryContext.class);
-		MethodInvocationRetryCallback callback = mock(MethodInvocationRetryCallback.class);
-		support.onError(context, callback, null);
+		support.onError(context, mockMethodInvocationRetryCallback(), null);
 
-		assertEquals(1, callsOnDoOnErrorMethod.get());
+		assertThat(callsOnDoOnErrorMethod.get()).isEqualTo(1);
 	}
 
 	@Test
 	public void testOpen() {
 		MethodInvocationRetryListenerSupport support = new MethodInvocationRetryListenerSupport();
-		assertTrue(support.open(null, null));
+		assertThat(support.open(null, null)).isTrue();
 	}
 
 	@Test
@@ -120,10 +109,13 @@ public class MethodInvocationRetryListenerSupportTests {
 			}
 		};
 		RetryContext context = mock(RetryContext.class);
-		MethodInvocationRetryCallback callback = mock(MethodInvocationRetryCallback.class);
-		assertTrue(support.open(context, callback));
 
-		assertEquals(1, callsOnDoOpenMethod.get());
+		assertThat(support.open(context, mockMethodInvocationRetryCallback())).isTrue();
+		assertThat(callsOnDoOpenMethod.get()).isEqualTo(1);
+	}
+
+	private MethodInvocationRetryCallback<?, ?> mockMethodInvocationRetryCallback() {
+		return mock(MethodInvocationRetryCallback.class);
 	}
 
 }

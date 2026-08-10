@@ -59,7 +59,7 @@ public class CompositeRetryPolicy implements RetryPolicy {
 	 * Delegate to the policies that were in operation when the context was created. If
 	 * any of them cannot retry then return false, otherwise return true.
 	 * @param context the {@link RetryContext}
-	 * @see org.springframework.retry.RetryPolicy#canRetry(org.springframework.retry.RetryContext)
+	 * @see RetryPolicy#canRetry(RetryContext)
 	 */
 	@Override
 	public boolean canRetry(RetryContext context) {
@@ -92,7 +92,7 @@ public class CompositeRetryPolicy implements RetryPolicy {
 	 * any of them fails to close the exception is propagated (and those later in the
 	 * chain are closed before re-throwing).
 	 *
-	 * @see org.springframework.retry.RetryPolicy#close(org.springframework.retry.RetryContext)
+	 * @see RetryPolicy#close(RetryContext)
 	 * @param context the {@link RetryContext}
 	 */
 	@Override
@@ -119,7 +119,7 @@ public class CompositeRetryPolicy implements RetryPolicy {
 	 * Creates a new context that copies the existing policies and keeps a list of the
 	 * contexts from each one.
 	 *
-	 * @see org.springframework.retry.RetryPolicy#open(RetryContext)
+	 * @see RetryPolicy#open(RetryContext)
 	 */
 	@Override
 	public RetryContext open(RetryContext parent) {
@@ -133,7 +133,7 @@ public class CompositeRetryPolicy implements RetryPolicy {
 	/**
 	 * Delegate to the policies that were in operation when the context was created.
 	 *
-	 * @see org.springframework.retry.RetryPolicy#close(org.springframework.retry.RetryContext)
+	 * @see RetryPolicy#close(RetryContext)
 	 */
 	@Override
 	public void registerThrowable(RetryContext context, Throwable throwable) {

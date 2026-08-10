@@ -32,7 +32,7 @@ public class AlwaysRetryPolicy extends NeverRetryPolicy {
 	/**
 	 * Always returns true.
 	 *
-	 * @see org.springframework.retry.RetryPolicy#canRetry(org.springframework.retry.RetryContext)
+	 * @see RetryPolicy#canRetry(RetryContext)
 	 */
 	public boolean canRetry(RetryContext context) {
 		return true;

@@ -16,12 +16,18 @@
 
 package org.springframework.retry.backoff;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.springframework.retry.backoff.BackOffInterruptedException;
+import org.springframework.retry.backoff.DummySleeper;
+import org.springframework.retry.backoff.Sleeper;
+import org.springframework.retry.backoff.UniformRandomBackOffPolicy;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Tomaz Fernandes
+ * @author Gary Russell
  * @author Marius Lichtblau
  * @since 1.3.2
  */
@@ -34,10 +40,52 @@ public class UniformRandomBackOffPolicyTests {
 		int maxBackOff = 10000;
 		backOffPolicy.setMinBackOffPeriod(minBackOff);
 		backOffPolicy.setMaxBackOffPeriod(maxBackOff);
-		UniformRandomBackOffPolicy withSleeper = backOffPolicy.withSleeper(new DummySleeper());
 
-		assertEquals(minBackOff, withSleeper.getMinBackOffPeriod());
-		assertEquals(maxBackOff, withSleeper.getMaxBackOffPeriod());
+		DummySleeper dummySleeper = new DummySleeper();
+		UniformRandomBackOffPolicy withSleeper = backOffPolicy.withSleeper(dummySleeper);
+
+		assertThat(withSleeper.getMinBackOffPeriod()).isEqualTo(minBackOff);
+		assertThat(withSleeper.getMaxBackOffPeriod()).isEqualTo(maxBackOff);
+
+		assertThat(dummySleeper.getBackOffs()).isEmpty();
+		withSleeper.backOff(null);
+
+		assertThat(dummySleeper.getBackOffs()).hasSize(1);
+		assertThat(dummySleeper.getBackOffs()[0]).isLessThan(maxBackOff);
+	}
+
+	@Test
+	public void testInterruptedStatusIsRestored() {
+		UniformRandomBackOffPolicy backOffPolicy = new UniformRandomBackOffPolicy();
+		int minBackOff = 1000;
+		int maxBackOff = 10000;
+		backOffPolicy.setMinBackOffPeriod(minBackOff);
+		backOffPolicy.setMaxBackOffPeriod(maxBackOff);
+		UniformRandomBackOffPolicy withSleeper = backOffPolicy.withSleeper(new Sleeper() {
+			@Override
+			public void sleep(long backOffPeriod) throws InterruptedException {
+				throw new InterruptedException("foo");
+			}
+		});
+
+		assertThatExceptionOfType(BackOffInterruptedException.class).isThrownBy(() -> withSleeper.backOff(null));
+		assertThat(Thread.interrupted()).isTrue();
+	}
+
+	@Test
+	public void testMaxBackOffLessThanMinBackOff() {
+		UniformRandomBackOffPolicy backOffPolicy = new UniformRandomBackOffPolicy();
+		int minBackOff = 1000;
+		int maxBackOff = 10;
+		backOffPolicy.setMinBackOffPeriod(minBackOff);
+		backOffPolicy.setMaxBackOffPeriod(maxBackOff);
+
+		DummySleeper dummySleeper = new DummySleeper();
+		UniformRandomBackOffPolicy withSleeper = backOffPolicy.withSleeper(dummySleeper);
+		assertThat(dummySleeper.getBackOffs()).isEmpty();
+		withSleeper.backOff(null);
+		assertThat(dummySleeper.getBackOffs()).hasSize(1);
+		assertThat(dummySleeper.getBackOffs()[0]).isEqualTo(minBackOff);
 	}
 
 }

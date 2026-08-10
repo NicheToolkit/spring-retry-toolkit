@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ package org.springframework.retry;
  * lifecycle.
  *
  * @author Dave Syer
+ * @author Gary Russell
+ * @author Henning Pöttker
  *
  */
 public interface RetryListener {
@@ -37,18 +39,35 @@ public interface RetryListener {
 	 * @param callback the current {@link RetryCallback}.
 	 * @return true if the retry should proceed.
 	 */
-	<T, E extends Throwable> boolean open(RetryContext context, RetryCallback<T, E> callback);
+	default <T, E extends Throwable> boolean open(RetryContext context, RetryCallback<T, E> callback) {
+		return true;
+	}
 
 	/**
-	 * Called after the final attempt (successful or not). Allow the interceptor to clean
-	 * up any resource it is holding before control returns to the retry caller.
+	 * Called after the final attempt (successful or not). Allow the listener to clean up
+	 * any resource it is holding before control returns to the retry caller.
 	 * @param context the current {@link RetryContext}.
 	 * @param callback the current {@link RetryCallback}.
 	 * @param throwable the last exception that was thrown by the callback.
 	 * @param <E> the exception type
 	 * @param <T> the return value
 	 */
-	<T, E extends Throwable> void close(RetryContext context, RetryCallback<T, E> callback, Throwable throwable);
+	default <T, E extends Throwable> void close(RetryContext context, RetryCallback<T, E> callback,
+			Throwable throwable) {
+	}
+
+	/**
+	 * Called after a successful attempt; allow the listener to throw a new exception to
+	 * cause a retry (according to the retry policy), based on the result returned by the
+	 * {@link RetryCallback#doWithRetry(RetryContext)}
+	 * @param <T> the return type.
+	 * @param context the current {@link RetryContext}.
+	 * @param callback the current {@link RetryCallback}.
+	 * @param result the result returned by the callback method.
+	 * @since 2.0
+	 */
+	default <T, E extends Throwable> void onSuccess(RetryContext context, RetryCallback<T, E> callback, T result) {
+	}
 
 	/**
 	 * Called after every unsuccessful attempt at a retry.
@@ -58,6 +77,8 @@ public interface RetryListener {
 	 * @param <T> the return value
 	 * @param <E> the exception to throw
 	 */
-	<T, E extends Throwable> void onError(RetryContext context, RetryCallback<T, E> callback, Throwable throwable);
+	default <T, E extends Throwable> void onError(RetryContext context, RetryCallback<T, E> callback,
+			Throwable throwable) {
+	}
 
 }

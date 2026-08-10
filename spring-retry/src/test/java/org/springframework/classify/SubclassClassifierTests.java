@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,28 @@
 
 package org.springframework.classify;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.classify.SubclassClassifier;
+
 import java.util.Collections;
 import java.util.function.Supplier;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SubclassClassifierTests {
 
 	@Test
 	public void testClassifyInterface() {
-		SubclassClassifier<Object, String> classifier = new SubclassClassifier<Object, String>();
+		SubclassClassifier<Object, String> classifier = new SubclassClassifier<>();
 		classifier.setTypeMap(Collections.<Class<?>, String>singletonMap(Supplier.class, "foo"));
-		assertEquals("foo", classifier.classify(new Foo()));
+		assertThat(classifier.classify(new Foo())).isEqualTo("foo");
 	}
 
 	@Test
 	public void testClassifyInterfaceOfParent() {
-		SubclassClassifier<Object, String> classifier = new SubclassClassifier<Object, String>();
+		SubclassClassifier<Object, String> classifier = new SubclassClassifier<>();
 		classifier.setTypeMap(Collections.<Class<?>, String>singletonMap(Supplier.class, "foo"));
-		assertEquals("foo", classifier.classify(new Bar()));
+		assertThat(classifier.classify(new Bar())).isEqualTo("foo");
 	}
 
 	public class Bar extends Foo {

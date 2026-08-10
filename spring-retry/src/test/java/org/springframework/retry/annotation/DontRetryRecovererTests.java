@@ -16,40 +16,31 @@
 
 package org.springframework.retry.annotation;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Gary Russell
- * @author Artem Bilan
  * @since 1.3.4
  */
-@RunWith(SpringRunner.class)
+@SpringJUnitConfig
 public class DontRetryRecovererTests {
 
-	@Autowired
-	Service service;
-
 	@Test
-	public void dontRetry() {
-		try {
-			this.service.foo("x");
-			fail("Exception expected");
-		}
-		catch (Exception e) {
-			assertEquals("test", e.getMessage());
-		}
-
-		assertEquals(3, this.service.getCallCount());
-		assertEquals(1, this.service.getRecoverCount());
+	void dontRetry(@Autowired Service service) {
+		assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> service.foo("x")).withMessage("test");
+		assertThat(service.getCallCount()).isEqualTo(3);
+		assertThat(service.getRecoverCount()).isEqualTo(1);
 	}
 
 	@Configuration

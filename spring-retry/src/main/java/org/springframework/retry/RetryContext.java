@@ -1,5 +1,5 @@
 /*
- * Copyright 2006-2007 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,15 @@
 package org.springframework.retry;
 
 import org.springframework.core.AttributeAccessor;
+import org.springframework.lang.Nullable;
 
 /**
  * Low-level access to ongoing retry operation. Normally not needed by clients, but can be
  * used to alter the course of the retry, e.g. force an early termination.
  *
  * @author Dave Syer
+ * @author Emanuele Ivaldi
+ * @author Marcin Zajączkowski
  *
  */
 public interface RetryContext extends AttributeAccessor {
@@ -56,6 +59,19 @@ public interface RetryContext extends AttributeAccessor {
 	String EXHAUSTED = "context.exhausted";
 
 	/**
+	 * Retry context attribute that is non-null (and true) if the exception is not
+	 * recoverable.
+	 */
+	String NO_RECOVERY = "context.no-recovery";
+
+	/**
+	 * Retry context attribute that represent the maximum number of attempts for policies
+	 * that provide a maximum number of attempts before failure. For other policies the
+	 * value returned is {@link RetryPolicy#NO_MAXIMUM_ATTEMPTS_SET}
+	 */
+	String MAX_ATTEMPTS = "context.max-attempts";
+
+	/**
 	 * Signal to the framework that no more attempts should be made to try or retry the
 	 * current {@link RetryCallback}.
 	 */
@@ -71,7 +87,7 @@ public interface RetryContext extends AttributeAccessor {
 	 * Accessor for the parent context if retry blocks are nested.
 	 * @return the parent or null if there is none.
 	 */
-	RetryContext getParent();
+	@Nullable RetryContext getParent();
 
 	/**
 	 * Counts the number of retry attempts. Before the first attempt this counter is zero,
@@ -83,9 +99,10 @@ public interface RetryContext extends AttributeAccessor {
 	/**
 	 * Accessor for the exception object that caused the current retry.
 	 * @return the last exception that caused a retry, or possibly null. It will be null
-	 * if this is the first attempt, but also if the enclosing policy decides not to
-	 * provide it (e.g. because of concerns about memory usage).
+	 * if this is the first attempt and it finishes successfully, but also if the
+	 * enclosing policy decides not to provide it (e.g. because of concerns about memory
+	 * usage).
 	 */
-	Throwable getLastThrowable();
+	@Nullable Throwable getLastThrowable();
 
 }

@@ -16,53 +16,74 @@
 
 package org.springframework.retry.backoff;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.springframework.retry.backoff.BackOffInterruptedException;
+import org.springframework.retry.backoff.DummySleeper;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.backoff.Sleeper;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author Rob Harrop
  * @author Dave Syer
+ * @author Gary Russell
  * @author Marius Lichtblau
  * @since 2.1
  */
 public class FixedBackOffPolicyTests {
 
-	private DummySleeper sleeper = new DummySleeper();
+	private final DummySleeper sleeper = new DummySleeper();
 
 	@Test
-	public void testSetBackoffPeriodNegative() throws Exception {
+	public void testSetBackoffPeriodNegative() {
 		FixedBackOffPolicy strategy = new FixedBackOffPolicy();
 		strategy.setBackOffPeriod(-1000L);
 		strategy.setSleeper(sleeper);
 		strategy.backOff(null);
 		// We should see a zero backoff if we try to set it negative
-		assertEquals(1, sleeper.getBackOffs().length);
-		assertEquals(1, sleeper.getLastBackOff());
+		assertThat(sleeper.getBackOffs().length).isEqualTo(1);
+		assertThat(sleeper.getLastBackOff()).isEqualTo(1);
 	}
 
 	@Test
-	public void testSingleBackOff() throws Exception {
+	public void testSingleBackOff() {
 		int backOffPeriod = 50;
 		FixedBackOffPolicy strategy = new FixedBackOffPolicy();
 		strategy.setBackOffPeriod(backOffPeriod);
 		strategy.setSleeper(sleeper);
 		strategy.backOff(null);
-		assertEquals(1, sleeper.getBackOffs().length);
-		assertEquals(backOffPeriod, sleeper.getLastBackOff());
+		assertThat(sleeper.getBackOffs().length).isEqualTo(1);
+		assertThat(sleeper.getLastBackOff()).isEqualTo(backOffPeriod);
 	}
 
 	@Test
-	public void testManyBackOffCalls() throws Exception {
+	public void testManyBackOffCalls() {
 		int backOffPeriod = 50;
 		FixedBackOffPolicy strategy = new FixedBackOffPolicy();
 		strategy.setBackOffPeriod(backOffPeriod);
 		strategy.setSleeper(sleeper);
 		for (int x = 0; x < 10; x++) {
 			strategy.backOff(null);
-			assertEquals(backOffPeriod, sleeper.getLastBackOff());
+			assertThat(sleeper.getLastBackOff()).isEqualTo(backOffPeriod);
 		}
-		assertEquals(10, sleeper.getBackOffs().length);
+		assertThat(sleeper.getBackOffs().length).isEqualTo(10);
+	}
+
+	@Test
+	public void testInterruptedStatusIsRestored() {
+		int backOffPeriod = 50;
+		FixedBackOffPolicy strategy = new FixedBackOffPolicy();
+		strategy.setBackOffPeriod(backOffPeriod);
+		strategy.setSleeper(new Sleeper() {
+			@Override
+			public void sleep(long backOffPeriod) throws InterruptedException {
+				throw new InterruptedException("foo");
+			}
+		});
+		assertThatExceptionOfType(BackOffInterruptedException.class).isThrownBy(() -> strategy.backOff(null));
+		assertThat(Thread.interrupted()).isTrue();
 	}
 
 }

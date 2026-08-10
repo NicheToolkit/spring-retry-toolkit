@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 the original author or authors.
+ * Copyright 2006-2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,86 +16,84 @@
 
 package org.springframework.retry.stats;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.springframework.retry.stats.ExponentialAverageRetryStatistics;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 
-import org.junit.Test;
-import org.springframework.test.util.ReflectionTestUtils;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Dave Syer
+ * @author Gary Russell
  *
  */
 public class ExponentialAverageRetryStatisticsTests {
 
-	private ExponentialAverageRetryStatistics stats = new ExponentialAverageRetryStatistics("test");
+	private final ExponentialAverageRetryStatistics stats = new ExponentialAverageRetryStatistics("test");
 
 	@Test
-	public void pointless() throws Exception {
+	public void pointless() {
 		stats.setName("spam");
-		assertEquals("spam", stats.getName());
-		assertNotNull(stats.toString());
+		assertThat(stats.getName()).isEqualTo("spam");
 	}
 
 	@Test
-	public void attributes() throws Exception {
+	public void attributes() {
 		stats.setAttribute("foo", "bar");
-		;
-		assertEquals("bar", stats.getAttribute("foo"));
-		assertTrue(Arrays.asList(stats.attributeNames()).contains("foo"));
+		assertThat(stats.getAttribute("foo")).isEqualTo("bar");
+		assertThat(Arrays.asList(stats.attributeNames()).contains("foo")).isTrue();
 	}
 
 	@Test
-	public void abortCount() throws Exception {
+	public void abortCount() {
 		stats.incrementAbortCount();
-		assertEquals(1, stats.getAbortCount());
+		assertThat(stats.getAbortCount()).isEqualTo(1);
 		// rounds up to 1
-		assertEquals(1, stats.getRollingAbortCount());
+		assertThat(stats.getRollingAbortCount()).isEqualTo(1);
 	}
 
 	@Test
-	public void errorCount() throws Exception {
+	public void errorCount() {
 		stats.incrementErrorCount();
-		assertEquals(1, stats.getErrorCount());
+		assertThat(stats.getErrorCount()).isEqualTo(1);
 		// rounds up to 1
-		assertEquals(1, stats.getRollingErrorCount());
+		assertThat(stats.getRollingErrorCount()).isEqualTo(1);
 	}
 
 	@Test
-	public void startedCount() throws Exception {
+	public void startedCount() {
 		stats.incrementStartedCount();
-		assertEquals(1, stats.getStartedCount());
+		assertThat(stats.getStartedCount()).isEqualTo(1);
 		// rounds up to 1
-		assertEquals(1, stats.getRollingStartedCount());
+		assertThat(stats.getRollingStartedCount()).isEqualTo(1);
 	}
 
 	@Test
-	public void completeCount() throws Exception {
+	public void completeCount() {
 		stats.incrementCompleteCount();
-		assertEquals(1, stats.getCompleteCount());
+		assertThat(stats.getCompleteCount()).isEqualTo(1);
 		// rounds up to 1
-		assertEquals(1, stats.getRollingCompleteCount());
+		assertThat(stats.getRollingCompleteCount()).isEqualTo(1);
 	}
 
 	@Test
-	public void recoveryCount() throws Exception {
+	public void recoveryCount() {
 		stats.incrementRecoveryCount();
-		assertEquals(1, stats.getRecoveryCount());
+		assertThat(stats.getRecoveryCount()).isEqualTo(1);
 		// rounds up to 1
-		assertEquals(1, stats.getRollingRecoveryCount());
+		assertThat(stats.getRollingRecoveryCount()).isEqualTo(1);
 	}
 
 	@Test
-	public void oldValuesDecay() throws Exception {
+	public void oldValuesDecay() {
 		stats.incrementAbortCount();
-		assertEquals(1, stats.getAbortCount());
+		assertThat(stats.getAbortCount()).isEqualTo(1);
 		// Wind back time to epoch 0
 		ReflectionTestUtils.setField(ReflectionTestUtils.getField(stats, "abort"), "lastTime", 0);
 		// rounds down to 1
-		assertEquals(0, stats.getRollingAbortCount());
+		assertThat(stats.getRollingAbortCount()).isEqualTo(0);
 	}
 
 }

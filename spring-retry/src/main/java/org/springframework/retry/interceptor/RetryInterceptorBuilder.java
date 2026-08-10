@@ -47,7 +47,7 @@ import org.springframework.util.Assert;
  * @author Gary Russell
  * @author Artem Bilan
  * @since 1.1
- * @param <T> The type of {@link org.aopalliance.intercept.MethodInterceptor} returned by
+ * @param <T> The type of {@link MethodInterceptor} returned by
  * the builder's {@link #build()} method.
  */
 public abstract class RetryInterceptorBuilder<T extends MethodInterceptor> {
