@@ -25,6 +25,7 @@
         <micrometer.version>1.15.12</micrometer.version>
         <easymock.version>2.3</easymock.version>
         <mockito.version>1.10.19</mockito.version>
+        <jsr305.version>3.0.2</jsr305.version>
     </properties>
 
     <licenses>
@@ -124,11 +125,13 @@
         </dependency>
 
 
+        <!-- compile  -->
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-            <version>3.0.2</version>
+            <version>${jsr305.version}</version>
             <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
 
 
