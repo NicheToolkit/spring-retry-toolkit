@@ -27,16 +27,23 @@ import org.springframework.retry.support.RetrySimulator;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Dave Syer
- * @author Jon Travis
- * @author Chase Diem
- * @author Gary Russell
- *
+ * <code>ExponentialRandomBackOffPolicyTests</code>
+ * <p>The exponential random back off policy tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class ExponentialRandomBackOffPolicyTests {
 
-	static final int NUM_TRIALS = 10000;
-	static final int MAX_RETRIES = 6;
+    /**
+     * <code>NUM_TRIALS</code>
+     * <p>The <code>NUM_TRIALS</code> field.</p>
+     */
+    static final int NUM_TRIALS = 10000;
+    /**
+     * <code>MAX_RETRIES</code>
+     * <p>The <code>MAX_RETRIES</code> field.</p>
+     */
+    static final int MAX_RETRIES = 6;
 
 	private ExponentialBackOffPolicy makeBackoffPolicy() {
 		ExponentialBackOffPolicy policy = new ExponentialRandomBackOffPolicy();
@@ -52,7 +59,12 @@ public class ExponentialRandomBackOffPolicyTests {
 		return retryPolicy;
 	}
 
-	@Test
+    /**
+     * <code>testSingleBackoff</code>
+     * <p>The test single backoff method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSingleBackoff() {
 		ExponentialBackOffPolicy backOffPolicy = makeBackoffPolicy();
 		RetrySimulator simulator = new RetrySimulator(backOffPolicy, makeRetryPolicy());
@@ -72,7 +84,12 @@ public class ExponentialRandomBackOffPolicyTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testMaxInterval</code>
+     * <p>The test max interval method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testMaxInterval() {
 		ExponentialBackOffPolicy backOffPolicy = makeBackoffPolicy();
 		backOffPolicy.setInitialInterval(3000);
@@ -95,7 +112,12 @@ public class ExponentialRandomBackOffPolicyTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testMultiBackOff</code>
+     * <p>The test multi back off method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testMultiBackOff() {
 		ExponentialBackOffPolicy backOffPolicy = makeBackoffPolicy();
 		RetrySimulator simulator = new RetrySimulator(backOffPolicy, makeRetryPolicy());

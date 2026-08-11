@@ -27,23 +27,20 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.retry.RetryContext;
 
 /**
- * Base {@link RetryContextCache} implementation that stores entries in memory, with a
- * configurable maximum capacity and LRU eviction policy. For a cache used in a global
- * state, any attempt to increase its capacity should result in an exception. However, a
- * regular cache should not have permanent entries, and removing the eldest entries is
- * sensible.
- *
- * @author Stephane Nicoll
- * @since 1.3.5
+ * <code>AbstractMapRetryContextCache</code>
+ * <p>The abstract map retry context cache class.</p>
+ * @param <V>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @see  org.springframework.retry.policy.RetryContextCache
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public abstract class AbstractMapRetryContextCache<V> implements RetryContextCache {
 
-	/**
-	 * Default value for maximum capacity of the cache. This is set to a reasonably low
-	 * value ({@value}) to avoid users inadvertently filling the cache with item keys that
-	 * are inconsistent.
-	 */
-	public static final int DEFAULT_CAPACITY = 4096;
+    /**
+     * <code>DEFAULT_CAPACITY</code>
+     * <p>The constant <code>DEFAULT_CAPACITY</code> field.</p>
+     */
+    public static final int DEFAULT_CAPACITY = 4096;
 
 	private static final Log logger = LogFactory.getLog(AbstractMapRetryContextCache.class);
 
@@ -53,14 +50,13 @@ public abstract class AbstractMapRetryContextCache<V> implements RetryContextCac
 
 	private int capacity;
 
-	/**
-	 * Create an instance with the given capacity and the policy to apply when the cache
-	 * is full.
-	 * @param capacity the size of the cache
-	 * @param removeEldestEntries whether to remove the eldest entries when the cache is
-	 * full
-	 */
-	protected AbstractMapRetryContextCache(int capacity, boolean removeEldestEntries) {
+    /**
+     * <code>AbstractMapRetryContextCache</code>
+     * <p>Instantiates a new abstract map retry context cache.</p>
+     * @param capacity int <p>The capacity parameter is <code>int</code> type.</p>
+     * @param removeEldestEntries boolean <p>The remove eldest entries parameter is <code>boolean</code> type.</p>
+     */
+    protected AbstractMapRetryContextCache(int capacity, boolean removeEldestEntries) {
 		this.capacity = capacity;
 		this.map = Collections
 			.synchronizedMap(removeEldestEntries ? new LinkedHashMap<Object, V>(capacity, 0.75f, true) {
@@ -78,15 +74,22 @@ public abstract class AbstractMapRetryContextCache<V> implements RetryContextCac
 		this.failIfFull = !removeEldestEntries;
 	}
 
-	protected final Map<Object, V> getMap() {
+    /**
+     * <code>getMap</code>
+     * <p>The get map getter method.</p>
+     * @return  {@link java.util.Map} <p>The get map return object is <code>Map</code> type.</p>
+     * @see  java.util.Map
+     */
+    protected final Map<Object, V> getMap() {
 		return this.map;
 	}
 
-	/**
-	 * Update the capacity of the cache.
-	 * @param capacity the new capacity
-	 */
-	protected void setCapacity(int capacity) {
+    /**
+     * <code>setCapacity</code>
+     * <p>The set capacity setter method.</p>
+     * @param capacity int <p>The capacity parameter is <code>int</code> type.</p>
+     */
+    protected void setCapacity(int capacity) {
 		this.capacity = capacity;
 	}
 
@@ -116,18 +119,22 @@ public abstract class AbstractMapRetryContextCache<V> implements RetryContextCac
 		this.map.remove(key);
 	}
 
-	/**
-	 * Compute the value to store in the cache.
-	 * @param context the {@link RetryContext} to store
-	 * @return the cache value
-	 */
-	protected abstract V toValue(RetryContext context);
+    /**
+     * <code>toValue</code>
+     * <p>The to value method.</p>
+     * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+     * @see  org.springframework.retry.RetryContext
+     * @return  V <p>The to value return object is <code>V</code> type.</p>
+     */
+    protected abstract V toValue(RetryContext context);
 
-	/**
-	 * Get the {@link RetryContext} from the cache value.
-	 * @param value the cache value
-	 * @return the retry context
-	 */
-	protected abstract RetryContext fromValue(V value);
+    /**
+     * <code>fromValue</code>
+     * <p>The from value method.</p>
+     * @param value V <p>The value parameter is <code>V</code> type.</p>
+     * @return  {@link org.springframework.retry.RetryContext} <p>The from value return object is <code>RetryContext</code> type.</p>
+     * @see  org.springframework.retry.RetryContext
+     */
+    protected abstract RetryContext fromValue(V value);
 
 }

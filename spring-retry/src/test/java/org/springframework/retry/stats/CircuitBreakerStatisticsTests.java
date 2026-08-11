@@ -37,10 +37,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
- * @author Dave Syer
- * @author Gary Russell
- * @author Artem Bilan
- *
+ * <code>CircuitBreakerStatisticsTests</code>
+ * <p>The circuit breaker statistics tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class CircuitBreakerStatisticsTests {
 
@@ -62,7 +62,12 @@ public class CircuitBreakerStatisticsTests {
 
 	private RetryContextCache cache;
 
-	@BeforeEach
+    /**
+     * <code>init</code>
+     * <p>The init method.</p>
+     * @see  org.junit.jupiter.api.BeforeEach
+     */
+    @BeforeEach
 	public void init() {
 		this.callback = new MockRetryCallback();
 		this.recovery = context -> RECOVERED;
@@ -75,7 +80,14 @@ public class CircuitBreakerStatisticsTests {
 		this.state = new DefaultRetryState("retry", new BinaryExceptionClassifier(false));
 	}
 
-	@Test
+    /**
+     * <code>testCircuitOpenWhenNotRetryable</code>
+     * <p>The test circuit open when not retryable method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testCircuitOpenWhenNotRetryable() throws Throwable {
 		this.retryTemplate.setRetryPolicy(new CircuitBreakerRetryPolicy(new NeverRetryPolicy()));
 		Object result = this.retryTemplate.execute(this.callback, this.recovery, this.state);
@@ -93,7 +105,12 @@ public class CircuitBreakerStatisticsTests {
 		resetAndAssert(this.cache, stats);
 	}
 
-	@Test
+    /**
+     * <code>testFailedRecoveryCountsAsAbort</code>
+     * <p>The test failed recovery counts as abort method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFailedRecoveryCountsAsAbort() {
 		this.retryTemplate.setRetryPolicy(new CircuitBreakerRetryPolicy(new NeverRetryPolicy()));
 		this.recovery = context -> {
@@ -107,7 +124,12 @@ public class CircuitBreakerStatisticsTests {
 		assertThat(stats.getRecoveryCount()).isEqualTo(0);
 	}
 
-	@Test
+    /**
+     * <code>testCircuitOpenWithNoRecovery</code>
+     * <p>The test circuit open with no recovery method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCircuitOpenWithNoRecovery() {
 		this.retryTemplate.setRetryPolicy(new CircuitBreakerRetryPolicy(new NeverRetryPolicy()));
 		this.retryTemplate.setThrowLastExceptionOnExhausted(true);
@@ -139,7 +161,14 @@ public class CircuitBreakerStatisticsTests {
 		ReflectionTestUtils.invokeMethod(retryContext, "reset");
 	}
 
-	protected static class MockRetryCallback implements RetryCallback<Object, Exception> {
+    /**
+     * <code>MockRetryCallback</code>
+     * <p>The mock retry callback class.</p>
+     * @see  org.springframework.retry.RetryCallback
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    protected static class MockRetryCallback implements RetryCallback<Object, Exception> {
 
 		private int attemptsBeforeSuccess;
 
@@ -160,15 +189,31 @@ public class CircuitBreakerStatisticsTests {
 			return RESULT;
 		}
 
-		public boolean isOpen() {
+        /**
+         * <code>isOpen</code>
+         * <p>The is open method.</p>
+         * @return  boolean <p>The is open return object is <code>boolean</code> type.</p>
+         */
+        public boolean isOpen() {
 			return status != null && status.getAttribute("open") == Boolean.TRUE;
 		}
 
-		public void setAttemptsBeforeSuccess(int attemptsBeforeSuccess) {
+        /**
+         * <code>setAttemptsBeforeSuccess</code>
+         * <p>The set attempts before success setter method.</p>
+         * @param attemptsBeforeSuccess int <p>The attempts before success parameter is <code>int</code> type.</p>
+         */
+        public void setAttemptsBeforeSuccess(int attemptsBeforeSuccess) {
 			this.attemptsBeforeSuccess = attemptsBeforeSuccess;
 		}
 
-		public void setExceptionToThrow(Exception exceptionToThrow) {
+        /**
+         * <code>setExceptionToThrow</code>
+         * <p>The set exception to throw setter method.</p>
+         * @param exceptionToThrow {@link java.lang.Exception} <p>The exception to throw parameter is <code>Exception</code> type.</p>
+         * @see  java.lang.Exception
+         */
+        public void setExceptionToThrow(Exception exceptionToThrow) {
 			this.exceptionToThrow = exceptionToThrow;
 		}
 

@@ -29,11 +29,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.aop.target.SingletonTargetSource;
-import org.springframework.retry.ExhaustedRetryException;
-import org.springframework.retry.RetryCallback;
-import org.springframework.retry.RetryContext;
-import org.springframework.retry.RetryListener;
-import org.springframework.retry.RetryOperations;
+import org.springframework.retry.*;
 import org.springframework.retry.policy.AlwaysRetryPolicy;
 import org.springframework.retry.policy.NeverRetryPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
@@ -49,10 +45,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * @author Dave Syer
- * @author Gary Russell
- * @author Henning Pöttker
- *
+ * <code>StatefulRetryOperationsInterceptorTests</code>
+ * <p>The stateful retry operations interceptor tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class StatefulRetryOperationsInterceptorTests {
 
@@ -68,6 +64,11 @@ public class StatefulRetryOperationsInterceptorTests {
 
 	private static int count;
 
+	/**
+	 * <code>setUp</code>
+	 * <p>The set up setter method.</p>
+	 * @see  org.junit.jupiter.api.BeforeEach
+	 */
 	@BeforeEach
 	public void setUp() {
 		interceptor = new StatefulRetryOperationsInterceptor();
@@ -84,6 +85,11 @@ public class StatefulRetryOperationsInterceptorTests {
 		count = 0;
 	}
 
+	/**
+	 * <code>testDefaultInterceptorSunnyDay</code>
+	 * <p>The test default interceptor sunny day method.</p>
+	 * @see  org.junit.jupiter.api.Test
+	 */
 	@Test
 	public void testDefaultInterceptorSunnyDay() {
 		((Advised) service).addAdvice(interceptor);
@@ -91,6 +97,11 @@ public class StatefulRetryOperationsInterceptorTests {
 			.withMessageStartingWith("Not enough calls");
 	}
 
+	/**
+	 * <code>testDefaultInterceptorWithLabel</code>
+	 * <p>The test default interceptor with label method.</p>
+	 * @see  org.junit.jupiter.api.Test
+	 */
 	@Test
 	public void testDefaultInterceptorWithLabel() {
 		interceptor.setLabel("FOO");
@@ -101,6 +112,11 @@ public class StatefulRetryOperationsInterceptorTests {
 		assertThat(context.getAttribute(RetryContext.NAME)).isEqualTo("FOO");
 	}
 
+	/**
+	 * <code>testDefaultTransformerInterceptorSunnyDay</code>
+	 * <p>The test default transformer interceptor sunny day method.</p>
+	 * @see  org.junit.jupiter.api.Test
+	 */
 	@Test
 	public void testDefaultTransformerInterceptorSunnyDay() {
 		((Advised) transformer).addAdvice(interceptor);
@@ -109,6 +125,11 @@ public class StatefulRetryOperationsInterceptorTests {
 		assertThat(count).isEqualTo(1);
 	}
 
+	/**
+	 * <code>testDefaultInterceptorAlwaysRetry</code>
+	 * <p>The test default interceptor always retry method.</p>
+	 * @see  org.junit.jupiter.api.Test
+	 */
 	@Test
 	public void testDefaultInterceptorAlwaysRetry() {
 		retryTemplate.setRetryPolicy(new AlwaysRetryPolicy());
@@ -119,6 +140,13 @@ public class StatefulRetryOperationsInterceptorTests {
 		assertThat(count).isEqualTo(1);
 	}
 
+	/**
+	 * <code>testInterceptorChainWithRetry</code>
+	 * <p>The test interceptor chain with retry method.</p>
+	 * @see  org.junit.jupiter.api.Test
+	 * @see  java.lang.Exception
+	 * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+	 */
 	@Test
 	public void testInterceptorChainWithRetry() throws Exception {
 		((Advised) service).addAdvice(interceptor);
@@ -137,6 +165,13 @@ public class StatefulRetryOperationsInterceptorTests {
 		assertThat(list).hasSize(2);
 	}
 
+	/**
+	 * <code>testTransformerWithSuccessfulRetry</code>
+	 * <p>The test transformer with successful retry method.</p>
+	 * @see  org.junit.jupiter.api.Test
+	 * @see  java.lang.Exception
+	 * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+	 */
 	@Test
 	public void testTransformerWithSuccessfulRetry() throws Exception {
 		((Advised) transformer).addAdvice(interceptor);
@@ -150,6 +185,13 @@ public class StatefulRetryOperationsInterceptorTests {
 		assertThat(result).hasSize(1);
 	}
 
+	/**
+	 * <code>testRetryExceptionAfterTooManyAttemptsWithNoRecovery</code>
+	 * <p>The test retry exception after too many attempts with no recovery method.</p>
+	 * @see  org.junit.jupiter.api.Test
+	 * @see  java.lang.Exception
+	 * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+	 */
 	@Test
 	public void testRetryExceptionAfterTooManyAttemptsWithNoRecovery() throws Exception {
 		((Advised) service).addAdvice(interceptor);
@@ -163,6 +205,13 @@ public class StatefulRetryOperationsInterceptorTests {
 		assertThat(count).isEqualTo(1);
 	}
 
+	/**
+	 * <code>testRecoveryAfterTooManyAttempts</code>
+	 * <p>The test recovery after too many attempts method.</p>
+	 * @see  org.junit.jupiter.api.Test
+	 * @see  java.lang.Exception
+	 * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+	 */
 	@Test
 	public void testRecoveryAfterTooManyAttempts() throws Exception {
 		((Advised) service).addAdvice(interceptor);
@@ -179,6 +228,14 @@ public class StatefulRetryOperationsInterceptorTests {
 		assertThat(count).isEqualTo(2);
 	}
 
+	/**
+	 * <code>testKeyGeneratorReturningNull</code>
+	 * <p>The test key generator returning null method.</p>
+	 * @see  java.lang.SuppressWarnings
+	 * @see  org.junit.jupiter.api.Test
+	 * @see  java.lang.Throwable
+	 * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testKeyGeneratorReturningNull() throws Throwable {
@@ -190,10 +247,18 @@ public class StatefulRetryOperationsInterceptorTests {
 		when(invocation.getArguments()).thenReturn(new Object[] { new Object() });
 		this.interceptor.invoke(invocation);
 		ArgumentCaptor<DefaultRetryState> captor = ArgumentCaptor.forClass(DefaultRetryState.class);
-		verify(template).execute(any(RetryCallback.class), eq(null), captor.capture());
+		verify(template).execute(any(RetryCallback.class), any(RecoveryCallback.class), captor.capture());
 		assertThat(captor.getValue().getKey()).isNull();
 	}
 
+	/**
+	 * <code>testKeyGeneratorAndRawKey</code>
+	 * <p>The test key generator and raw key method.</p>
+	 * @see  java.lang.SuppressWarnings
+	 * @see  org.junit.jupiter.api.Test
+	 * @see  java.lang.Throwable
+	 * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testKeyGeneratorAndRawKey() throws Throwable {
@@ -206,10 +271,17 @@ public class StatefulRetryOperationsInterceptorTests {
 		when(invocation.getArguments()).thenReturn(new Object[] { new Object() });
 		this.interceptor.invoke(invocation);
 		ArgumentCaptor<DefaultRetryState> captor = ArgumentCaptor.forClass(DefaultRetryState.class);
-		verify(template).execute(any(RetryCallback.class), eq(null), captor.capture());
+		verify(template).execute(any(RetryCallback.class), any(RecoveryCallback.class), captor.capture());
 		assertThat(captor.getValue().getKey()).isEqualTo("bar");
 	}
 
+	/**
+	 * <code>testTransformerRecoveryAfterTooManyAttempts</code>
+	 * <p>The test transformer recovery after too many attempts method.</p>
+	 * @see  org.junit.jupiter.api.Test
+	 * @see  java.lang.Exception
+	 * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+	 */
 	@Test
 	public void testTransformerRecoveryAfterTooManyAttempts() throws Exception {
 		((Advised) transformer).addAdvice(interceptor);
@@ -227,12 +299,32 @@ public class StatefulRetryOperationsInterceptorTests {
 		assertThat(result.size()).isEqualTo(1);
 	}
 
+	/**
+	 * <code>Service</code>
+	 * <p>The service interface.</p>
+	 * @author  Cyan (snow22314@outlook.com)
+	 * @since Jdk1.8
+	 */
 	public static interface Service {
 
+		/**
+		 * <code>service</code>
+		 * <p>The service method.</p>
+		 * @param in {@link java.lang.String} <p>The in parameter is <code>String</code> type.</p>
+		 * @see  java.lang.String
+		 * @see  java.lang.Exception
+		 * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+		 */
 		void service(String in) throws Exception;
 
 	}
 
+	/**
+	 * <code>ServiceImpl</code>
+	 * <p>The service class.</p>
+	 * @author  Cyan (snow22314@outlook.com)
+	 * @since Jdk1.8
+	 */
 	public static class ServiceImpl implements Service {
 
 		@Override
@@ -245,12 +337,34 @@ public class StatefulRetryOperationsInterceptorTests {
 
 	}
 
+	/**
+	 * <code>Transformer</code>
+	 * <p>The transformer interface.</p>
+	 * @author  Cyan (snow22314@outlook.com)
+	 * @since Jdk1.8
+	 */
 	public static interface Transformer {
 
+		/**
+		 * <code>transform</code>
+		 * <p>The transform method.</p>
+		 * @param in {@link java.lang.String} <p>The in parameter is <code>String</code> type.</p>
+		 * @see  java.lang.String
+		 * @see  java.util.Collection
+		 * @see  java.lang.Exception
+		 * @return  {@link java.util.Collection} <p>The transform return object is <code>Collection</code> type.</p>
+		 * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+		 */
 		Collection<String> transform(String in) throws Exception;
 
 	}
 
+	/**
+	 * <code>TransformerImpl</code>
+	 * <p>The transformer class.</p>
+	 * @author  Cyan (snow22314@outlook.com)
+	 * @since Jdk1.8
+	 */
 	public static class TransformerImpl implements Transformer {
 
 		@Override

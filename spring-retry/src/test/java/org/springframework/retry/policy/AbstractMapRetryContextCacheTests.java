@@ -25,15 +25,28 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 
 /**
- * Tests for {@link AbstractMapRetryContextCache}.
- *
- * @author Stephane Nicoll
+ * <code>AbstractMapRetryContextCacheTests</code>
+ * <p>The abstract map retry context cache tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public abstract class AbstractMapRetryContextCacheTests {
 
-	protected abstract AbstractMapRetryContextCache<?> createCache(int capacity, boolean removeEldestEntries);
+    /**
+     * <code>createCache</code>
+     * <p>The create cache method.</p>
+     * @param capacity int <p>The capacity parameter is <code>int</code> type.</p>
+     * @param removeEldestEntries boolean <p>The remove eldest entries parameter is <code>boolean</code> type.</p>
+     * @return  {@link org.springframework.retry.policy.AbstractMapRetryContextCache} <p>The create cache return object is <code>AbstractMapRetryContextCache</code> type.</p>
+     */
+    protected abstract AbstractMapRetryContextCache<?> createCache(int capacity, boolean removeEldestEntries);
 
-	@Test
+    /**
+     * <code>testPutAndGet</code>
+     * <p>The test put and get method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testPutAndGet() {
 		AbstractMapRetryContextCache<?> cache = createCache(5, false);
 		RetryContext context = createRetryContext();
@@ -41,7 +54,12 @@ public abstract class AbstractMapRetryContextCacheTests {
 		assertThat(cache.get("foo")).isEqualTo(context);
 	}
 
-	@Test
+    /**
+     * <code>testLruEviction</code>
+     * <p>The test lru eviction method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testLruEviction() {
 		AbstractMapRetryContextCache<?> cache = createCache(2, true);
 
@@ -63,7 +81,12 @@ public abstract class AbstractMapRetryContextCacheTests {
 		assertThat(cache.containsKey("3")).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testRemove</code>
+     * <p>The test remove method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRemove() {
 		AbstractMapRetryContextCache<?> cache = createCache(5, true);
 		RetryContext context = createRetryContext();
@@ -75,7 +98,12 @@ public abstract class AbstractMapRetryContextCacheTests {
 		assertThat(cache.get("foo")).isNull();
 	}
 
-	@Test
+    /**
+     * <code>testContainsKey</code>
+     * <p>The test contains key method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testContainsKey() {
 		AbstractMapRetryContextCache<?> cache = createCache(5, true);
 		RetryContext context = createRetryContext();
@@ -84,7 +112,12 @@ public abstract class AbstractMapRetryContextCacheTests {
 		assertThat(cache.containsKey("bar")).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testCapacityLimitBreachedThrowsException</code>
+     * <p>The test capacity limit breached throws exception method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCapacityLimitBreachedThrowsException() {
 		AbstractMapRetryContextCache<?> cache = createCache(1, false);
 		RetryContext context1 = createRetryContext();
@@ -95,7 +128,12 @@ public abstract class AbstractMapRetryContextCacheTests {
 			.isThrownBy(() -> cache.put("bar", context2));
 	}
 
-	@Test
+    /**
+     * <code>testCapacityLimitBreachedAllowsUpdateOfExistingEntry</code>
+     * <p>The test capacity limit breached allows update of existing entry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCapacityLimitBreachedAllowsUpdateOfExistingEntry() {
 		AbstractMapRetryContextCache<?> cache = createCache(1, false);
 		RetryContext context1 = createRetryContext();
@@ -105,7 +143,12 @@ public abstract class AbstractMapRetryContextCacheTests {
 		cache.put("foo", context2);
 	}
 
-	@Test
+    /**
+     * <code>testCapacityCanBeUpdated</code>
+     * <p>The test capacity can be updated method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCapacityCanBeUpdated() {
 		AbstractMapRetryContextCache<?> cache = createCache(1, false);
 		cache.put("1", createRetryContext());
@@ -115,7 +158,13 @@ public abstract class AbstractMapRetryContextCacheTests {
 		cache.put("2", context2);
 	}
 
-	protected RetryContext createRetryContext() {
+    /**
+     * <code>createRetryContext</code>
+     * <p>The create retry context method.</p>
+     * @return  {@link org.springframework.retry.RetryContext} <p>The create retry context return object is <code>RetryContext</code> type.</p>
+     * @see  org.springframework.retry.RetryContext
+     */
+    protected RetryContext createRetryContext() {
 		return mock(RetryContext.class);
 	}
 

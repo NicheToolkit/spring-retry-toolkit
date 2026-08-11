@@ -24,14 +24,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**
- * @author Tomaz Fernandes
- * @author Gary Russell
- * @author Aftab Shaikh
- * @since 1.3.3
+ * <code>BackOffPolicyBuilderTests</code>
+ * <p>The back off policy builder tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class BackOffPolicyBuilderTests {
 
-	@Test
+    /**
+     * <code>shouldCreateDefaultBackOffPolicy</code>
+     * <p>The should create default back off policy method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void shouldCreateDefaultBackOffPolicy() {
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newDefaultPolicy();
 		assertThat(FixedBackOffPolicy.class.isAssignableFrom(backOffPolicy.getClass())).isTrue();
@@ -39,7 +44,12 @@ public class BackOffPolicyBuilderTests {
 		assertThat(policy.getBackOffPeriod()).isEqualTo(1000);
 	}
 
-	@Test
+    /**
+     * <code>shouldCreateDefaultBackOffPolicyViaNewBuilder</code>
+     * <p>The should create default back off policy via new builder method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void shouldCreateDefaultBackOffPolicyViaNewBuilder() {
 		Sleeper mockSleeper = mock(Sleeper.class);
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder().sleeper(mockSleeper).build();
@@ -49,7 +59,12 @@ public class BackOffPolicyBuilderTests {
 		assertThat(new DirectFieldAccessor(policy).getPropertyValue("sleeper")).isEqualTo(mockSleeper);
 	}
 
-	@Test
+    /**
+     * <code>shouldCreateFixedBackOffPolicy</code>
+     * <p>The should create fixed back off policy method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void shouldCreateFixedBackOffPolicy() {
 		Sleeper mockSleeper = mock(Sleeper.class);
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder().delay(3500).sleeper(mockSleeper).build();
@@ -59,7 +74,12 @@ public class BackOffPolicyBuilderTests {
 		assertThat(new DirectFieldAccessor(policy).getPropertyValue("sleeper")).isEqualTo(mockSleeper);
 	}
 
-	@Test
+    /**
+     * <code>shouldCreateUniformRandomBackOffPolicy</code>
+     * <p>The should create uniform random back off policy method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void shouldCreateUniformRandomBackOffPolicy() {
 		Sleeper mockSleeper = mock(Sleeper.class);
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
@@ -74,7 +94,12 @@ public class BackOffPolicyBuilderTests {
 		assertThat(new DirectFieldAccessor(policy).getPropertyValue("sleeper")).isEqualTo(mockSleeper);
 	}
 
-	@Test
+    /**
+     * <code>shouldCreateExponentialBackOff</code>
+     * <p>The should create exponential back off method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void shouldCreateExponentialBackOff() {
 		Sleeper mockSleeper = mock(Sleeper.class);
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
@@ -92,7 +117,12 @@ public class BackOffPolicyBuilderTests {
 		assertThat(new DirectFieldAccessor(policy).getPropertyValue("sleeper")).isEqualTo(mockSleeper);
 	}
 
-	@Test
+    /**
+     * <code>shouldCreateExponentialRandomBackOff</code>
+     * <p>The should create exponential random back off method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void shouldCreateExponentialRandomBackOff() {
 		Sleeper mockSleeper = mock(Sleeper.class);
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
@@ -110,7 +140,12 @@ public class BackOffPolicyBuilderTests {
 		assertThat(new DirectFieldAccessor(policy).getPropertyValue("sleeper")).isEqualTo(mockSleeper);
 	}
 
-	@Test
+    /**
+     * <code>shouldCreateExponentialRandomBackOffWhenProvidedRandomSupplier</code>
+     * <p>The should create exponential random back off when provided random supplier method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void shouldCreateExponentialRandomBackOffWhenProvidedRandomSupplier() {
 		Sleeper mockSleeper = mock(Sleeper.class);
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
@@ -128,7 +163,12 @@ public class BackOffPolicyBuilderTests {
 		assertThat(policy.getMultiplier()).isEqualTo(10);
 	}
 
-	@Test
+    /**
+     * <code>shouldCreateExponentialRandomBackOffWithProvidedSuppliers</code>
+     * <p>The should create exponential random back off with provided suppliers method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void shouldCreateExponentialRandomBackOffWithProvidedSuppliers() {
 		Sleeper mockSleeper = mock(Sleeper.class);
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
@@ -146,7 +186,12 @@ public class BackOffPolicyBuilderTests {
 		assertThat(policy.getMultiplier()).isEqualTo(10);
 	}
 
-	@Test
+    /**
+     * <code>shouldCreateExponentialBackOffWhenProvidedRandomSupplier</code>
+     * <p>The should create exponential back off when provided random supplier method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void shouldCreateExponentialBackOffWhenProvidedRandomSupplier() {
 		Sleeper mockSleeper = mock(Sleeper.class);
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()
@@ -164,7 +209,12 @@ public class BackOffPolicyBuilderTests {
 		assertThat(policy.getMultiplier()).isEqualTo(2);
 	}
 
-	@Test
+    /**
+     * <code>shouldCreateExponentialBackOffWithProvidedSuppliers</code>
+     * <p>The should create exponential back off with provided suppliers method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void shouldCreateExponentialBackOffWithProvidedSuppliers() {
 		Sleeper mockSleeper = mock(Sleeper.class);
 		BackOffPolicy backOffPolicy = BackOffPolicyBuilder.newBuilder()

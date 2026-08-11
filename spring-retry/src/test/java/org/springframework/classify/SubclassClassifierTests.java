@@ -23,27 +23,57 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * <code>SubclassClassifierTests</code>
+ * <p>The subclass classifier tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class SubclassClassifierTests {
 
-	@Test
+    /**
+     * <code>testClassifyInterface</code>
+     * <p>The test classify interface method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyInterface() {
 		SubclassClassifier<Object, String> classifier = new SubclassClassifier<>();
 		classifier.setTypeMap(Collections.<Class<?>, String>singletonMap(Supplier.class, "foo"));
 		assertThat(classifier.classify(new Foo())).isEqualTo("foo");
 	}
 
-	@Test
+    /**
+     * <code>testClassifyInterfaceOfParent</code>
+     * <p>The test classify interface of parent method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyInterfaceOfParent() {
 		SubclassClassifier<Object, String> classifier = new SubclassClassifier<>();
 		classifier.setTypeMap(Collections.<Class<?>, String>singletonMap(Supplier.class, "foo"));
 		assertThat(classifier.classify(new Bar())).isEqualTo("foo");
 	}
 
-	public class Bar extends Foo {
+    /**
+     * <code>Bar</code>
+     * <p>The bar class.</p>
+     * @see  org.springframework.classify.SubclassClassifierTests.Foo
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public class Bar extends Foo {
 
 	}
 
-	public static class Foo implements Supplier<String> {
+    /**
+     * <code>Foo</code>
+     * <p>The foo class.</p>
+     * @see  java.util.function.Supplier
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public static class Foo implements Supplier<String> {
 
 		@Override
 		public String get() {

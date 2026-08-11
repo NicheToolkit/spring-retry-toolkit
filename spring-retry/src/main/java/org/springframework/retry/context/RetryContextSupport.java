@@ -21,7 +21,13 @@ import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryPolicy;
 
 /**
- * @author Dave Syer
+ * <code>RetryContextSupport</code>
+ * <p>The retry context support class.</p>
+ * @see  org.springframework.core.AttributeAccessorSupport
+ * @see  org.springframework.retry.RetryContext
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class RetryContextSupport extends AttributeAccessorSupport implements RetryContext {
@@ -34,7 +40,13 @@ public class RetryContextSupport extends AttributeAccessorSupport implements Ret
 
 	private volatile Throwable lastException;
 
-	public RetryContextSupport(RetryContext parent) {
+    /**
+     * <code>RetryContextSupport</code>
+     * <p>Instantiates a new retry context support.</p>
+     * @param parent {@link org.springframework.retry.RetryContext} <p>The parent parameter is <code>RetryContext</code> type.</p>
+     * @see  org.springframework.retry.RetryContext
+     */
+    public RetryContextSupport(RetryContext parent) {
 		super();
 		this.parent = parent;
 	}
@@ -59,19 +71,13 @@ public class RetryContextSupport extends AttributeAccessorSupport implements Ret
 		return lastException;
 	}
 
-	/**
-	 * Set the exception for the public interface {@link RetryContext}, and also increment
-	 * the retry count if the throwable is non-null.
-	 *
-	 * All {@link RetryPolicy} implementations should use this method when they register
-	 * the throwable. It should only be called once per retry attempt because it
-	 * increments a counter.
-	 *
-	 * Use of this method is not enforced by the framework - it is a service provider
-	 * contract for authors of policies.
-	 * @param throwable the exception that caused the current retry attempt to fail.
-	 */
-	public void registerThrowable(Throwable throwable) {
+    /**
+     * <code>registerThrowable</code>
+     * <p>The register throwable method.</p>
+     * @param throwable {@link java.lang.Throwable} <p>The throwable parameter is <code>Throwable</code> type.</p>
+     * @see  java.lang.Throwable
+     */
+    public void registerThrowable(Throwable throwable) {
 		this.lastException = throwable;
 		if (throwable != null)
 			count++;

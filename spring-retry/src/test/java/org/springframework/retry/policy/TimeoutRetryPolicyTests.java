@@ -22,9 +22,22 @@ import org.springframework.retry.RetryContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * <code>TimeoutRetryPolicyTests</code>
+ * <p>The timeout retry policy tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class TimeoutRetryPolicyTests {
 
-	@Test
+    /**
+     * <code>testTimeoutPreventsRetry</code>
+     * <p>The test timeout prevents retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	public void testTimeoutPreventsRetry() throws Exception {
 		TimeoutRetryPolicy policy = new TimeoutRetryPolicy();
 		policy.setTimeout(100);
@@ -36,7 +49,12 @@ public class TimeoutRetryPolicyTests {
 		policy.close(context);
 	}
 
-	@Test
+    /**
+     * <code>testRetryCount</code>
+     * <p>The test retry count method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRetryCount() {
 		TimeoutRetryPolicy policy = new TimeoutRetryPolicy();
 		RetryContext context = policy.open(null);
@@ -48,7 +66,12 @@ public class TimeoutRetryPolicyTests {
 		assertThat(context.getLastThrowable().getMessage()).isEqualTo("foo");
 	}
 
-	@Test
+    /**
+     * <code>testParent</code>
+     * <p>The test parent method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testParent() {
 		TimeoutRetryPolicy policy = new TimeoutRetryPolicy();
 		RetryContext context = policy.open(null);
@@ -57,7 +80,14 @@ public class TimeoutRetryPolicyTests {
 		assertThat(child.getParent()).isSameAs(context);
 	}
 
-	@Test
+    /**
+     * <code>testConstructorWithCustomTimeout</code>
+     * <p>The test constructor with custom timeout method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	public void testConstructorWithCustomTimeout() throws Exception {
 		TimeoutRetryPolicy policy = new TimeoutRetryPolicy(100);
 		RetryContext context = policy.open(null);

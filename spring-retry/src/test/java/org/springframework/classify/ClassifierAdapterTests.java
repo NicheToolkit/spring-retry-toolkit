@@ -24,15 +24,21 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 
 /**
- * @author Dave Syer
- * @author Gary Russell
- *
+ * <code>ClassifierAdapterTests</code>
+ * <p>The classifier adapter tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class ClassifierAdapterTests {
 
 	private ClassifierAdapter<String, Integer> adapter = new ClassifierAdapter<>();
 
-	@Test
+    /**
+     * <code>testClassifierAdapterObject</code>
+     * <p>The test classifier adapter object method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifierAdapterObject() {
 		adapter = new ClassifierAdapter<>(new Object() {
 			@Classifier
@@ -48,7 +54,12 @@ public class ClassifierAdapterTests {
 		assertThat(adapter.classify("23").intValue()).isEqualTo(23);
 	}
 
-	@Test
+    /**
+     * <code>testClassifierAdapterObjectWithNoAnnotation</code>
+     * <p>The test classifier adapter object with no annotation method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifierAdapterObjectWithNoAnnotation() {
 		assertThatIllegalStateException().isThrownBy(() -> new ClassifierAdapter<>(new Object() {
 			@SuppressWarnings("unused")
@@ -63,7 +74,12 @@ public class ClassifierAdapterTests {
 		}));
 	}
 
-	@Test
+    /**
+     * <code>testClassifierAdapterObjectSingleMethodWithNoAnnotation</code>
+     * <p>The test classifier adapter object single method with no annotation method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifierAdapterObjectSingleMethodWithNoAnnotation() {
 		adapter = new ClassifierAdapter<>(new Object() {
 			@SuppressWarnings("unused")
@@ -83,14 +99,25 @@ public class ClassifierAdapterTests {
 		assertThat(adapter.classify("23").intValue()).isEqualTo(23);
 	}
 
-	@SuppressWarnings({ "serial" })
+    /**
+     * <code>testClassifierAdapterClassifier</code>
+     * <p>The test classifier adapter classifier method.</p>
+     * @see  java.lang.SuppressWarnings
+     * @see  org.junit.jupiter.api.Test
+     */
+    @SuppressWarnings({ "serial" })
 	@Test
 	public void testClassifierAdapterClassifier() {
 		adapter = new ClassifierAdapter<>(Integer::valueOf);
 		assertThat(adapter.classify("23").intValue()).isEqualTo(23);
 	}
 
-	@Test
+    /**
+     * <code>testClassifyWithSetter</code>
+     * <p>The test classify with setter method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyWithSetter() {
 		adapter.setDelegate(new Object() {
 			@Classifier
@@ -101,7 +128,12 @@ public class ClassifierAdapterTests {
 		assertThat(adapter.classify("23").intValue()).isEqualTo(23);
 	}
 
-	@Test
+    /**
+     * <code>testClassifyWithWrongType</code>
+     * <p>The test classify with wrong type method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyWithWrongType() {
 		adapter.setDelegate(new Object() {
 			@Classifier
@@ -112,7 +144,12 @@ public class ClassifierAdapterTests {
 		assertThatIllegalArgumentException().isThrownBy(() -> adapter.classify("23"));
 	}
 
-	@Test
+    /**
+     * <code>testClassifyWithClassifier</code>
+     * <p>The test classify with classifier method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyWithClassifier() {
 		adapter.setDelegate(Integer::valueOf);
 		assertThat(adapter.classify("23").intValue()).isEqualTo(23);

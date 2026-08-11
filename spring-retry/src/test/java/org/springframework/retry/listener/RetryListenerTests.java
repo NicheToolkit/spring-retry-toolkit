@@ -34,70 +34,123 @@ import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
 /**
- * @author Dave Syer
- * @author Stéphane Nicoll
- * @author Gary Russell
- * @author Henning Pöttker
- * @author Artem Bilan
+ * <code>RetryListenerTests</code>
+ * <p>The retry listener tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RetryListenerTests {
 
-	RetryTemplate template = new RetryTemplate();
+    /**
+     * <code>template</code>
+     * {@link org.springframework.retry.support.RetryTemplate} <p>The <code>template</code> field.</p>
+     * @see  org.springframework.retry.support.RetryTemplate
+     */
+    RetryTemplate template = new RetryTemplate();
 
-	int count = 0;
+    /**
+     * <code>count</code>
+     * <p>The <code>count</code> field.</p>
+     */
+    int count = 0;
 
-	List<String> list = new ArrayList<>();
+    /**
+     * <code>list</code>
+     * {@link java.util.List} <p>The <code>list</code> field.</p>
+     * @see  java.util.List
+     */
+    List<String> list = new ArrayList<>();
 
-	@Test
+    /**
+     * <code>testClose</code>
+     * <p>The test close method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClose() {
 		RetryListener retryListener = new RetryListener() {
 		};
 		assertThatNoException().isThrownBy(() -> retryListener.close(null, null, null));
 	}
 
-	@Test
+    /**
+     * <code>noExceptionOnError</code>
+     * <p>The no exception on error method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void noExceptionOnError() {
 		RetryListener retryListener = new RetryListener() {
 		};
 		assertThatNoException().isThrownBy(() -> retryListener.onError(null, null, null));
 	}
 
-	@Test
+    /**
+     * <code>testOpen</code>
+     * <p>The test open method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOpen() {
 		RetryListener retryListener = new RetryListener() {
 		};
 		assertThat(retryListener.open(null, null)).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testOpenDefaultImplementation</code>
+     * <p>The test open default implementation method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOpenDefaultImplementation() {
 		RetryListener retryListener = new RetryListener() {
 		};
 		assertThat(retryListener.open(null, null)).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testCloseDefaultImplementation</code>
+     * <p>The test close default implementation method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCloseDefaultImplementation() {
 		RetryListener retryListener = new RetryListener() {
 		};
 		assertThatNoException().isThrownBy(() -> retryListener.close(null, null, null));
 	}
 
-	@Test
+    /**
+     * <code>testOnSuccessDefaultImplementation</code>
+     * <p>The test on success default implementation method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOnSuccessDefaultImplementation() {
 		RetryListener retryListener = new RetryListener() {
 		};
 		assertThatNoException().isThrownBy(() -> retryListener.onError(null, null, null));
 	}
 
-	@Test
+    /**
+     * <code>testOnErrorDefaultImplementation</code>
+     * <p>The test on error default implementation method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOnErrorDefaultImplementation() {
 		RetryListener retryListener = new RetryListener() {
 		};
 		assertThatNoException().isThrownBy(() -> retryListener.onError(null, null, null));
 	}
 
-	@Test
+    /**
+     * <code>testOpenInterceptors</code>
+     * <p>The test open interceptors method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOpenInterceptors() {
 		template.setListeners(new RetryListener[] { new RetryListener() {
 			public <T, E extends Throwable> boolean open(RetryContext context, RetryCallback<T, E> callback) {
@@ -118,7 +171,12 @@ public class RetryListenerTests {
 		assertThat(list.get(0)).isEqualTo("1:1");
 	}
 
-	@Test
+    /**
+     * <code>testOpenCanVetoRetry</code>
+     * <p>The test open can veto retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOpenCanVetoRetry() {
 		template.registerListener(new RetryListener() {
 			public <T, E extends Throwable> boolean open(RetryContext context, RetryCallback<T, E> callback) {
@@ -135,7 +193,12 @@ public class RetryListenerTests {
 		assertThat(list.get(0)).isEqualTo("1");
 	}
 
-	@Test
+    /**
+     * <code>testCloseInterceptors</code>
+     * <p>The test close interceptors method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCloseInterceptors() {
 		template.setListeners(new RetryListener[] { new RetryListener() {
 			public <T, E extends Throwable> void close(RetryContext context, RetryCallback<T, E> callback,
@@ -157,7 +220,12 @@ public class RetryListenerTests {
 		assertThat(list.get(0)).isEqualTo("2:1");
 	}
 
-	@Test
+    /**
+     * <code>testOnError</code>
+     * <p>The test on error method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOnError() {
 		template.setRetryPolicy(new NeverRetryPolicy());
 		template.setListeners(new RetryListener[] { new RetryListener() {
@@ -183,7 +251,12 @@ public class RetryListenerTests {
 
 	}
 
-	@Test
+    /**
+     * <code>testCloseInterceptorsAfterRetry</code>
+     * <p>The test close interceptors after retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCloseInterceptorsAfterRetry() {
 		template.registerListener(new RetryListener() {
 			public <T, E extends Throwable> void close(RetryContext context, RetryCallback<T, E> callback,

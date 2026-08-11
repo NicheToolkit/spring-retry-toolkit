@@ -17,11 +17,21 @@
 package org.springframework.retry.stats;
 
 /**
- * @author Dave Syer
- *
+ * <code>RetryStatisticsFactory</code>
+ * <p>The retry statistics factory interface.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface RetryStatisticsFactory {
 
-	MutableRetryStatistics create(String name);
+    /**
+     * <code>create</code>
+     * <p>The create method.</p>
+     * @param name {@link java.lang.String} <p>The name parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     * @see  org.springframework.retry.stats.MutableRetryStatistics
+     * @return  {@link org.springframework.retry.stats.MutableRetryStatistics} <p>The create return object is <code>MutableRetryStatistics</code> type.</p>
+     */
+    MutableRetryStatistics create(String name);
 
 }

@@ -21,17 +21,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * A {@link Classifier} for a parameterised object type based on a map. Classifies objects
- * according to their inheritance relation with the supplied type map. If the object to be
- * classified is one of the keys of the provided map, or is a subclass of one of the keys,
- * then the map entry value for that key is returned. Otherwise, returns the default value
- * which is null by default.
- *
- * @author Dave Syer
- * @author Gary Russell
- * @author Artem Bilan
- * @param <T> the type of the thing to classify
- * @param <C> the output of the classifier
+ * <code>SubclassClassifier</code>
+ * <p>The subclass classifier class.</p>
+ * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @param <C>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @see  org.springframework.classify.Classifier
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class SubclassClassifier<T, C> implements Classifier<T, C> {
@@ -40,67 +37,66 @@ public class SubclassClassifier<T, C> implements Classifier<T, C> {
 
 	private C defaultValue;
 
-	/**
-	 * Create a {@link SubclassClassifier} with null default value.
-	 */
-	public SubclassClassifier() {
+    /**
+     * <code>SubclassClassifier</code>
+     * <p>Instantiates a new subclass classifier.</p>
+     */
+    public SubclassClassifier() {
 		this(null);
 	}
 
-	/**
-	 * Create a {@link SubclassClassifier} with supplied default value.
-	 * @param defaultValue the default value
-	 */
-	public SubclassClassifier(C defaultValue) {
+    /**
+     * <code>SubclassClassifier</code>
+     * <p>Instantiates a new subclass classifier.</p>
+     * @param defaultValue C <p>The default value parameter is <code>C</code> type.</p>
+     */
+    public SubclassClassifier(C defaultValue) {
 		this(new HashMap<>(), defaultValue);
 	}
 
-	/**
-	 * Create a {@link SubclassClassifier} with supplied default value.
-	 * @param defaultValue the default value
-	 * @param typeMap the map of types
-	 */
-	public SubclassClassifier(Map<Class<? extends T>, C> typeMap, C defaultValue) {
+    /**
+     * <code>SubclassClassifier</code>
+     * <p>Instantiates a new subclass classifier.</p>
+     * @param typeMap {@link java.util.Map} <p>The type map parameter is <code>Map</code> type.</p>
+     * @param defaultValue C <p>The default value parameter is <code>C</code> type.</p>
+     * @see  java.util.Map
+     */
+    public SubclassClassifier(Map<Class<? extends T>, C> typeMap, C defaultValue) {
 		super();
 		this.classified = new ConcurrentHashMap<>(typeMap);
 		this.defaultValue = defaultValue;
 	}
 
-	/**
-	 * Public setter for the default value for mapping keys that are not found in the map
-	 * (or their subclasses). Defaults to false.
-	 * @param defaultValue the default value to set
-	 */
-	public void setDefaultValue(C defaultValue) {
+    /**
+     * <code>setDefaultValue</code>
+     * <p>The set default value setter method.</p>
+     * @param defaultValue C <p>The default value parameter is <code>C</code> type.</p>
+     */
+    public void setDefaultValue(C defaultValue) {
 		this.defaultValue = defaultValue;
 	}
 
-	/**
-	 * Set the classifications up as a map. The keys are types and these will be mapped
-	 * along with all their subclasses to the corresponding value. The most specific types
-	 * will match first.
-	 * @param map a map from type to class
-	 */
-	public void setTypeMap(Map<Class<? extends T>, C> map) {
+    /**
+     * <code>setTypeMap</code>
+     * <p>The set type map setter method.</p>
+     * @param map {@link java.util.Map} <p>The map parameter is <code>Map</code> type.</p>
+     * @see  java.util.Map
+     */
+    public void setTypeMap(Map<Class<? extends T>, C> map) {
 		this.classified = new ConcurrentHashMap<>(map);
 	}
 
-	/**
-	 * The key is the type and this will be mapped along with all subclasses to the
-	 * corresponding value. The most specific types will match first.
-	 * @param type the type of the input object
-	 * @param target the target value for all such types
-	 */
-	public void add(Class<? extends T> type, C target) {
+    /**
+     * <code>add</code>
+     * <p>The add method.</p>
+     * @param type {@link java.lang.Class} <p>The type parameter is <code>Class</code> type.</p>
+     * @param target C <p>The target parameter is <code>C</code> type.</p>
+     * @see  java.lang.Class
+     */
+    public void add(Class<? extends T> type, C target) {
 		this.classified.put(type, target);
 	}
 
-	/**
-	 * Return the value from the type map whose key is the class of the given Throwable,
-	 * or its nearest ancestor if a subclass.
-	 * @return C the classified value
-	 * @param classifiable the classifiable thing
-	 */
 	@Override
 	public C classify(T classifiable) {
 		if (classifiable == null) {
@@ -145,15 +141,22 @@ public class SubclassClassifier<T, C> implements Classifier<T, C> {
 		return value;
 	}
 
-	/**
-	 * Return the default value supplied in the constructor (default false).
-	 * @return C the default value
-	 */
-	final public C getDefault() {
+    /**
+     * <code>getDefault</code>
+     * <p>The get default getter method.</p>
+     * @return  C <p>The get default return object is <code>C</code> type.</p>
+     */
+    final public C getDefault() {
 		return this.defaultValue;
 	}
 
-	protected Map<Class<? extends T>, C> getClassified() {
+    /**
+     * <code>getClassified</code>
+     * <p>The get classified getter method.</p>
+     * @return  {@link java.util.Map} <p>The get classified return object is <code>Map</code> type.</p>
+     * @see  java.util.Map
+     */
+    protected Map<Class<? extends T>, C> getClassified() {
 		return this.classified;
 	}
 

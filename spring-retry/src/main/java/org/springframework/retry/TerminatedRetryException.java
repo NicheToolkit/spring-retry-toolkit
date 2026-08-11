@@ -16,14 +16,36 @@
 
 package org.springframework.retry;
 
+/**
+ * <code>TerminatedRetryException</code>
+ * <p>The terminated retry exception class.</p>
+ * @see  org.springframework.retry.RetryException
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 @SuppressWarnings("serial")
 public class TerminatedRetryException extends RetryException {
 
-	public TerminatedRetryException(String msg, Throwable cause) {
+    /**
+     * <code>TerminatedRetryException</code>
+     * <p>Instantiates a new terminated retry exception.</p>
+     * @param msg {@link java.lang.String} <p>The msg parameter is <code>String</code> type.</p>
+     * @param cause {@link java.lang.Throwable} <p>The cause parameter is <code>Throwable</code> type.</p>
+     * @see  java.lang.String
+     * @see  java.lang.Throwable
+     */
+    public TerminatedRetryException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 
-	public TerminatedRetryException(String msg) {
+    /**
+     * <code>TerminatedRetryException</code>
+     * <p>Instantiates a new terminated retry exception.</p>
+     * @param msg {@link java.lang.String} <p>The msg parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    public TerminatedRetryException(String msg) {
 		super(msg);
 	}
 

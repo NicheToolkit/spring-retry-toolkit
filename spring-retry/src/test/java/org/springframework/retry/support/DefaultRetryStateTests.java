@@ -20,17 +20,20 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Dave Syer
- * @author Gary Russell
- *
+ * <code>DefaultRetryStateTests</code>
+ * <p>The default retry state tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class DefaultRetryStateTests {
 
-	/**
-	 * Test method for
-	 * {@link DefaultRetryState#DefaultRetryState(Object, boolean, org.springframework.classify.Classifier)}.
-	 */
-	@SuppressWarnings("serial")
+    /**
+     * <code>testDefaultRetryStateObjectBooleanClassifierOfQsuperThrowableBoolean</code>
+     * <p>The test default retry state object boolean classifier of qsuper throwable boolean method.</p>
+     * @see  java.lang.SuppressWarnings
+     * @see  org.junit.jupiter.api.Test
+     */
+    @SuppressWarnings("serial")
 	@Test
 	public void testDefaultRetryStateObjectBooleanClassifierOfQsuperThrowableBoolean() {
 		DefaultRetryState state = new DefaultRetryState("foo", true, classifiable -> false);
@@ -39,11 +42,13 @@ public class DefaultRetryStateTests {
 		assertThat(state.rollbackFor(null)).isFalse();
 	}
 
-	/**
-	 * Test method for
-	 * {@link DefaultRetryState#DefaultRetryState(Object, org.springframework.classify.Classifier)}.
-	 */
-	@SuppressWarnings("serial")
+    /**
+     * <code>testDefaultRetryStateObjectClassifierOfQsuperThrowableBoolean</code>
+     * <p>The test default retry state object classifier of qsuper throwable boolean method.</p>
+     * @see  java.lang.SuppressWarnings
+     * @see  org.junit.jupiter.api.Test
+     */
+    @SuppressWarnings("serial")
 	@Test
 	public void testDefaultRetryStateObjectClassifierOfQsuperThrowableBoolean() {
 		DefaultRetryState state = new DefaultRetryState("foo", classifiable -> false);
@@ -52,11 +57,12 @@ public class DefaultRetryStateTests {
 		assertThat(state.rollbackFor(null)).isFalse();
 	}
 
-	/**
-	 * Test method for
-	 * {@link DefaultRetryState#DefaultRetryState(Object, boolean)}.
-	 */
-	@Test
+    /**
+     * <code>testDefaultRetryStateObjectBoolean</code>
+     * <p>The test default retry state object boolean method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testDefaultRetryStateObjectBoolean() {
 		DefaultRetryState state = new DefaultRetryState("foo", true);
 		assertThat(state.getKey()).isEqualTo("foo");
@@ -64,11 +70,12 @@ public class DefaultRetryStateTests {
 		assertThat(state.rollbackFor(null)).isTrue();
 	}
 
-	/**
-	 * Test method for
-	 * {@link DefaultRetryState#DefaultRetryState(Object)}.
-	 */
-	@Test
+    /**
+     * <code>testDefaultRetryStateObject</code>
+     * <p>The test default retry state object method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testDefaultRetryStateObject() {
 		DefaultRetryState state = new DefaultRetryState("foo");
 		assertThat(state.getKey()).isEqualTo("foo");

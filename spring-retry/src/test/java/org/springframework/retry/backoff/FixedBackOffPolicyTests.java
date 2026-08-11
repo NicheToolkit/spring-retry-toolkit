@@ -22,17 +22,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
- * @author Rob Harrop
- * @author Dave Syer
- * @author Gary Russell
- * @author Marius Lichtblau
- * @since 2.1
+ * <code>FixedBackOffPolicyTests</code>
+ * <p>The fixed back off policy tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class FixedBackOffPolicyTests {
 
 	private final DummySleeper sleeper = new DummySleeper();
 
-	@Test
+    /**
+     * <code>testSetBackoffPeriodNegative</code>
+     * <p>The test set backoff period negative method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSetBackoffPeriodNegative() {
 		FixedBackOffPolicy strategy = new FixedBackOffPolicy();
 		strategy.setBackOffPeriod(-1000L);
@@ -43,7 +47,12 @@ public class FixedBackOffPolicyTests {
 		assertThat(sleeper.getLastBackOff()).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>testSingleBackOff</code>
+     * <p>The test single back off method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSingleBackOff() {
 		int backOffPeriod = 50;
 		FixedBackOffPolicy strategy = new FixedBackOffPolicy();
@@ -54,7 +63,12 @@ public class FixedBackOffPolicyTests {
 		assertThat(sleeper.getLastBackOff()).isEqualTo(backOffPeriod);
 	}
 
-	@Test
+    /**
+     * <code>testManyBackOffCalls</code>
+     * <p>The test many back off calls method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testManyBackOffCalls() {
 		int backOffPeriod = 50;
 		FixedBackOffPolicy strategy = new FixedBackOffPolicy();
@@ -67,7 +81,12 @@ public class FixedBackOffPolicyTests {
 		assertThat(sleeper.getBackOffs().length).isEqualTo(10);
 	}
 
-	@Test
+    /**
+     * <code>testInterruptedStatusIsRestored</code>
+     * <p>The test interrupted status is restored method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testInterruptedStatusIsRestored() {
 		int backOffPeriod = 50;
 		FixedBackOffPolicy strategy = new FixedBackOffPolicy();

@@ -22,8 +22,14 @@ import org.springframework.core.AttributeAccessorSupport;
 import org.springframework.retry.RetryStatistics;
 
 /**
- * @author Dave Syer
- *
+ * <code>DefaultRetryStatistics</code>
+ * <p>The default retry statistics class.</p>
+ * @see  org.springframework.core.AttributeAccessorSupport
+ * @see  org.springframework.retry.RetryStatistics
+ * @see  org.springframework.retry.stats.MutableRetryStatistics
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class DefaultRetryStatistics extends AttributeAccessorSupport
@@ -41,10 +47,20 @@ public class DefaultRetryStatistics extends AttributeAccessorSupport
 
 	private final AtomicInteger abortCount = new AtomicInteger();
 
-	DefaultRetryStatistics() {
+    /**
+     * <code>DefaultRetryStatistics</code>
+     * <p>Instantiates a new default retry statistics.</p>
+     */
+    DefaultRetryStatistics() {
 	}
 
-	public DefaultRetryStatistics(String name) {
+    /**
+     * <code>DefaultRetryStatistics</code>
+     * <p>Instantiates a new default retry statistics.</p>
+     * @param name {@link java.lang.String} <p>The name parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    public DefaultRetryStatistics(String name) {
 		this.name = name;
 	}
 
@@ -78,7 +94,13 @@ public class DefaultRetryStatistics extends AttributeAccessorSupport
 		return recoveryCount.get();
 	}
 
-	public void setName(String name) {
+    /**
+     * <code>setName</code>
+     * <p>The set name setter method.</p>
+     * @param name {@link java.lang.String} <p>The name parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    public void setName(String name) {
 		this.name = name;
 	}
 

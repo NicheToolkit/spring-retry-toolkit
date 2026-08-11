@@ -24,33 +24,62 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Artem Bilan
- * @since 2.0.9
+ * <code>RetryableXmlConfigTests</code>
+ * <p>The retryable xml config tests class.</p>
+ * @see  org.springframework.test.context.junit.jupiter.SpringJUnitConfig
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SpringJUnitConfig
 public class RetryableXmlConfigTests {
 
-	@Autowired
+    /**
+     * <code>service</code>
+     * {@link org.springframework.retry.annotation.RetryableXmlConfigTests.Service} <p>The <code>service</code> field.</p>
+     * @see  org.springframework.retry.annotation.RetryableXmlConfigTests.Service
+     * @see  org.springframework.beans.factory.annotation.Autowired
+     */
+    @Autowired
 	Service service;
 
-	@Test
+    /**
+     * <code>serviceCallIsRetied</code>
+     * <p>The service call is retied method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	void serviceCallIsRetied() {
 		this.service.service();
 		assertThat(service.getCount()).isEqualTo(3);
 	}
 
-	public static class Service {
+    /**
+     * <code>Service</code>
+     * <p>The service class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public static class Service {
 
 		private int count = 0;
 
-		@Retryable
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         */
+        @Retryable
 		public void service() {
 			if (this.count++ < 2) {
 				throw new RuntimeException("Planned");
 			}
 		}
 
-		public int getCount() {
+        /**
+         * <code>getCount</code>
+         * <p>The get count getter method.</p>
+         * @return  int <p>The get count return object is <code>int</code> type.</p>
+         */
+        public int getCount() {
 			return this.count;
 		}
 

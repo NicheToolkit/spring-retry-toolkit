@@ -17,8 +17,12 @@
 package org.springframework.retry.stats;
 
 /**
- * @author Dave Syer
- *
+ * <code>ExponentialAverageRetryStatistics</code>
+ * <p>The exponential average retry statistics class.</p>
+ * @see  org.springframework.retry.stats.DefaultRetryStatistics
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class ExponentialAverageRetryStatistics extends DefaultRetryStatistics {
@@ -35,7 +39,13 @@ public class ExponentialAverageRetryStatistics extends DefaultRetryStatistics {
 
 	private ExponentialAverage abort;
 
-	public ExponentialAverageRetryStatistics(String name) {
+    /**
+     * <code>ExponentialAverageRetryStatistics</code>
+     * <p>Instantiates a new exponential average retry statistics.</p>
+     * @param name {@link java.lang.String} <p>The name parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    public ExponentialAverageRetryStatistics(String name) {
 		super(name);
 		init();
 	}
@@ -48,36 +58,67 @@ public class ExponentialAverageRetryStatistics extends DefaultRetryStatistics {
 		recovery = new ExponentialAverage(window);
 	}
 
-	/**
-	 * Window in milliseconds for exponential decay factor in rolling average.
-	 * @param window the window to set
-	 */
-	public void setWindow(long window) {
+    /**
+     * <code>setWindow</code>
+     * <p>The set window setter method.</p>
+     * @param window long <p>The window parameter is <code>long</code> type.</p>
+     */
+    public void setWindow(long window) {
 		this.window = window;
 		init();
 	}
 
-	public int getRollingStartedCount() {
+    /**
+     * <code>getRollingStartedCount</code>
+     * <p>The get rolling started count getter method.</p>
+     * @return  int <p>The get rolling started count return object is <code>int</code> type.</p>
+     */
+    public int getRollingStartedCount() {
 		return (int) Math.round(started.getValue());
 	}
 
-	public int getRollingErrorCount() {
+    /**
+     * <code>getRollingErrorCount</code>
+     * <p>The get rolling error count getter method.</p>
+     * @return  int <p>The get rolling error count return object is <code>int</code> type.</p>
+     */
+    public int getRollingErrorCount() {
 		return (int) Math.round(error.getValue());
 	}
 
-	public int getRollingAbortCount() {
+    /**
+     * <code>getRollingAbortCount</code>
+     * <p>The get rolling abort count getter method.</p>
+     * @return  int <p>The get rolling abort count return object is <code>int</code> type.</p>
+     */
+    public int getRollingAbortCount() {
 		return (int) Math.round(abort.getValue());
 	}
 
-	public int getRollingRecoveryCount() {
+    /**
+     * <code>getRollingRecoveryCount</code>
+     * <p>The get rolling recovery count getter method.</p>
+     * @return  int <p>The get rolling recovery count return object is <code>int</code> type.</p>
+     */
+    public int getRollingRecoveryCount() {
 		return (int) Math.round(recovery.getValue());
 	}
 
-	public int getRollingCompleteCount() {
+    /**
+     * <code>getRollingCompleteCount</code>
+     * <p>The get rolling complete count getter method.</p>
+     * @return  int <p>The get rolling complete count return object is <code>int</code> type.</p>
+     */
+    public int getRollingCompleteCount() {
 		return (int) Math.round(complete.getValue());
 	}
 
-	public double getRollingErrorRate() {
+    /**
+     * <code>getRollingErrorRate</code>
+     * <p>The get rolling error rate getter method.</p>
+     * @return  double <p>The get rolling error rate return object is <code>double</code> type.</p>
+     */
+    public double getRollingErrorRate() {
 		if (Math.round(started.getValue()) == 0) {
 			return 0.;
 		}
@@ -122,17 +163,31 @@ public class ExponentialAverageRetryStatistics extends DefaultRetryStatistics {
 
 		private volatile double value = 0;
 
-		public ExponentialAverage(long window) {
+        /**
+         * <code>ExponentialAverage</code>
+         * <p>Instantiates a new exponential average.</p>
+         * @param window long <p>The window parameter is <code>long</code> type.</p>
+         */
+        public ExponentialAverage(long window) {
 			alpha = 1. / window;
 		}
 
-		public synchronized void increment() {
+        /**
+         * <code>increment</code>
+         * <p>The increment method.</p>
+         */
+        public synchronized void increment() {
 			long time = System.currentTimeMillis();
 			value = value * Math.exp(-alpha * (time - lastTime)) + 1;
 			lastTime = time;
 		}
 
-		public double getValue() {
+        /**
+         * <code>getValue</code>
+         * <p>The get value getter method.</p>
+         * @return  double <p>The get value return object is <code>double</code> type.</p>
+         */
+        public double getValue() {
 			long time = System.currentTimeMillis();
 			return value * Math.exp(-alpha * (time - lastTime));
 		}

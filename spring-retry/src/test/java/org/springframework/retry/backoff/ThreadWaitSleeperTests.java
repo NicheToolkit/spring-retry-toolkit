@@ -21,13 +21,21 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Dave Syer
- * @author Artem Bilan
- * @author Gary Russell
+ * <code>ThreadWaitSleeperTests</code>
+ * <p>The thread wait sleeper tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class ThreadWaitSleeperTests {
 
-	@Test
+    /**
+     * <code>testSingleBackOff</code>
+     * <p>The test single back off method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	public void testSingleBackOff() throws Exception {
 		long backOffPeriod = 50;
 		ThreadWaitSleeper strategy = new ThreadWaitSleeper();

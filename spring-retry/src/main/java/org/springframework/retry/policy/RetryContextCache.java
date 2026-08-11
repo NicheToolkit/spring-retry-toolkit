@@ -19,23 +19,50 @@ package org.springframework.retry.policy;
 import org.springframework.retry.RetryContext;
 
 /**
- * Simple map-like abstraction for stateful retry policies to use when storing and
- * retrieving {@link RetryContext} instances. A null key should never be passed in by the
- * caller, but if it is then implementations are free to discard the context instead of
- * saving it (null key means "no information").
- *
- * @author Dave Syer
- * @see MapRetryContextCache
- *
+ * <code>RetryContextCache</code>
+ * <p>The retry context cache interface.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface RetryContextCache {
 
-	RetryContext get(Object key);
+    /**
+     * <code>get</code>
+     * <p>The get method.</p>
+     * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     * @see  org.springframework.retry.RetryContext
+     * @return  {@link org.springframework.retry.RetryContext} <p>The get return object is <code>RetryContext</code> type.</p>
+     */
+    RetryContext get(Object key);
 
-	void put(Object key, RetryContext context) throws RetryCacheCapacityExceededException;
+    /**
+     * <code>put</code>
+     * <p>The put method.</p>
+     * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+     * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+     * @see  java.lang.Object
+     * @see  org.springframework.retry.RetryContext
+     * @see  org.springframework.retry.policy.RetryCacheCapacityExceededException
+     * @throws RetryCacheCapacityExceededException {@link org.springframework.retry.policy.RetryCacheCapacityExceededException} <p>The retry cache capacity exceeded exception is <code>RetryCacheCapacityExceededException</code> type.</p>
+     */
+    void put(Object key, RetryContext context) throws RetryCacheCapacityExceededException;
 
-	void remove(Object key);
+    /**
+     * <code>remove</code>
+     * <p>The remove method.</p>
+     * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     */
+    void remove(Object key);
 
-	boolean containsKey(Object key);
+    /**
+     * <code>containsKey</code>
+     * <p>The contains key method.</p>
+     * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     * @return  boolean <p>The contains key return object is <code>boolean</code> type.</p>
+     */
+    boolean containsKey(Object key);
 
 }

@@ -18,32 +18,35 @@ package org.springframework.retry.policy;
 import org.springframework.retry.RetryException;
 
 /**
- * Exception that indicates that a cache limit was exceeded. This is often a sign of badly
- * or inconsistently implemented hashCode, equals in failed items. Items can then fail
- * repeatedly and appear different to the cache, so they get added over and over again
- * until a limit is reached and this exception is thrown. Consult the documentation of the
- * {@link RetryContextCache} in use to determine how to increase the limit if appropriate.
- *
- * @author Dave Syer
- *
+ * <code>RetryCacheCapacityExceededException</code>
+ * <p>The retry cache capacity exceeded exception class.</p>
+ * @see  org.springframework.retry.RetryException
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class RetryCacheCapacityExceededException extends RetryException {
 
-	/**
-	 * Constructs a new instance with a message.
-	 * @param message the message sent when creating the exception
-	 */
-	public RetryCacheCapacityExceededException(String message) {
+    /**
+     * <code>RetryCacheCapacityExceededException</code>
+     * <p>Instantiates a new retry cache capacity exceeded exception.</p>
+     * @param message {@link java.lang.String} <p>The message parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    public RetryCacheCapacityExceededException(String message) {
 		super(message);
 	}
 
-	/**
-	 * Constructs a new instance with a message and nested exception.
-	 * @param msg the exception message.
-	 * @param nested the nested exception
-	 */
-	public RetryCacheCapacityExceededException(String msg, Throwable nested) {
+    /**
+     * <code>RetryCacheCapacityExceededException</code>
+     * <p>Instantiates a new retry cache capacity exceeded exception.</p>
+     * @param msg {@link java.lang.String} <p>The msg parameter is <code>String</code> type.</p>
+     * @param nested {@link java.lang.Throwable} <p>The nested parameter is <code>Throwable</code> type.</p>
+     * @see  java.lang.String
+     * @see  java.lang.Throwable
+     */
+    public RetryCacheCapacityExceededException(String msg, Throwable nested) {
 		super(msg, nested);
 	}
 

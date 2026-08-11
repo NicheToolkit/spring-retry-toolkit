@@ -23,11 +23,15 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Mark a method as capable of classifying its input to an instance of its output. Should
- * only be used on non-void methods with one parameter.
- *
- * @author Dave Syer
- *
+ * <code>Classifier</code>
+ * <p>The classifier interface.</p>
+ * @see  java.lang.annotation.Annotation
+ * @see  java.lang.annotation.Target
+ * @see  java.lang.annotation.Retention
+ * @see  java.lang.annotation.Inherited
+ * @see  java.lang.annotation.Documented
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

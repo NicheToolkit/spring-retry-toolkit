@@ -30,9 +30,10 @@ import org.springframework.retry.support.RetryTemplate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Dave Syer
- * @author Henning Pöttker
- *
+ * <code>StatisticsListenerTests</code>
+ * <p>The statistics listener tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class StatisticsListenerTests {
 
@@ -40,7 +41,14 @@ public class StatisticsListenerTests {
 
 	private final StatisticsListener listener = new StatisticsListener(repository);
 
-	@Test
+    /**
+     * <code>testStatelessSuccessful</code>
+     * <p>The test stateless successful method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testStatelessSuccessful() throws Throwable {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		retryTemplate.setListeners(new RetryListener[] { listener });
@@ -59,7 +67,12 @@ public class StatisticsListenerTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testStatefulSuccessful</code>
+     * <p>The test stateful successful method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testStatefulSuccessful() {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		retryTemplate.setListeners(new RetryListener[] { listener });
@@ -86,7 +99,12 @@ public class StatisticsListenerTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testStatelessUnsuccessful</code>
+     * <p>The test stateless unsuccessful method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testStatelessUnsuccessful() {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		retryTemplate.setListeners(new RetryListener[] { listener });
@@ -109,7 +127,12 @@ public class StatisticsListenerTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testStatefulUnsuccessful</code>
+     * <p>The test stateful unsuccessful method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testStatefulUnsuccessful() {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		retryTemplate.setListeners(new RetryListener[] { listener });
@@ -136,7 +159,14 @@ public class StatisticsListenerTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testStatelessRecovery</code>
+     * <p>The test stateless recovery method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testStatelessRecovery() throws Throwable {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		retryTemplate.setListeners(new RetryListener[] { listener });
@@ -155,7 +185,12 @@ public class StatisticsListenerTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testStatefulRecovery</code>
+     * <p>The test stateful recovery method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testStatefulRecovery() {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		retryTemplate.setListeners(new RetryListener[] { listener });
@@ -200,7 +235,12 @@ public class StatisticsListenerTests {
 			return null;
 		}
 
-		public void setAttemptsBeforeSuccess(int attemptsBeforeSuccess) {
+        /**
+         * <code>setAttemptsBeforeSuccess</code>
+         * <p>The set attempts before success setter method.</p>
+         * @param attemptsBeforeSuccess int <p>The attempts before success parameter is <code>int</code> type.</p>
+         */
+        public void setAttemptsBeforeSuccess(int attemptsBeforeSuccess) {
 			this.attemptsBeforeSuccess = attemptsBeforeSuccess;
 		}
 

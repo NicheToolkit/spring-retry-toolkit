@@ -27,9 +27,20 @@ import org.springframework.retry.RetryPolicy;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+/**
+ * <code>CompositeRetryPolicyTests</code>
+ * <p>The composite retry policy tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class CompositeRetryPolicyTests {
 
-	@Test
+    /**
+     * <code>testEmptyPolicies</code>
+     * <p>The test empty policies method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testEmptyPolicies() {
 		CompositeRetryPolicy policy = new CompositeRetryPolicy();
 		RetryContext context = policy.open(null);
@@ -37,7 +48,12 @@ public class CompositeRetryPolicyTests {
 		assertThat(policy.canRetry(context)).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testTrivialPolicies</code>
+     * <p>The test trivial policies method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testTrivialPolicies() {
 		CompositeRetryPolicy policy = new CompositeRetryPolicy();
 		policy.setPolicies(new RetryPolicy[] { new MockRetryPolicySupport(), new MockRetryPolicySupport() });
@@ -46,7 +62,13 @@ public class CompositeRetryPolicyTests {
 		assertThat(policy.canRetry(context)).isTrue();
 	}
 
-	@SuppressWarnings("serial")
+    /**
+     * <code>testNonTrivialPolicies</code>
+     * <p>The test non trivial policies method.</p>
+     * @see  java.lang.SuppressWarnings
+     * @see  org.junit.jupiter.api.Test
+     */
+    @SuppressWarnings("serial")
 	@Test
 	public void testNonTrivialPolicies() {
 		CompositeRetryPolicy policy = new CompositeRetryPolicy();
@@ -60,7 +82,13 @@ public class CompositeRetryPolicyTests {
 		assertThat(policy.canRetry(context)).isFalse();
 	}
 
-	@SuppressWarnings("serial")
+    /**
+     * <code>testNonTrivialPoliciesWithThrowable</code>
+     * <p>The test non trivial policies with throwable method.</p>
+     * @see  java.lang.SuppressWarnings
+     * @see  org.junit.jupiter.api.Test
+     */
+    @SuppressWarnings("serial")
 	@Test
 	public void testNonTrivialPoliciesWithThrowable() {
 		CompositeRetryPolicy policy = new CompositeRetryPolicy();
@@ -82,7 +110,13 @@ public class CompositeRetryPolicyTests {
 		assertThat(policy.canRetry(context)).describedAs("Should be still able to retry").isFalse();
 	}
 
-	@SuppressWarnings("serial")
+    /**
+     * <code>testNonTrivialPoliciesClose</code>
+     * <p>The test non trivial policies close method.</p>
+     * @see  java.lang.SuppressWarnings
+     * @see  org.junit.jupiter.api.Test
+     */
+    @SuppressWarnings("serial")
 	@Test
 	public void testNonTrivialPoliciesClose() {
 		final List<String> list = new ArrayList<>();
@@ -102,7 +136,13 @@ public class CompositeRetryPolicyTests {
 		assertThat(list).hasSize(2);
 	}
 
-	@SuppressWarnings("serial")
+    /**
+     * <code>testExceptionOnPoliciesClose</code>
+     * <p>The test exception on policies close method.</p>
+     * @see  java.lang.SuppressWarnings
+     * @see  org.junit.jupiter.api.Test
+     */
+    @SuppressWarnings("serial")
 	@Test
 	public void testExceptionOnPoliciesClose() {
 		final List<String> list = new ArrayList<>();
@@ -123,7 +163,12 @@ public class CompositeRetryPolicyTests {
 		assertThat(list).hasSize(2);
 	}
 
-	@Test
+    /**
+     * <code>testRetryCount</code>
+     * <p>The test retry count method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRetryCount() {
 		CompositeRetryPolicy policy = new CompositeRetryPolicy();
 		policy.setPolicies(new RetryPolicy[] { new MockRetryPolicySupport(), new MockRetryPolicySupport() });
@@ -136,7 +181,12 @@ public class CompositeRetryPolicyTests {
 		assertThat(context.getLastThrowable().getMessage()).isEqualTo("foo");
 	}
 
-	@Test
+    /**
+     * <code>testParent</code>
+     * <p>The test parent method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testParent() {
 		CompositeRetryPolicy policy = new CompositeRetryPolicy();
 		RetryContext context = policy.open(null);
@@ -145,7 +195,13 @@ public class CompositeRetryPolicyTests {
 		assertThat(child.getParent()).isSameAs(context);
 	}
 
-	@SuppressWarnings("serial")
+    /**
+     * <code>testOptimistic</code>
+     * <p>The test optimistic method.</p>
+     * @see  java.lang.SuppressWarnings
+     * @see  org.junit.jupiter.api.Test
+     */
+    @SuppressWarnings("serial")
 	@Test
 	public void testOptimistic() {
 		CompositeRetryPolicy policy = new CompositeRetryPolicy();
@@ -160,7 +216,12 @@ public class CompositeRetryPolicyTests {
 		assertThat(policy.canRetry(context)).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testMaximumAttemptsForNonSuitablePolicies</code>
+     * <p>The test maximum attempts for non suitable policies method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testMaximumAttemptsForNonSuitablePolicies() {
 		CompositeRetryPolicy policy = new CompositeRetryPolicy();
 		policy.setOptimistic(true);
@@ -169,7 +230,12 @@ public class CompositeRetryPolicyTests {
 		assertThat(policy.getMaxAttempts()).isEqualTo(RetryPolicy.NO_MAXIMUM_ATTEMPTS_SET);
 	}
 
-	@Test
+    /**
+     * <code>testMaximumAttemptsForSuitablePolicies</code>
+     * <p>The test maximum attempts for suitable policies method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testMaximumAttemptsForSuitablePolicies() {
 		CompositeRetryPolicy policy = new CompositeRetryPolicy();
 		policy.setOptimistic(true);

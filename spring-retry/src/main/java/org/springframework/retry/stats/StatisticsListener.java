@@ -24,15 +24,23 @@ import org.springframework.retry.RetryStatistics;
 import org.springframework.retry.policy.CircuitBreakerRetryPolicy;
 
 /**
- * @author Dave Syer
- * @author Henning Pöttker
- *
+ * <code>StatisticsListener</code>
+ * <p>The statistics listener class.</p>
+ * @see  org.springframework.retry.RetryListener
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class StatisticsListener implements RetryListener {
 
 	private final StatisticsRepository repository;
 
-	public StatisticsListener(StatisticsRepository repository) {
+    /**
+     * <code>StatisticsListener</code>
+     * <p>Instantiates a new statistics listener.</p>
+     * @param repository {@link org.springframework.retry.stats.StatisticsRepository} <p>The repository parameter is <code>StatisticsRepository</code> type.</p>
+     * @see  org.springframework.retry.stats.StatisticsRepository
+     */
+    public StatisticsListener(StatisticsRepository repository) {
 		this.repository = repository;
 	}
 

@@ -17,48 +17,54 @@
 package org.springframework.retry;
 
 /**
- * Interface for statistics reporting of retry attempts. Counts the number of retry
- * attempts, successes, errors (including retries), and aborts.
- *
- * @author Dave Syer
- *
+ * <code>RetryStatistics</code>
+ * <p>The retry statistics interface.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface RetryStatistics {
 
-	/**
-	 * @return the number of completed successful retry attempts.
-	 */
-	int getCompleteCount();
+    /**
+     * <code>getCompleteCount</code>
+     * <p>The get complete count getter method.</p>
+     * @return  int <p>The get complete count return object is <code>int</code> type.</p>
+     */
+    int getCompleteCount();
 
-	/**
-	 * Get the number of times a retry block has been entered, irrespective of how many
-	 * times the operation was retried.
-	 * @return the number of retry blocks started.
-	 */
-	int getStartedCount();
+    /**
+     * <code>getStartedCount</code>
+     * <p>The get started count getter method.</p>
+     * @return  int <p>The get started count return object is <code>int</code> type.</p>
+     */
+    int getStartedCount();
 
-	/**
-	 * Get the number of errors detected, whether or not they resulted in a retry.
-	 * @return the number of errors detected.
-	 */
-	int getErrorCount();
+    /**
+     * <code>getErrorCount</code>
+     * <p>The get error count getter method.</p>
+     * @return  int <p>The get error count return object is <code>int</code> type.</p>
+     */
+    int getErrorCount();
 
-	/**
-	 * Get the number of times a block failed to complete successfully, even after retry.
-	 * @return the number of retry attempts that failed overall.
-	 */
-	int getAbortCount();
+    /**
+     * <code>getAbortCount</code>
+     * <p>The get abort count getter method.</p>
+     * @return  int <p>The get abort count return object is <code>int</code> type.</p>
+     */
+    int getAbortCount();
 
-	/**
-	 * Get the number of times a recovery callback was applied.
-	 * @return the number of recovered attempts.
-	 */
-	int getRecoveryCount();
+    /**
+     * <code>getRecoveryCount</code>
+     * <p>The get recovery count getter method.</p>
+     * @return  int <p>The get recovery count return object is <code>int</code> type.</p>
+     */
+    int getRecoveryCount();
 
-	/**
-	 * Get an identifier for the retry block for reporting purposes.
-	 * @return an identifier for the block.
-	 */
-	String getName();
+    /**
+     * <code>getName</code>
+     * <p>The get name getter method.</p>
+     * @return  {@link java.lang.String} <p>The get name return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String getName();
 
 }

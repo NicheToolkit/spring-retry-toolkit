@@ -26,16 +26,32 @@ import org.springframework.retry.RetryContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * <code>SimpleRetryPolicyTests</code>
+ * <p>The simple retry policy tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class SimpleRetryPolicyTests {
 
-	@Test
+    /**
+     * <code>testCanRetryIfNoException</code>
+     * <p>The test can retry if no exception method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCanRetryIfNoException() {
 		SimpleRetryPolicy policy = new SimpleRetryPolicy();
 		RetryContext context = policy.open(null);
 		assertThat(policy.canRetry(context)).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testEmptyExceptionsNeverRetry</code>
+     * <p>The test empty exceptions never retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testEmptyExceptionsNeverRetry() {
 
 		// We can't retry any exceptions...
@@ -48,7 +64,12 @@ public class SimpleRetryPolicyTests {
 		assertThat(policy.canRetry(context)).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testWithExceptionDefaultAlwaysRetry</code>
+     * <p>The test with exception default always retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testWithExceptionDefaultAlwaysRetry() {
 
 		// We retry any exceptions except...
@@ -66,7 +87,12 @@ public class SimpleRetryPolicyTests {
 		assertThat(policy.canRetry(context)).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testRetryLimitInitialState</code>
+     * <p>The test retry limit initial state method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRetryLimitInitialState() {
 		SimpleRetryPolicy policy = new SimpleRetryPolicy();
 		RetryContext context = policy.open(null);
@@ -76,7 +102,12 @@ public class SimpleRetryPolicyTests {
 		assertThat(policy.canRetry(context)).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testRetryLimitSubsequentState</code>
+     * <p>The test retry limit subsequent state method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRetryLimitSubsequentState() {
 		SimpleRetryPolicy policy = new SimpleRetryPolicy();
 		RetryContext context = policy.open(null);
@@ -88,7 +119,12 @@ public class SimpleRetryPolicyTests {
 		assertThat(policy.canRetry(context)).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testRetryCount</code>
+     * <p>The test retry count method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRetryCount() {
 		SimpleRetryPolicy policy = new SimpleRetryPolicy();
 		RetryContext context = policy.open(null);
@@ -100,7 +136,12 @@ public class SimpleRetryPolicyTests {
 		assertThat(context.getLastThrowable().getMessage()).isEqualTo("foo");
 	}
 
-	@Test
+    /**
+     * <code>testFatalOverridesRetryable</code>
+     * <p>The test fatal overrides retryable method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFatalOverridesRetryable() {
 		Map<Class<? extends Throwable>, Boolean> map = new HashMap<>();
 		map.put(Exception.class, false);
@@ -112,7 +153,12 @@ public class SimpleRetryPolicyTests {
 		assertThat(policy.canRetry(context)).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testRetryableWithCause</code>
+     * <p>The test retryable with cause method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRetryableWithCause() {
 		Map<Class<? extends Throwable>, Boolean> map = new HashMap<>();
 		map.put(RuntimeException.class, true);
@@ -123,7 +169,12 @@ public class SimpleRetryPolicyTests {
 		assertThat(policy.canRetry(context)).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testParent</code>
+     * <p>The test parent method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testParent() {
 		SimpleRetryPolicy policy = new SimpleRetryPolicy();
 		RetryContext context = policy.open(null);

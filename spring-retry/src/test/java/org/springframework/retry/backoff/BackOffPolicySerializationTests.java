@@ -39,15 +39,23 @@ import org.springframework.util.SerializationUtils;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * @author Dave Syer
- * @author Gary Russell
- *
+ * <code>BackOffPolicySerializationTests</code>
+ * <p>The back off policy serialization tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class BackOffPolicySerializationTests {
 
 	private static final Log logger = LogFactory.getLog(BackOffPolicySerializationTests.class);
 
-	@SuppressWarnings("deprecation")
+    /**
+     * <code>policies</code>
+     * <p>The policies method.</p>
+     * @return  {@link java.util.stream.Stream} <p>The policies return object is <code>Stream</code> type.</p>
+     * @see  java.util.stream.Stream
+     * @see  java.lang.SuppressWarnings
+     */
+    @SuppressWarnings("deprecation")
 	public static Stream<Object[]> policies() {
 		List<Object[]> result = new ArrayList<>();
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(true);
@@ -68,7 +76,15 @@ public class BackOffPolicySerializationTests {
 		return result.stream();
 	}
 
-	@ParameterizedTest
+    /**
+     * <code>testSerializationCycleForContext</code>
+     * <p>The test serialization cycle for context method.</p>
+     * @param policy {@link org.springframework.retry.backoff.BackOffPolicy} <p>The policy parameter is <code>BackOffPolicy</code> type.</p>
+     * @see  org.junit.jupiter.params.ParameterizedTest
+     * @see  org.junit.jupiter.params.provider.MethodSource
+     * @see  java.lang.SuppressWarnings
+     */
+    @ParameterizedTest
 	@MethodSource("policies")
 	@SuppressWarnings("deprecation")
 	public void testSerializationCycleForContext(BackOffPolicy policy) {

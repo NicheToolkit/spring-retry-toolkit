@@ -18,18 +18,21 @@ package org.springframework.retry.backoff;
 import java.io.Serializable;
 
 /**
- * Strategy interface for backoff policies to delegate the pausing of execution.
- *
- * @author Dave Syer
- *
+ * <code>Sleeper</code>
+ * <p>The sleeper interface.</p>
+ * @see  java.io.Serializable
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface Sleeper extends Serializable {
 
-	/**
-	 * Pause for the specified period using whatever means available.
-	 * @param backOffPeriod the backoff period
-	 * @throws InterruptedException the exception when interrupted
-	 */
-	void sleep(long backOffPeriod) throws InterruptedException;
+    /**
+     * <code>sleep</code>
+     * <p>The sleep method.</p>
+     * @param backOffPeriod long <p>The back off period parameter is <code>long</code> type.</p>
+     * @throws InterruptedException {@link java.lang.InterruptedException} <p>The interrupted exception is <code>InterruptedException</code> type.</p>
+     * @see  java.lang.InterruptedException
+     */
+    void sleep(long backOffPeriod) throws InterruptedException;
 
 }

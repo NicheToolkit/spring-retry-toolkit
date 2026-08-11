@@ -31,24 +31,26 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
 /**
- * Utility methods to create {@link MethodInvoker} instances.
- *
- * @author Lucas Ward
- * @author Artem Bilan
- * @since 1.1
+ * <code>MethodInvokerUtils</code>
+ * <p>The method invoker utils class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class MethodInvokerUtils {
 
-	/**
-	 * Create a {@link MethodInvoker} using the provided method name to search.
-	 * @param object to be invoked
-	 * @param methodName of the method to be invoked
-	 * @param paramsRequired boolean indicating whether the parameters are required, if
-	 * false, a no args version of the method will be searched for.
-	 * @param paramTypes - parameter types of the method to search for.
-	 * @return MethodInvoker if the method is found, null if it is not.
-	 */
-	public static MethodInvoker getMethodInvokerByName(Object object, String methodName, boolean paramsRequired,
+    /**
+     * <code>getMethodInvokerByName</code>
+     * <p>The get method invoker by name getter method.</p>
+     * @param object {@link java.lang.Object} <p>The object parameter is <code>Object</code> type.</p>
+     * @param methodName {@link java.lang.String} <p>The method name parameter is <code>String</code> type.</p>
+     * @param paramsRequired boolean <p>The params required parameter is <code>boolean</code> type.</p>
+     * @param paramTypes {@link java.lang.Class} <p>The param types parameter is <code>Class</code> type.</p>
+     * @see  java.lang.Object
+     * @see  java.lang.String
+     * @see  java.lang.Class
+     * @return  {@link org.springframework.classify.util.MethodInvoker} <p>The get method invoker by name return object is <code>MethodInvoker</code> type.</p>
+     */
+    public static MethodInvoker getMethodInvokerByName(Object object, String methodName, boolean paramsRequired,
 			Class<?>... paramTypes) {
 		Assert.notNull(object, "Object to invoke must not be null");
 		Method method = ClassUtils.getMethodIfAvailable(object.getClass(), methodName, paramTypes);
@@ -65,12 +67,15 @@ public class MethodInvokerUtils {
 		return new SimpleMethodInvoker(object, method);
 	}
 
-	/**
-	 * Create a String representation of the array of parameter types.
-	 * @param paramTypes the types of parameters
-	 * @return the paramTypes as String representation
-	 */
-	public static String getParamTypesString(Class<?>... paramTypes) {
+    /**
+     * <code>getParamTypesString</code>
+     * <p>The get param types string getter method.</p>
+     * @param paramTypes {@link java.lang.Class} <p>The param types parameter is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  java.lang.String
+     * @return  {@link java.lang.String} <p>The get param types string return object is <code>String</code> type.</p>
+     */
+    public static String getParamTypesString(Class<?>... paramTypes) {
 		StringBuilder paramTypesList = new StringBuilder("(");
 		for (int i = 0; i < paramTypes.length; i++) {
 			paramTypesList.append(paramTypes[i].getSimpleName());
@@ -81,16 +86,19 @@ public class MethodInvokerUtils {
 		return paramTypesList.append(")").toString();
 	}
 
-	/**
-	 * Create a {@link MethodInvoker} using the provided interface, and method name from
-	 * that interface.
-	 * @param cls the interface to search for the method named
-	 * @param methodName of the method to be invoked
-	 * @param object to be invoked
-	 * @param paramTypes - parameter types of the method to search for.
-	 * @return MethodInvoker if the method is found, null if it is not.
-	 */
-	public static MethodInvoker getMethodInvokerForInterface(Class<?> cls, String methodName, Object object,
+    /**
+     * <code>getMethodInvokerForInterface</code>
+     * <p>The get method invoker for interface getter method.</p>
+     * @param cls {@link java.lang.Class} <p>The cls parameter is <code>Class</code> type.</p>
+     * @param methodName {@link java.lang.String} <p>The method name parameter is <code>String</code> type.</p>
+     * @param object {@link java.lang.Object} <p>The object parameter is <code>Object</code> type.</p>
+     * @param paramTypes {@link java.lang.Class} <p>The param types parameter is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  java.lang.String
+     * @see  java.lang.Object
+     * @return  {@link org.springframework.classify.util.MethodInvoker} <p>The get method invoker for interface return object is <code>MethodInvoker</code> type.</p>
+     */
+    public static MethodInvoker getMethodInvokerForInterface(Class<?> cls, String methodName, Object object,
 			Class<?>... paramTypes) {
 
 		if (cls.isAssignableFrom(object.getClass())) {
@@ -101,15 +109,17 @@ public class MethodInvokerUtils {
 		}
 	}
 
-	/**
-	 * Create a MethodInvoker from the delegate based on the annotationType. Ensure that
-	 * the annotated method has a valid set of parameters.
-	 * @param annotationType the annotation to scan for
-	 * @param target the target object
-	 * @param expectedParamTypes the expected parameter types for the method
-	 * @return a MethodInvoker
-	 */
-	public static MethodInvoker getMethodInvokerByAnnotation(final Class<? extends Annotation> annotationType,
+    /**
+     * <code>getMethodInvokerByAnnotation</code>
+     * <p>The get method invoker by annotation getter method.</p>
+     * @param annotationType {@link java.lang.Class} <p>The annotation type parameter is <code>Class</code> type.</p>
+     * @param target {@link java.lang.Object} <p>The target parameter is <code>Object</code> type.</p>
+     * @param expectedParamTypes {@link java.lang.Class} <p>The expected param types parameter is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  java.lang.Object
+     * @return  {@link org.springframework.classify.util.MethodInvoker} <p>The get method invoker by annotation return object is <code>MethodInvoker</code> type.</p>
+     */
+    public static MethodInvoker getMethodInvokerByAnnotation(final Class<? extends Annotation> annotationType,
 			final Object target, final Class<?>... expectedParamTypes) {
 		MethodInvoker mi = MethodInvokerUtils.getMethodInvokerByAnnotation(annotationType, target);
 		final Class<?> targetClass = (target instanceof Advised) ? ((Advised) target).getTargetSource().getTargetClass()
@@ -136,15 +146,16 @@ public class MethodInvokerUtils {
 		return mi;
 	}
 
-	/**
-	 * Create {@link MethodInvoker} for the method with the provided annotation on the
-	 * provided object. Annotations that cannot be applied to methods (i.e. that aren't
-	 * annotated with an element type of METHOD) will cause an exception to be thrown.
-	 * @param annotationType to be searched for
-	 * @param target to be invoked
-	 * @return MethodInvoker for the provided annotation, null if none is found.
-	 */
-	public static MethodInvoker getMethodInvokerByAnnotation(final Class<? extends Annotation> annotationType,
+    /**
+     * <code>getMethodInvokerByAnnotation</code>
+     * <p>The get method invoker by annotation getter method.</p>
+     * @param annotationType {@link java.lang.Class} <p>The annotation type parameter is <code>Class</code> type.</p>
+     * @param target {@link java.lang.Object} <p>The target parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Class
+     * @see  java.lang.Object
+     * @return  {@link org.springframework.classify.util.MethodInvoker} <p>The get method invoker by annotation return object is <code>MethodInvoker</code> type.</p>
+     */
+    public static MethodInvoker getMethodInvokerByAnnotation(final Class<? extends Annotation> annotationType,
 			final Object target) {
 		Assert.notNull(target, "Target must not be null");
 		Assert.notNull(annotationType, "AnnotationType must not be null");
@@ -176,14 +187,16 @@ public class MethodInvokerUtils {
 		}
 	}
 
-	/**
-	 * Create a {@link MethodInvoker} for the delegate from a single public method.
-	 * @param target an object to search for an appropriate method
-	 * @return a MethodInvoker that calls a method on the delegate
-	 * @param <T> the t
-	 * @param <C> the C
-	 */
-	public static <C, T> MethodInvoker getMethodInvokerForSingleArgument(Object target) {
+    /**
+     * <code>getMethodInvokerForSingleArgument</code>
+     * <p>The get method invoker for single argument getter method.</p>
+     * @param <C>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+     * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+     * @param target {@link java.lang.Object} <p>The target parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     * @return  {@link org.springframework.classify.util.MethodInvoker} <p>The get method invoker for single argument return object is <code>MethodInvoker</code> type.</p>
+     */
+    public static <C, T> MethodInvoker getMethodInvokerForSingleArgument(Object target) {
 		final AtomicReference<Method> methodHolder = new AtomicReference<>();
 		ReflectionUtils.doWithMethods(target.getClass(), method -> {
 			if ((method.getModifiers() & Modifier.PUBLIC) == 0 || method.isBridge()) {

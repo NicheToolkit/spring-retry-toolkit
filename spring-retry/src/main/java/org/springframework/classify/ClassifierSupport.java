@@ -17,32 +17,29 @@
 package org.springframework.classify;
 
 /**
- * Base class for {@link Classifier} implementations. Provides default behaviour and some
- * convenience members, like constants.
- *
- * @author Dave Syer
- * @param <C> the type of the thing to classify
- * @param <T> the output of the classifier
+ * <code>ClassifierSupport</code>
+ * <p>The classifier support class.</p>
+ * @param <C>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class ClassifierSupport<C, T> implements Classifier<C, T> {
 
 	final private T defaultValue;
 
-	/**
-	 * @param defaultValue the default value
-	 */
-	public ClassifierSupport(T defaultValue) {
+    /**
+     * <code>ClassifierSupport</code>
+     * <p>Instantiates a new classifier support.</p>
+     * @param defaultValue T <p>The default value parameter is <code>T</code> type.</p>
+     */
+    public ClassifierSupport(T defaultValue) {
 		super();
 		this.defaultValue = defaultValue;
 	}
 
-	/**
-	 * Always returns the default value. This is the main extension point for subclasses,
-	 * so it must be able to classify null.
-	 *
-	 * @see Classifier#classify(Object)
-	 */
 	@Override
 	public T classify(C throwable) {
 		return this.defaultValue;

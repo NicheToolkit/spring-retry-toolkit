@@ -21,77 +21,61 @@ import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.context.RetryContextSupport;
 
 /**
- * A {@link RetryPolicy} that allows the first attempt but never permits a retry. Also be
- * used as a base class for other policies, e.g. for test purposes as a stub.
- *
- * @author Dave Syer
- *
+ * <code>NeverRetryPolicy</code>
+ * <p>The never retry policy class.</p>
+ * @see  org.springframework.retry.RetryPolicy
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class NeverRetryPolicy implements RetryPolicy {
 
-	/**
-	 * Returns false after the first exception. So there is always one try, and then the
-	 * retry is prevented.
-	 *
-	 * @see RetryPolicy#canRetry(RetryContext)
-	 */
 	public boolean canRetry(RetryContext context) {
 		return !((NeverRetryContext) context).isFinished();
 	}
 
-	/**
-	 * Do nothing.
-	 *
-	 * @see RetryPolicy#close(RetryContext)
-	 */
 	public void close(RetryContext context) {
 		// no-op
 	}
 
-	/**
-	 * Return a context that can respond to early termination requests, but does nothing
-	 * else.
-	 *
-	 * @see RetryPolicy#open(RetryContext)
-	 */
 	public RetryContext open(RetryContext parent) {
 		return new NeverRetryContext(parent);
 	}
 
-	/**
-	 * Make the throwable available for downstream use through the context.
-	 * @see RetryPolicy#registerThrowable(RetryContext,
-	 * Throwable)
-	 */
 	public void registerThrowable(RetryContext context, Throwable throwable) {
 		((NeverRetryContext) context).setFinished();
 		((RetryContextSupport) context).registerThrowable(throwable);
 	}
 
-	/**
-	 * Special context object for {@link NeverRetryPolicy}. Implements a flag with a
-	 * similar function to {@link RetryContext#isExhaustedOnly()}, but kept separate so
-	 * that if subclasses of {@link NeverRetryPolicy} need to they can modify the
-	 * behaviour of {@link NeverRetryPolicy#canRetry(RetryContext)} without affecting
-	 * {@link RetryContext#isExhaustedOnly()}.
-	 *
-	 * @author Dave Syer
-	 *
-	 */
 	private static class NeverRetryContext extends RetryContextSupport {
 
 		private boolean finished = false;
 
-		public NeverRetryContext(RetryContext parent) {
+        /**
+         * <code>NeverRetryContext</code>
+         * <p>Instantiates a new never retry context.</p>
+         * @param parent {@link org.springframework.retry.RetryContext} <p>The parent parameter is <code>RetryContext</code> type.</p>
+         * @see  org.springframework.retry.RetryContext
+         */
+        public NeverRetryContext(RetryContext parent) {
 			super(parent);
 		}
 
-		public boolean isFinished() {
+        /**
+         * <code>isFinished</code>
+         * <p>The is finished method.</p>
+         * @return  boolean <p>The is finished return object is <code>boolean</code> type.</p>
+         */
+        public boolean isFinished() {
 			return finished;
 		}
 
-		public void setFinished() {
+        /**
+         * <code>setFinished</code>
+         * <p>The set finished setter method.</p>
+         */
+        public void setFinished() {
 			this.finished = true;
 		}
 

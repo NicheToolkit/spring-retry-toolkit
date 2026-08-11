@@ -17,34 +17,34 @@
 package org.springframework.retry;
 
 /**
- * Callback interface for an operation that can be retried using a
- * {@link RetryOperations}.
- *
- * @param <T> the type of object returned by the callback
- * @param <E> the type of exception it declares may be thrown
- * @author Rob Harrop
- * @author Dave Syer
- * @author Artem Bilan
+ * <code>RetryCallback</code>
+ * <p>The retry callback interface.</p>
+ * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @param <E>  {@link java.lang.Throwable} <p>The generic parameter is <code>Throwable</code> type.</p>
+ * @see  java.lang.Throwable
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface RetryCallback<T, E extends Throwable> {
 
-	/**
-	 * Execute an operation with retry semantics. Operations should generally be
-	 * idempotent, but implementations may choose to implement compensation semantics when
-	 * an operation is retried.
-	 * @param context the current retry context.
-	 * @return the result of the successful operation.
-	 * @throws E of type E if processing fails
-	 */
-	T doWithRetry(RetryContext context) throws E;
+    /**
+     * <code>doWithRetry</code>
+     * <p>The do with retry method.</p>
+     * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+     * @see  org.springframework.retry.RetryContext
+     * @see  E
+     * @return  T <p>The do with retry return object is <code>T</code> type.</p>
+     * @throws E E <p>The e is <code>E</code> type.</p>
+     */
+    T doWithRetry(RetryContext context) throws E;
 
-	/**
-	 * A logical identifier for this callback to distinguish retries around business
-	 * operations.
-	 * @return the identifier for this callback.
-	 * @since 2.0.6
-	 */
-	default String getLabel() {
+    /**
+     * <code>getLabel</code>
+     * <p>The get label getter method.</p>
+     * @return  {@link java.lang.String} <p>The get label return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    default String getLabel() {
 		return null;
 	}
 

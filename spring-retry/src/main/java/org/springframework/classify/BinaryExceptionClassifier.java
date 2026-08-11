@@ -21,47 +21,56 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A {@link Classifier} for exceptions that has only two classes (true and false).
- * Classifies objects according to their inheritance relation with the supplied types. If
- * the object to be classified is one of the provided types, or is a subclass of one of
- * the types, then the non-default value is returned (usually true).
- *
- * @see SubclassClassifier
- * @author Dave Syer
- * @author Gary Russell
- *
+ * <code>BinaryExceptionClassifier</code>
+ * <p>The binary exception classifier class.</p>
+ * @see  org.springframework.classify.SubclassClassifier
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class BinaryExceptionClassifier extends SubclassClassifier<Throwable, Boolean> {
 
 	private boolean traverseCauses;
 
-	public static BinaryExceptionClassifierBuilder builder() {
+    /**
+     * <code>builder</code>
+     * <p>The builder method.</p>
+     * @return  {@link org.springframework.classify.BinaryExceptionClassifierBuilder} <p>The builder return object is <code>BinaryExceptionClassifierBuilder</code> type.</p>
+     * @see  org.springframework.classify.BinaryExceptionClassifierBuilder
+     */
+    public static BinaryExceptionClassifierBuilder builder() {
 		return new BinaryExceptionClassifierBuilder();
 	}
 
-	public static BinaryExceptionClassifier defaultClassifier() {
+    /**
+     * <code>defaultClassifier</code>
+     * <p>The default classifier method.</p>
+     * @return  {@link org.springframework.classify.BinaryExceptionClassifier} <p>The default classifier return object is <code>BinaryExceptionClassifier</code> type.</p>
+     */
+    public static BinaryExceptionClassifier defaultClassifier() {
 		// create new instance for each call due to mutability
 		return new BinaryExceptionClassifier(
 				Collections.<Class<? extends Throwable>, Boolean>singletonMap(Exception.class, true), false);
 	}
 
-	/**
-	 * Create a binary exception classifier with the provided default value.
-	 * @param defaultValue defaults to false
-	 */
-	public BinaryExceptionClassifier(boolean defaultValue) {
+    /**
+     * <code>BinaryExceptionClassifier</code>
+     * <p>Instantiates a new binary exception classifier.</p>
+     * @param defaultValue boolean <p>The default value parameter is <code>boolean</code> type.</p>
+     */
+    public BinaryExceptionClassifier(boolean defaultValue) {
 		super(defaultValue);
 	}
 
-	/**
-	 * Create a binary exception classifier with the provided classes and their
-	 * subclasses. The mapped value for these exceptions will be the one provided (which
-	 * will be the opposite of the default).
-	 * @param exceptionClasses the exceptions to classify among
-	 * @param value the value to classify
-	 */
-	public BinaryExceptionClassifier(Collection<Class<? extends Throwable>> exceptionClasses, boolean value) {
+    /**
+     * <code>BinaryExceptionClassifier</code>
+     * <p>Instantiates a new binary exception classifier.</p>
+     * @param exceptionClasses {@link java.util.Collection} <p>The exception classes parameter is <code>Collection</code> type.</p>
+     * @param value boolean <p>The value parameter is <code>boolean</code> type.</p>
+     * @see  java.util.Collection
+     */
+    public BinaryExceptionClassifier(Collection<Class<? extends Throwable>> exceptionClasses, boolean value) {
 		this(!value);
 		if (exceptionClasses != null) {
 			Map<Class<? extends Throwable>, Boolean> map = new HashMap<>();
@@ -72,48 +81,57 @@ public class BinaryExceptionClassifier extends SubclassClassifier<Throwable, Boo
 		}
 	}
 
-	/**
-	 * Create a binary exception classifier with the default value false and value mapping
-	 * true for the provided classes and their subclasses.
-	 * @param exceptionClasses the exception types to throw
-	 */
-	public BinaryExceptionClassifier(Collection<Class<? extends Throwable>> exceptionClasses) {
+    /**
+     * <code>BinaryExceptionClassifier</code>
+     * <p>Instantiates a new binary exception classifier.</p>
+     * @param exceptionClasses {@link java.util.Collection} <p>The exception classes parameter is <code>Collection</code> type.</p>
+     * @see  java.util.Collection
+     */
+    public BinaryExceptionClassifier(Collection<Class<? extends Throwable>> exceptionClasses) {
 		this(exceptionClasses, true);
 	}
 
-	/**
-	 * Create a binary exception classifier using the given classification map and a
-	 * default classification of false.
-	 * @param typeMap the map of types
-	 */
-	public BinaryExceptionClassifier(Map<Class<? extends Throwable>, Boolean> typeMap) {
+    /**
+     * <code>BinaryExceptionClassifier</code>
+     * <p>Instantiates a new binary exception classifier.</p>
+     * @param typeMap {@link java.util.Map} <p>The type map parameter is <code>Map</code> type.</p>
+     * @see  java.util.Map
+     */
+    public BinaryExceptionClassifier(Map<Class<? extends Throwable>, Boolean> typeMap) {
 		this(typeMap, false);
 	}
 
-	/**
-	 * Create a binary exception classifier using the given classification map and the
-	 * given value for default class.
-	 * @param defaultValue the default value to use
-	 * @param typeMap the map of types to classify
-	 */
-	public BinaryExceptionClassifier(Map<Class<? extends Throwable>, Boolean> typeMap, boolean defaultValue) {
+    /**
+     * <code>BinaryExceptionClassifier</code>
+     * <p>Instantiates a new binary exception classifier.</p>
+     * @param typeMap {@link java.util.Map} <p>The type map parameter is <code>Map</code> type.</p>
+     * @param defaultValue boolean <p>The default value parameter is <code>boolean</code> type.</p>
+     * @see  java.util.Map
+     */
+    public BinaryExceptionClassifier(Map<Class<? extends Throwable>, Boolean> typeMap, boolean defaultValue) {
 		super(typeMap, defaultValue);
 	}
 
-	/**
-	 * Create a binary exception classifier.
-	 * @param defaultValue the default value to use
-	 * @param typeMap the map of types to classify
-	 * @param traverseCauses if true, throwable's causes will be inspected to find
-	 * non-default class
-	 */
-	public BinaryExceptionClassifier(Map<Class<? extends Throwable>, Boolean> typeMap, boolean defaultValue,
+    /**
+     * <code>BinaryExceptionClassifier</code>
+     * <p>Instantiates a new binary exception classifier.</p>
+     * @param typeMap {@link java.util.Map} <p>The type map parameter is <code>Map</code> type.</p>
+     * @param defaultValue boolean <p>The default value parameter is <code>boolean</code> type.</p>
+     * @param traverseCauses boolean <p>The traverse causes parameter is <code>boolean</code> type.</p>
+     * @see  java.util.Map
+     */
+    public BinaryExceptionClassifier(Map<Class<? extends Throwable>, Boolean> typeMap, boolean defaultValue,
 			boolean traverseCauses) {
 		super(typeMap, defaultValue);
 		this.traverseCauses = traverseCauses;
 	}
 
-	public void setTraverseCauses(boolean traverseCauses) {
+    /**
+     * <code>setTraverseCauses</code>
+     * <p>The set traverse causes setter method.</p>
+     * @param traverseCauses boolean <p>The traverse causes parameter is <code>boolean</code> type.</p>
+     */
+    public void setTraverseCauses(boolean traverseCauses) {
 		this.traverseCauses = traverseCauses;
 	}
 

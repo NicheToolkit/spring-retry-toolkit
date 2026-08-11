@@ -36,23 +36,11 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * A {@link MethodInterceptor} that can be used to automatically retry calls to a method
- * on a service if it fails. The argument to the service method is treated as an item to
- * be remembered in case the call fails. So the retry operation is stateful, and the item
- * that failed is tracked by its unique key (via {@link MethodArgumentsKeyGenerator})
- * until the retry is exhausted, at which point the {@link MethodInvocationRecoverer} is
- * called.
- *
- * The main use case for this is where the service is transactional, via a transaction
- * interceptor on the interceptor chain. In this case the retry (and recovery on
- * exhausted) always happens in a new transaction.
- *
- * The injected {@link RetryOperations} is used to control the number of retries. By
- * default it will retry a fixed number of times, according to the defaults in
- * {@link RetryTemplate}.
- *
- * @author Dave Syer
- * @author Gary Russell
+ * <code>StatefulRetryOperationsInterceptor</code>
+ * <p>The stateful retry operations interceptor class.</p>
+ * @see  org.aopalliance.intercept.MethodInterceptor
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class StatefulRetryOperationsInterceptor implements MethodInterceptor {
 
@@ -72,77 +60,86 @@ public class StatefulRetryOperationsInterceptor implements MethodInterceptor {
 
 	private boolean useRawKey;
 
-	public StatefulRetryOperationsInterceptor() {
+    /**
+     * <code>StatefulRetryOperationsInterceptor</code>
+     * <p>Instantiates a new stateful retry operations interceptor.</p>
+     */
+    public StatefulRetryOperationsInterceptor() {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		retryTemplate.setRetryPolicy(new NeverRetryPolicy());
 		this.retryOperations = retryTemplate;
 	}
 
-	public void setRetryOperations(RetryOperations retryTemplate) {
+    /**
+     * <code>setRetryOperations</code>
+     * <p>The set retry operations setter method.</p>
+     * @param retryTemplate {@link org.springframework.retry.RetryOperations} <p>The retry template parameter is <code>RetryOperations</code> type.</p>
+     * @see  org.springframework.retry.RetryOperations
+     */
+    public void setRetryOperations(RetryOperations retryTemplate) {
 		Assert.notNull(retryTemplate, "'retryOperations' cannot be null.");
 		this.retryOperations = retryTemplate;
 	}
 
-	/**
-	 * Public setter for the {@link MethodInvocationRecoverer} to use if the retry is
-	 * exhausted. The recoverer should be able to return an object of the same type as the
-	 * target object because its return value will be used to return to the caller in the
-	 * case of a recovery.
-	 * @param recoverer the {@link MethodInvocationRecoverer} to set
-	 */
-	public void setRecoverer(MethodInvocationRecoverer<?> recoverer) {
+    /**
+     * <code>setRecoverer</code>
+     * <p>The set recoverer setter method.</p>
+     * @param recoverer {@link org.springframework.retry.interceptor.MethodInvocationRecoverer} <p>The recoverer parameter is <code>MethodInvocationRecoverer</code> type.</p>
+     * @see  org.springframework.retry.interceptor.MethodInvocationRecoverer
+     */
+    public void setRecoverer(MethodInvocationRecoverer<?> recoverer) {
 		this.recoverer = recoverer;
 	}
 
-	/**
-	 * Rollback classifier for the retry state. Default to null (meaning rollback for
-	 * all).
-	 * @param rollbackClassifier the rollbackClassifier to set
-	 */
-	public void setRollbackClassifier(Classifier<? super Throwable, Boolean> rollbackClassifier) {
+    /**
+     * <code>setRollbackClassifier</code>
+     * <p>The set rollback classifier setter method.</p>
+     * @param rollbackClassifier {@link org.springframework.classify.Classifier} <p>The rollback classifier parameter is <code>Classifier</code> type.</p>
+     * @see  org.springframework.classify.Classifier
+     */
+    public void setRollbackClassifier(Classifier<? super Throwable, Boolean> rollbackClassifier) {
 		this.rollbackClassifier = rollbackClassifier;
 	}
 
-	public void setKeyGenerator(MethodArgumentsKeyGenerator keyGenerator) {
+    /**
+     * <code>setKeyGenerator</code>
+     * <p>The set key generator setter method.</p>
+     * @param keyGenerator {@link org.springframework.retry.interceptor.MethodArgumentsKeyGenerator} <p>The key generator parameter is <code>MethodArgumentsKeyGenerator</code> type.</p>
+     * @see  org.springframework.retry.interceptor.MethodArgumentsKeyGenerator
+     */
+    public void setKeyGenerator(MethodArgumentsKeyGenerator keyGenerator) {
 		this.keyGenerator = keyGenerator;
 	}
 
-	public void setLabel(String label) {
+    /**
+     * <code>setLabel</code>
+     * <p>The set label setter method.</p>
+     * @param label {@link java.lang.String} <p>The label parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    public void setLabel(String label) {
 		this.label = label;
 	}
 
-	/**
-	 * Public setter for the {@link NewMethodArgumentsIdentifier}. Only set this if the
-	 * arguments to the intercepted method can be inspected to find out if they have never
-	 * been processed before.
-	 * @param newMethodArgumentsIdentifier the {@link NewMethodArgumentsIdentifier} to set
-	 */
-	public void setNewItemIdentifier(NewMethodArgumentsIdentifier newMethodArgumentsIdentifier) {
+    /**
+     * <code>setNewItemIdentifier</code>
+     * <p>The set new item identifier setter method.</p>
+     * @param newMethodArgumentsIdentifier {@link org.springframework.retry.interceptor.NewMethodArgumentsIdentifier} <p>The new method arguments identifier parameter is <code>NewMethodArgumentsIdentifier</code> type.</p>
+     * @see  org.springframework.retry.interceptor.NewMethodArgumentsIdentifier
+     */
+    public void setNewItemIdentifier(NewMethodArgumentsIdentifier newMethodArgumentsIdentifier) {
 		this.newMethodArgumentsIdentifier = newMethodArgumentsIdentifier;
 	}
 
-	/**
-	 * Set to true to use the raw key generated by the key generator. Should only be set
-	 * to true for cases where the key is guaranteed to be unique in all cases. When
-	 * false, a compound key is used, including invocation metadata. Default: false.
-	 * @param useRawKey the useRawKey to set.
-	 */
-	public void setUseRawKey(boolean useRawKey) {
+    /**
+     * <code>setUseRawKey</code>
+     * <p>The set use raw key setter method.</p>
+     * @param useRawKey boolean <p>The use raw key parameter is <code>boolean</code> type.</p>
+     */
+    public void setUseRawKey(boolean useRawKey) {
 		this.useRawKey = useRawKey;
 	}
 
-	/**
-	 * Wrap the method invocation in a stateful retry with the policy and other helpers
-	 * provided. If there is a failure the exception will generally be re-thrown. The only
-	 * time it is not re-thrown is when retry is exhausted and the recovery path is taken
-	 * (though the {@link MethodInvocationRecoverer} provided if there is one). In that
-	 * case the value returned from the method invocation will be the value returned by
-	 * the recoverer (so the return type for that should be the same as the intercepted
-	 * method).
-	 * @see MethodInterceptor#invoke(MethodInvocation)
-	 * @see MethodInvocationRecoverer#recover(Object[], Throwable)
-	 *
-	 */
 	@Override
 	public Object invoke(final MethodInvocation invocation) throws Throwable {
 
@@ -190,10 +187,6 @@ public class StatefulRetryOperationsInterceptor implements MethodInterceptor {
 		return Arrays.asList(name, generatedKey);
 	}
 
-	/**
-	 * @author Dave Syer
-	 *
-	 */
 	private static final class StatefulMethodInvocationRetryCallback
 			extends MethodInvocationRetryCallback<Object, Throwable> {
 
@@ -217,19 +210,12 @@ public class StatefulRetryOperationsInterceptor implements MethodInterceptor {
 
 	}
 
-	/**
-	 * @author Dave Syer
-	 *
-	 */
 	private static final class ItemRecovererCallback implements RecoveryCallback<Object> {
 
 		private final Object[] args;
 
 		private final MethodInvocationRecoverer<?> recoverer;
 
-		/**
-		 * @param args the item that failed.
-		 */
 		private ItemRecovererCallback(Object[] args, MethodInvocationRecoverer<?> recoverer) {
 			this.args = Arrays.asList(args).toArray();
 			this.recoverer = recoverer;

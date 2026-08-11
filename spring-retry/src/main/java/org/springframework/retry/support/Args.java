@@ -17,29 +17,38 @@
 package org.springframework.retry.support;
 
 /**
- * A root object containing the method arguments to use in expression evaluation.
- * IMPORTANT; the arguments are not available (will contain nulls) until after the first
- * call to the retryable method; this is generally only an issue for the
- * {@code maxAttempts}, meaning the arguments cannot be used to indicate
- * {@code maxAttempts = 0}.
- *
- * @author Gary Russell
- * @since 2.0
+ * <code>Args</code>
+ * <p>The args class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class Args {
 
-	/**
-	 * An empty {@link Args} with 100 null arguments.
-	 */
-	public static final Args NO_ARGS = new Args(new Object[100]);
+    /**
+     * <code>NO_ARGS</code>
+     * {@link org.springframework.retry.support.Args} <p>The constant <code>NO_ARGS</code> field.</p>
+     */
+    public static final Args NO_ARGS = new Args(new Object[100]);
 
 	private final Object[] args;
 
-	public Args(Object[] args) {
+    /**
+     * <code>Args</code>
+     * <p>Instantiates a new args.</p>
+     * @param args {@link java.lang.Object} <p>The args parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     */
+    public Args(Object[] args) {
 		this.args = args;
 	}
 
-	public Object[] getArgs() {
+    /**
+     * <code>getArgs</code>
+     * <p>The get args method.</p>
+     * @return  {@link java.lang.Object} <p>The get args return object is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     */
+    public Object[] getArgs() {
 		return args;
 	}
 

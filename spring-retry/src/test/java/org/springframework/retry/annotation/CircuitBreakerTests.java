@@ -39,14 +39,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
- * @author Dave Syer
- * @author Gary Russell
- * @author Artem Bilan
- *
+ * <code>CircuitBreakerTests</code>
+ * <p>The circuit breaker tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class CircuitBreakerTests {
 
-	@Test
+    /**
+     * <code>vanilla</code>
+     * <p>The vanilla method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	public void vanilla() throws Exception {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfiguration.class);
 		Service service = context.getBean(Service.class);
@@ -87,7 +94,14 @@ public class CircuitBreakerTests {
 		context.close();
 	}
 
-	@Test
+    /**
+     * <code>runtimeExpressions</code>
+     * <p>The runtime expressions method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	void runtimeExpressions() throws Exception {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfiguration.class);
 		Service service = context.getBean(Service.class);
@@ -125,57 +139,153 @@ public class CircuitBreakerTests {
 		context.close();
 	}
 
-	@Configuration
+    /**
+     * <code>TestConfiguration</code>
+     * <p>The test configuration class.</p>
+     * @see  org.springframework.context.annotation.Configuration
+     * @see  org.springframework.retry.annotation.EnableRetry
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    @Configuration
 	@EnableRetry
 	protected static class TestConfiguration {
 
-		@Bean
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         * @return  {@link org.springframework.retry.annotation.CircuitBreakerTests.Service} <p>The service return object is <code>Service</code> type.</p>
+         * @see  org.springframework.retry.annotation.CircuitBreakerTests.Service
+         * @see  org.springframework.context.annotation.Bean
+         */
+        @Bean
 		public Service service() {
 			return new ServiceImpl();
 		}
 
-		@Bean
+        /**
+         * <code>configs</code>
+         * <p>The configs method.</p>
+         * @return  {@link org.springframework.retry.annotation.CircuitBreakerTests.Configs} <p>The configs return object is <code>Configs</code> type.</p>
+         * @see  org.springframework.retry.annotation.CircuitBreakerTests.Configs
+         * @see  org.springframework.context.annotation.Bean
+         */
+        @Bean
 		Configs configs() {
 			return new Configs();
 		}
 
 	}
 
-	public static class Configs {
+    /**
+     * <code>Configs</code>
+     * <p>The configs class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public static class Configs {
 
-		public int maxAttempts = 10;
+        /**
+         * <code>maxAttempts</code>
+         * <p>The <code>maxAttempts</code> field.</p>
+         */
+        public int maxAttempts = 10;
 
-		public long openTimeout = 10000;
+        /**
+         * <code>openTimeout</code>
+         * <p>The <code>openTimeout</code> field.</p>
+         */
+        public long openTimeout = 10000;
 
-		public long resetTimeout = 20000;
-
-	}
-
-	interface Service {
-
-		void service();
-
-		void expressionService();
-
-		void expressionService2();
-
-		void expressionService3();
-
-		void exhaustedRetryService();
-
-		void noWrapExhaustedRetryService();
-
-		int getCount();
-
-		RetryContext getContext();
+        /**
+         * <code>resetTimeout</code>
+         * <p>The <code>resetTimeout</code> field.</p>
+         */
+        public long resetTimeout = 20000;
 
 	}
 
-	protected static class ServiceImpl implements Service {
+    /**
+     * <code>Service</code>
+     * <p>The service interface.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    interface Service {
 
-		int count = 0;
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         */
+        void service();
 
-		RetryContext context;
+        /**
+         * <code>expressionService</code>
+         * <p>The expression service method.</p>
+         */
+        void expressionService();
+
+        /**
+         * <code>expressionService2</code>
+         * <p>The expression service 2 method.</p>
+         */
+        void expressionService2();
+
+        /**
+         * <code>expressionService3</code>
+         * <p>The expression service 3 method.</p>
+         */
+        void expressionService3();
+
+        /**
+         * <code>exhaustedRetryService</code>
+         * <p>The exhausted retry service method.</p>
+         */
+        void exhaustedRetryService();
+
+        /**
+         * <code>noWrapExhaustedRetryService</code>
+         * <p>The no wrap exhausted retry service method.</p>
+         */
+        void noWrapExhaustedRetryService();
+
+        /**
+         * <code>getCount</code>
+         * <p>The get count getter method.</p>
+         * @return  int <p>The get count return object is <code>int</code> type.</p>
+         */
+        int getCount();
+
+        /**
+         * <code>getContext</code>
+         * <p>The get context getter method.</p>
+         * @return  {@link org.springframework.retry.RetryContext} <p>The get context return object is <code>RetryContext</code> type.</p>
+         * @see  org.springframework.retry.RetryContext
+         */
+        RetryContext getContext();
+
+	}
+
+    /**
+     * <code>ServiceImpl</code>
+     * <p>The service class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    protected static class ServiceImpl implements Service {
+
+        /**
+         * <code>count</code>
+         * <p>The <code>count</code> field.</p>
+         */
+        int count = 0;
+
+        /**
+         * <code>context</code>
+         * {@link org.springframework.retry.RetryContext} <p>The <code>context</code> field.</p>
+         * @see  org.springframework.retry.RetryContext
+         */
+        RetryContext context;
 
 		@Override
 		@CircuitBreaker(retryFor = RuntimeException.class)

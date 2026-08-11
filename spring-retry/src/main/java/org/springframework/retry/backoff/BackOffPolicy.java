@@ -19,43 +19,31 @@ package org.springframework.retry.backoff;
 import org.springframework.retry.RetryContext;
 
 /**
- * Strategy interface to control back off between attempts in a single
- * {@link org.springframework.retry.support.RetryTemplate retry operation}.
- *
- * Implementations are expected to be thread-safe and should be designed for concurrent
- * access. Configuration for each implementation is also expected to be thread-safe but
- * need not be suitable for high load concurrent access.
- *
- * For each block of retry operations the {@link #start} method is called and
- * implementations can return an implementation-specific
- *
- * {@link BackOffContext} that can be used to track state through subsequent back off
- * invocations. Each back off process is handled via a call to {@link #backOff}.
- *
- * The {@link org.springframework.retry.support.RetryTemplate} will pass in the
- * corresponding {@link BackOffContext} object created by the call to {@link #start}.
- *
- * @author Rob Harrop
- * @author Dave Syer
+ * <code>BackOffPolicy</code>
+ * <p>The back off policy interface.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface BackOffPolicy {
 
-	/**
-	 * Start a new block of back off operations. Implementations can choose to pause when
-	 * this method is called, but normally it returns immediately.
-	 * @param context the {@link RetryContext} context, which might contain information
-	 * that we can use to decide how to proceed.
-	 * @return the implementation-specific {@link BackOffContext} or '<code>null</code>'.
-	 */
-	BackOffContext start(RetryContext context);
+    /**
+     * <code>start</code>
+     * <p>The start method.</p>
+     * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+     * @see  org.springframework.retry.RetryContext
+     * @see  org.springframework.retry.backoff.BackOffContext
+     * @return  {@link org.springframework.retry.backoff.BackOffContext} <p>The start return object is <code>BackOffContext</code> type.</p>
+     */
+    BackOffContext start(RetryContext context);
 
-	/**
-	 * Back off/pause in an implementation-specific fashion. The passed in
-	 * {@link BackOffContext} corresponds to the one created by the call to {@link #start}
-	 * for a given retry operation set.
-	 * @param backOffContext the {@link BackOffContext}
-	 * @throws BackOffInterruptedException if the attempt at back off is interrupted.
-	 */
-	void backOff(BackOffContext backOffContext) throws BackOffInterruptedException;
+    /**
+     * <code>backOff</code>
+     * <p>The back off method.</p>
+     * @param backOffContext {@link org.springframework.retry.backoff.BackOffContext} <p>The back off context parameter is <code>BackOffContext</code> type.</p>
+     * @see  org.springframework.retry.backoff.BackOffContext
+     * @see  org.springframework.retry.backoff.BackOffInterruptedException
+     * @throws BackOffInterruptedException {@link org.springframework.retry.backoff.BackOffInterruptedException} <p>The back off interrupted exception is <code>BackOffInterruptedException</code> type.</p>
+     */
+    void backOff(BackOffContext backOffContext) throws BackOffInterruptedException;
 
 }

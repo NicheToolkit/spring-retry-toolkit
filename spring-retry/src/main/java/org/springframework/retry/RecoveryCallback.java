@@ -16,19 +16,23 @@
 package org.springframework.retry;
 
 /**
- * Callback for stateful retry after all tries are exhausted.
- *
- * @author Dave Syer
- * @param <T> the type that is returned from the recovery
- * @since 1.1
+ * <code>RecoveryCallback</code>
+ * <p>The recovery callback interface.</p>
+ * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface RecoveryCallback<T> {
 
-	/**
-	 * @param context the current retry context
-	 * @return an Object that can be used to replace the callback result that failed
-	 * @throws Exception when something goes wrong
-	 */
-	T recover(RetryContext context) throws Exception;
+    /**
+     * <code>recover</code>
+     * <p>The recover method.</p>
+     * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+     * @see  org.springframework.retry.RetryContext
+     * @see  java.lang.Exception
+     * @return  T <p>The recover return object is <code>T</code> type.</p>
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    T recover(RetryContext context) throws Exception;
 
 }

@@ -25,28 +25,44 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Dave Syer
- * @author Gary Russell
- *
+ * <code>ExponentialAverageRetryStatisticsTests</code>
+ * <p>The exponential average retry statistics tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class ExponentialAverageRetryStatisticsTests {
 
 	private final ExponentialAverageRetryStatistics stats = new ExponentialAverageRetryStatistics("test");
 
-	@Test
+    /**
+     * <code>pointless</code>
+     * <p>The pointless method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void pointless() {
 		stats.setName("spam");
 		assertThat(stats.getName()).isEqualTo("spam");
 	}
 
-	@Test
+    /**
+     * <code>attributes</code>
+     * <p>The attributes method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void attributes() {
 		stats.setAttribute("foo", "bar");
 		assertThat(stats.getAttribute("foo")).isEqualTo("bar");
 		assertThat(Arrays.asList(stats.attributeNames()).contains("foo")).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>abortCount</code>
+     * <p>The abort count method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void abortCount() {
 		stats.incrementAbortCount();
 		assertThat(stats.getAbortCount()).isEqualTo(1);
@@ -54,7 +70,12 @@ public class ExponentialAverageRetryStatisticsTests {
 		assertThat(stats.getRollingAbortCount()).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>errorCount</code>
+     * <p>The error count method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void errorCount() {
 		stats.incrementErrorCount();
 		assertThat(stats.getErrorCount()).isEqualTo(1);
@@ -62,7 +83,12 @@ public class ExponentialAverageRetryStatisticsTests {
 		assertThat(stats.getRollingErrorCount()).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>startedCount</code>
+     * <p>The started count method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void startedCount() {
 		stats.incrementStartedCount();
 		assertThat(stats.getStartedCount()).isEqualTo(1);
@@ -70,7 +96,12 @@ public class ExponentialAverageRetryStatisticsTests {
 		assertThat(stats.getRollingStartedCount()).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>completeCount</code>
+     * <p>The complete count method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void completeCount() {
 		stats.incrementCompleteCount();
 		assertThat(stats.getCompleteCount()).isEqualTo(1);
@@ -78,7 +109,12 @@ public class ExponentialAverageRetryStatisticsTests {
 		assertThat(stats.getRollingCompleteCount()).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>recoveryCount</code>
+     * <p>The recovery count method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void recoveryCount() {
 		stats.incrementRecoveryCount();
 		assertThat(stats.getRecoveryCount()).isEqualTo(1);
@@ -86,7 +122,12 @@ public class ExponentialAverageRetryStatisticsTests {
 		assertThat(stats.getRollingRecoveryCount()).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>oldValuesDecay</code>
+     * <p>The old values decay method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void oldValuesDecay() {
 		stats.incrementAbortCount();
 		assertThat(stats.getAbortCount()).isEqualTo(1);

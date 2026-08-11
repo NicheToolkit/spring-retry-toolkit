@@ -18,13 +18,14 @@ package org.springframework.classify;
 import java.util.Map;
 
 /**
- * A special purpose {@link Classifier} with easy configuration options for mapping from
- * one arbitrary type of object to another via a pattern matcher.
- *
- * @author Dave Syer
- * @param <C> the type of thing to classify
- * @param <T> the output of the classifier
- *
+ * <code>BackToBackPatternClassifier</code>
+ * <p>The back to back pattern classifier class.</p>
+ * @param <C>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @see  org.springframework.classify.Classifier
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class BackToBackPatternClassifier<C, T> implements Classifier<C, T> {
@@ -33,47 +34,46 @@ public class BackToBackPatternClassifier<C, T> implements Classifier<C, T> {
 
 	private Classifier<String, T> matcher;
 
-	/**
-	 * Default constructor, provided as a convenience for people using setter injection.
-	 */
-	public BackToBackPatternClassifier() {
+    /**
+     * <code>BackToBackPatternClassifier</code>
+     * <p>Instantiates a new back to back pattern classifier.</p>
+     */
+    public BackToBackPatternClassifier() {
 	}
 
-	/**
-	 * Set up a classifier with input to the router and output from the matcher.
-	 * @param router see {@link #setRouterDelegate(Object)}
-	 * @param matcher see {@link #setMatcherMap(Map)}
-	 */
-	public BackToBackPatternClassifier(Classifier<C, String> router, Classifier<String, T> matcher) {
+    /**
+     * <code>BackToBackPatternClassifier</code>
+     * <p>Instantiates a new back to back pattern classifier.</p>
+     * @param router {@link org.springframework.classify.Classifier} <p>The router parameter is <code>Classifier</code> type.</p>
+     * @param matcher {@link org.springframework.classify.Classifier} <p>The matcher parameter is <code>Classifier</code> type.</p>
+     * @see  org.springframework.classify.Classifier
+     */
+    public BackToBackPatternClassifier(Classifier<C, String> router, Classifier<String, T> matcher) {
 		super();
 		this.router = router;
 		this.matcher = matcher;
 	}
 
-	/**
-	 * A convenience method for creating a pattern matching classifier for the matcher
-	 * component.
-	 * @param map maps pattern keys with wildcards to output values
-	 */
-	public void setMatcherMap(Map<String, T> map) {
+    /**
+     * <code>setMatcherMap</code>
+     * <p>The set matcher map setter method.</p>
+     * @param map {@link java.util.Map} <p>The map parameter is <code>Map</code> type.</p>
+     * @see  java.util.Map
+     */
+    public void setMatcherMap(Map<String, T> map) {
 		this.matcher = new PatternMatchingClassifier<>(map);
 	}
 
-	/**
-	 * A convenience method of creating a router classifier based on a plain old Java
-	 * Object. The object provided must have precisely one public method that either has
-	 * the <code>@Classifier</code> annotation or accepts a single argument and outputs a
-	 * String. This will be used to create an input classifier for the router component.
-	 * @param delegate the delegate object used to create a router classifier
-	 */
-	public void setRouterDelegate(Object delegate) {
+    /**
+     * <code>setRouterDelegate</code>
+     * <p>The set router delegate setter method.</p>
+     * @param delegate {@link java.lang.Object} <p>The delegate parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     */
+    public void setRouterDelegate(Object delegate) {
 		this.router = new ClassifierAdapter<>(delegate);
 	}
 
-	/**
-	 * Classify the input and map to a String, then take that and put it into a pattern
-	 * matcher to match to an output value.
-	 */
 	@Override
 	public T classify(C classifiable) {
 		return this.matcher.classify(this.router.classify(classifiable));

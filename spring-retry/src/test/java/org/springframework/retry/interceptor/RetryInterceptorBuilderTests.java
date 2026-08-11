@@ -37,20 +37,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
- * @author Gary Russell
- * @author Artem Bilan
- * @since 1.1
- *
+ * <code>RetryInterceptorBuilderTests</code>
+ * <p>The retry interceptor builder tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RetryInterceptorBuilderTests {
 
-	@Test
+    /**
+     * <code>testBasic</code>
+     * <p>The test basic method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testBasic() {
 		StatefulRetryOperationsInterceptor interceptor = RetryInterceptorBuilder.stateful().build();
 		assertThat(TestUtils.getPropertyValue(interceptor, "retryOperations.retryPolicy.maxAttempts")).isEqualTo(3);
 	}
 
-	@Test
+    /**
+     * <code>testWithCustomRetryTemplate</code>
+     * <p>The test with custom retry template method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testWithCustomRetryTemplate() {
 		RetryOperations retryOperations = new RetryTemplate();
 		StatefulRetryOperationsInterceptor interceptor = RetryInterceptorBuilder.stateful()
@@ -60,13 +70,23 @@ public class RetryInterceptorBuilderTests {
 		assertSame(retryOperations, TestUtils.getPropertyValue(interceptor, "retryOperations"));
 	}
 
-	@Test
+    /**
+     * <code>testWithMoreAttempts</code>
+     * <p>The test with more attempts method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testWithMoreAttempts() {
 		StatefulRetryOperationsInterceptor interceptor = RetryInterceptorBuilder.stateful().maxAttempts(5).build();
 		assertThat(TestUtils.getPropertyValue(interceptor, "retryOperations.retryPolicy.maxAttempts")).isEqualTo(5);
 	}
 
-	@Test
+    /**
+     * <code>testWithCustomizedBackOffMoreAttempts</code>
+     * <p>The test with customized back off more attempts method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testWithCustomizedBackOffMoreAttempts() {
 		StatefulRetryOperationsInterceptor interceptor = RetryInterceptorBuilder.stateful()
 			.maxAttempts(5)
@@ -80,7 +100,12 @@ public class RetryInterceptorBuilderTests {
 		assertThat(TestUtils.getPropertyValue(interceptor, "retryOperations.backOffPolicy.maxInterval")).isEqualTo(10L);
 	}
 
-	@Test
+    /**
+     * <code>testWithCustomBackOffPolicy</code>
+     * <p>The test with custom back off policy method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testWithCustomBackOffPolicy() {
 		StatefulRetryOperationsInterceptor interceptor = RetryInterceptorBuilder.stateful()
 			.maxAttempts(5)
@@ -94,7 +119,14 @@ public class RetryInterceptorBuilderTests {
 			.isEqualTo(1000L);
 	}
 
-	@Test
+    /**
+     * <code>testWithCustomNewMessageIdentifier</code>
+     * <p>The test with custom new message identifier method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	public void testWithCustomNewMessageIdentifier() throws Exception {
 		final CountDownLatch latch = new CountDownLatch(1);
 		StatefulRetryOperationsInterceptor interceptor = RetryInterceptorBuilder.stateful()
@@ -124,7 +156,12 @@ public class RetryInterceptorBuilderTests {
 		assertThat(latch.await(0, TimeUnit.SECONDS)).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testWitCustomRetryPolicyTraverseCause</code>
+     * <p>The test wit custom retry policy traverse cause method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testWitCustomRetryPolicyTraverseCause() {
 		StatefulRetryOperationsInterceptor interceptor = RetryInterceptorBuilder.stateful()
 			.retryPolicy(new SimpleRetryPolicy(15,
@@ -133,7 +170,14 @@ public class RetryInterceptorBuilderTests {
 		assertThat(TestUtils.getPropertyValue(interceptor, "retryOperations.retryPolicy.maxAttempts")).isEqualTo(15);
 	}
 
-	@Test
+    /**
+     * <code>testWithCustomKeyGenerator</code>
+     * <p>The test with custom key generator method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	public void testWithCustomKeyGenerator() throws Exception {
 		final CountDownLatch latch = new CountDownLatch(1);
 		StatefulRetryOperationsInterceptor interceptor = RetryInterceptorBuilder.stateful().keyGenerator(item -> {
@@ -169,9 +213,23 @@ public class RetryInterceptorBuilderTests {
 		return delegate;
 	}
 
-	static interface Foo {
+    /**
+     * <code>Foo</code>
+     * <p>The foo interface.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    static interface Foo {
 
-		void onMessage(String s, Object message);
+        /**
+         * <code>onMessage</code>
+         * <p>The on message method.</p>
+         * @param s {@link java.lang.String} <p>The s parameter is <code>String</code> type.</p>
+         * @param message {@link java.lang.Object} <p>The message parameter is <code>Object</code> type.</p>
+         * @see  java.lang.String
+         * @see  java.lang.Object
+         */
+        void onMessage(String s, Object message);
 
 	}
 

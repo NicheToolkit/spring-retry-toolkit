@@ -50,21 +50,34 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * @author Rob Harrop
- * @author Dave Syer
- * @author Gary Russell
- * @author Henning Pöttker
- * @author Emanuele Ivaldi
- * @author Morulai Planinski
- * @author Tobias Soloschenko
+ * <code>RetryTemplateTests</code>
+ * <p>The retry template tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RetryTemplateTests {
 
-	RetryContext context;
+    /**
+     * <code>context</code>
+     * {@link org.springframework.retry.RetryContext} <p>The <code>context</code> field.</p>
+     * @see  org.springframework.retry.RetryContext
+     */
+    RetryContext context;
 
-	int count = 0;
+    /**
+     * <code>count</code>
+     * <p>The <code>count</code> field.</p>
+     */
+    int count = 0;
 
-	@Test
+    /**
+     * <code>testSuccessfulRetry</code>
+     * <p>The test successful retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testSuccessfulRetry() throws Throwable {
 		for (int x = 1; x <= 10; x++) {
 			MockRetryCallback callback = new MockRetryCallback();
@@ -76,7 +89,12 @@ public class RetryTemplateTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testSpecificExceptionRetry</code>
+     * <p>The test specific exception retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSpecificExceptionRetry() {
 		for (int x = 1; x <= 10; x++) {
 			final int attemptsBeforeSuccess = x;
@@ -97,7 +115,14 @@ public class RetryTemplateTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testRetryOnPredicateWithRetry</code>
+     * <p>The test retry on predicate with retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testRetryOnPredicateWithRetry() throws Throwable {
 		for (int x = 1; x <= 10; x++) {
 			MockRetryCallback callback = new MockRetryCallback();
@@ -114,7 +139,14 @@ public class RetryTemplateTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testRetryOnPredicateWithoutRetry</code>
+     * <p>The test retry on predicate without retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testRetryOnPredicateWithoutRetry() throws Throwable {
 		MockRetryCallback callback = new MockRetryCallback();
 		callback.setAttemptsBeforeSuccess(0);
@@ -129,7 +161,14 @@ public class RetryTemplateTests {
 		assertThat(callback.attempts).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>testSuccessfulRecovery</code>
+     * <p>The test successful recovery method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testSuccessfulRecovery() throws Throwable {
 		MockRetryCallback callback = new MockRetryCallback();
 		callback.setAttemptsBeforeSuccess(3);
@@ -141,7 +180,14 @@ public class RetryTemplateTests {
 		assertThat(result).isEqualTo(value);
 	}
 
-	@Test
+    /**
+     * <code>testAlwaysTryAtLeastOnce</code>
+     * <p>The test always try at least once method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testAlwaysTryAtLeastOnce() throws Throwable {
 		MockRetryCallback callback = new MockRetryCallback();
 		RetryTemplate retryTemplate = new RetryTemplate();
@@ -150,7 +196,14 @@ public class RetryTemplateTests {
 		assertThat(callback.attempts).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>testNoSuccessRetry</code>
+     * <p>The test no success retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testNoSuccessRetry() throws Throwable {
 		MockRetryCallback callback = new MockRetryCallback();
 		// Something that won't be thrown by JUnit...
@@ -163,7 +216,14 @@ public class RetryTemplateTests {
 		assertThat(callback.attempts).isEqualTo(retryAttempts);
 	}
 
-	@Test
+    /**
+     * <code>testDefaultConfigWithExceptionSubclass</code>
+     * <p>The test default config with exception subclass method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testDefaultConfigWithExceptionSubclass() throws Throwable {
 		MockRetryCallback callback = new MockRetryCallback();
 		int attempts = 3;
@@ -176,7 +236,14 @@ public class RetryTemplateTests {
 		assertThat(callback.attempts).isEqualTo(attempts);
 	}
 
-	@Test
+    /**
+     * <code>testRollbackClassifierOverridesRetryPolicy</code>
+     * <p>The test rollback classifier overrides retry policy method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testRollbackClassifierOverridesRetryPolicy() throws Throwable {
 		MockRetryCallback callback = new MockRetryCallback();
 		int attempts = 3;
@@ -192,7 +259,14 @@ public class RetryTemplateTests {
 		assertThat(callback.attempts).isEqualTo(attempts);
 	}
 
-	@Test
+    /**
+     * <code>testSetExceptions</code>
+     * <p>The test set exceptions method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testSetExceptions() throws Throwable {
 		RetryTemplate template = new RetryTemplate();
 		SimpleRetryPolicy policy = new SimpleRetryPolicy(3,
@@ -217,7 +291,14 @@ public class RetryTemplateTests {
 		assertThat(callback.attempts).isEqualTo(attempts);
 	}
 
-	@Test
+    /**
+     * <code>testBackOffInvoked</code>
+     * <p>The test back off invoked method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testBackOffInvoked() throws Throwable {
 		for (int x = 1; x <= 10; x++) {
 			MockRetryCallback callback = new MockRetryCallback();
@@ -233,7 +314,12 @@ public class RetryTemplateTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testEarlyTermination</code>
+     * <p>The test early termination method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testEarlyTermination() {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		assertThatIllegalStateException().isThrownBy(() -> retryTemplate.execute(status -> {
@@ -242,7 +328,12 @@ public class RetryTemplateTests {
 		})).withMessage("Retry this operation");
 	}
 
-	@Test
+    /**
+     * <code>testEarlyTerminationWithOriginalException</code>
+     * <p>The test early termination with original exception method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testEarlyTerminationWithOriginalException() {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		retryTemplate.setThrowLastExceptionOnExhausted(true);
@@ -252,7 +343,14 @@ public class RetryTemplateTests {
 		})).withMessage("Retry this operation");
 	}
 
-	@Test
+    /**
+     * <code>testNestedContexts</code>
+     * <p>The test nested contexts method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testNestedContexts() throws Throwable {
 		RetryTemplate outer = new RetryTemplate();
 		final RetryTemplate inner = new RetryTemplate();
@@ -275,7 +373,12 @@ public class RetryTemplateTests {
 		assertThat(this.count).isEqualTo(2);
 	}
 
-	@Test
+    /**
+     * <code>testRethrowError</code>
+     * <p>The test rethrow error method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRethrowError() {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		retryTemplate.setRetryPolicy(new NeverRetryPolicy());
@@ -290,7 +393,12 @@ public class RetryTemplateTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testFailedPolicy</code>
+     * <p>The test failed policy method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFailedPolicy() {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		retryTemplate.setRetryPolicy(new NeverRetryPolicy() {
@@ -304,7 +412,12 @@ public class RetryTemplateTests {
 		})).withCauseInstanceOf(RuntimeException.class).withStackTraceContaining("Planned");
 	}
 
-	@Test
+    /**
+     * <code>testBackOffInterrupted</code>
+     * <p>The test back off interrupted method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testBackOffInterrupted() {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		retryTemplate.setBackOffPolicy(new StatelessBackOffPolicy() {
@@ -318,10 +431,12 @@ public class RetryTemplateTests {
 		})).withMessage("foo");
 	}
 
-	/**
-	 * {@link BackOffPolicy} should apply also for exceptions that are re-thrown.
-	 */
-	@Test
+    /**
+     * <code>testNoBackOffForRethrownException</code>
+     * <p>The test no back off for rethrown exception method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testNoBackOffForRethrownException() {
 
 		RetryTemplate tested = new RetryTemplate();
@@ -347,7 +462,12 @@ public class RetryTemplateTests {
 		verify(bop).start(any());
 	}
 
-	@Test
+    /**
+     * <code>testRetryOnBadResult</code>
+     * <p>The test retry on bad result method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRetryOnBadResult() {
 		RetryTemplate template = new RetryTemplate();
 		template.registerListener(new RetryListener() {
@@ -371,7 +491,14 @@ public class RetryTemplateTests {
 		assertThat(callCount.get()).isEqualTo(2);
 	}
 
-	@Test
+    /**
+     * <code>testContextForPolicyWithMaximumNumberOfAttempts</code>
+     * <p>The test context for policy with maximum number of attempts method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testContextForPolicyWithMaximumNumberOfAttempts() throws Throwable {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		RetryPolicy retryPolicy = new SimpleRetryPolicy(2);
@@ -383,7 +510,14 @@ public class RetryTemplateTests {
 		assertThat(result).isEqualTo(2);
 	}
 
-	@Test
+    /**
+     * <code>testContextForPolicyWithNoMaximumNumberOfAttempts</code>
+     * <p>The test context for policy with no maximum number of attempts method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testContextForPolicyWithNoMaximumNumberOfAttempts() throws Throwable {
 		RetryTemplate retryTemplate = new RetryTemplate();
 		RetryPolicy retryPolicy = new AlwaysRetryPolicy();
@@ -412,11 +546,22 @@ public class RetryTemplateTests {
 			return null;
 		}
 
-		public void setAttemptsBeforeSuccess(int attemptsBeforeSuccess) {
+        /**
+         * <code>setAttemptsBeforeSuccess</code>
+         * <p>The set attempts before success setter method.</p>
+         * @param attemptsBeforeSuccess int <p>The attempts before success parameter is <code>int</code> type.</p>
+         */
+        public void setAttemptsBeforeSuccess(int attemptsBeforeSuccess) {
 			this.attemptsBeforeSuccess = attemptsBeforeSuccess;
 		}
 
-		public void setExceptionToThrow(Exception exceptionToThrow) {
+        /**
+         * <code>setExceptionToThrow</code>
+         * <p>The set exception to throw setter method.</p>
+         * @param exceptionToThrow {@link java.lang.Exception} <p>The exception to throw parameter is <code>Exception</code> type.</p>
+         * @see  java.lang.Exception
+         */
+        public void setExceptionToThrow(Exception exceptionToThrow) {
 			this.exceptionToThrow = exceptionToThrow;
 		}
 
@@ -424,9 +569,17 @@ public class RetryTemplateTests {
 
 	private static class MockBackOffStrategy implements BackOffPolicy {
 
-		public int backOffCalls;
+        /**
+         * <code>backOffCalls</code>
+         * <p>The <code>backOffCalls</code> field.</p>
+         */
+        public int backOffCalls;
 
-		public int startCalls;
+        /**
+         * <code>startCalls</code>
+         * <p>The <code>startCalls</code> field.</p>
+         */
+        public int startCalls;
 
 		@Override
 		public BackOffContext start(RetryContext status) {
@@ -441,7 +594,14 @@ public class RetryTemplateTests {
 
 	}
 
-	@Test
+    /**
+     * <code>testLoggingAppliedCorrectly</code>
+     * <p>The test logging applied correctly method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	public void testLoggingAppliedCorrectly() throws Exception {
 		ArgumentCaptor<String> logOutputCaptor = ArgumentCaptor.forClass(String.class);
 		RetryTemplate retryTemplate = new RetryTemplate();

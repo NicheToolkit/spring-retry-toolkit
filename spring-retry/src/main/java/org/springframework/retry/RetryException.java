@@ -18,14 +18,36 @@ package org.springframework.retry;
 
 import org.springframework.core.NestedRuntimeException;
 
+/**
+ * <code>RetryException</code>
+ * <p>The retry exception class.</p>
+ * @see  org.springframework.core.NestedRuntimeException
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 @SuppressWarnings("serial")
 public class RetryException extends NestedRuntimeException {
 
-	public RetryException(String msg, Throwable cause) {
+    /**
+     * <code>RetryException</code>
+     * <p>Instantiates a new retry exception.</p>
+     * @param msg {@link java.lang.String} <p>The msg parameter is <code>String</code> type.</p>
+     * @param cause {@link java.lang.Throwable} <p>The cause parameter is <code>Throwable</code> type.</p>
+     * @see  java.lang.String
+     * @see  java.lang.Throwable
+     */
+    public RetryException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 
-	public RetryException(String msg) {
+    /**
+     * <code>RetryException</code>
+     * <p>Instantiates a new retry exception.</p>
+     * @param msg {@link java.lang.String} <p>The msg parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    public RetryException(String msg) {
 		super(msg);
 	}
 

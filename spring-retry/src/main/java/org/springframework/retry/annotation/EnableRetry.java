@@ -28,16 +28,16 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AliasFor;
 
 /**
- * Global enabler for <code>@Retryable</code> annotations in Spring beans. If this is
- * declared on any <code>@Configuration</code> in the context then beans that have
- * retryable methods will be proxied and the retry handled according to the metadata in
- * the annotations.
- *
- * @author Dave Syer
- * @author Yanming Zhou
- * @author Ruslan Stelmachenko
- * @since 1.1
- *
+ * <code>EnableRetry</code>
+ * <p>The enable retry interface.</p>
+ * @see  java.lang.annotation.Annotation
+ * @see  java.lang.annotation.Target
+ * @see  java.lang.annotation.Retention
+ * @see  org.springframework.context.annotation.EnableAspectJAutoProxy
+ * @see  org.springframework.context.annotation.Import
+ * @see  java.lang.annotation.Documented
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -46,22 +46,20 @@ import org.springframework.core.annotation.AliasFor;
 @Documented
 public @interface EnableRetry {
 
-	/**
-	 * Indicate whether subclass-based (CGLIB) proxies are to be created as opposed to
-	 * standard Java interface-based proxies. The default is {@code false}.
-	 * @return whether to proxy or not to proxy the class
-	 */
-	@AliasFor(annotation = EnableAspectJAutoProxy.class)
+    /**
+     * <code>proxyTargetClass</code>
+     * <p>The proxy target class method.</p>
+     * @return  boolean <p>The proxy target class return object is <code>boolean</code> type.</p>
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor(annotation = EnableAspectJAutoProxy.class)
 	boolean proxyTargetClass() default false;
 
-	/**
-	 * Indicate the order in which the {@link RetryConfiguration} AOP <b>advice</b> should
-	 * be applied.
-	 * <p>
-	 * The default is {@code Ordered.LOWEST_PRECEDENCE - 1} in order to make sure the
-	 * advice is applied before other advices with {@link Ordered#LOWEST_PRECEDENCE} order
-	 * (e.g. an advice responsible for {@code @Transactional} behavior).
-	 */
-	int order() default Ordered.LOWEST_PRECEDENCE - 1;
+    /**
+     * <code>order</code>
+     * <p>The order method.</p>
+     * @return  int <p>The order return object is <code>int</code> type.</p>
+     */
+    int order() default Ordered.LOWEST_PRECEDENCE - 1;
 
 }

@@ -19,26 +19,23 @@ import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.util.Assert;
 
 /**
- * See Spring Integration TestUtils.
- *
- * @author Mark Fisher
- * @author Iwein Fuld
- * @author Oleg Zhurakousky
- * @author Gary Russell
- * @since 1.2
+ * <code>TestUtils</code>
+ * <p>The test utils class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class TestUtils {
 
-	/**
-	 * Uses nested {@link DirectFieldAccessor}s to obtain a
-	 * property using dotted notation to traverse fields; e.g. "foo.bar.baz" will obtain a
-	 * reference to the baz field of the bar field of foo. Adopted from Spring
-	 * Integration.
-	 * @param root The object.
-	 * @param propertyPath The path.
-	 * @return The field.
-	 */
-	public static Object getPropertyValue(Object root, String propertyPath) {
+    /**
+     * <code>getPropertyValue</code>
+     * <p>The get property value getter method.</p>
+     * @param root {@link java.lang.Object} <p>The root parameter is <code>Object</code> type.</p>
+     * @param propertyPath {@link java.lang.String} <p>The property path parameter is <code>String</code> type.</p>
+     * @see  java.lang.Object
+     * @see  java.lang.String
+     * @return  {@link java.lang.Object} <p>The get property value return object is <code>Object</code> type.</p>
+     */
+    public static Object getPropertyValue(Object root, String propertyPath) {
 		Object value = null;
 		DirectFieldAccessor accessor = new DirectFieldAccessor(root);
 		String[] tokens = propertyPath.split("\\.");
@@ -57,7 +54,20 @@ public class TestUtils {
 		return value;
 	}
 
-	@SuppressWarnings("unchecked")
+    /**
+     * <code>getPropertyValue</code>
+     * <p>The get property value getter method.</p>
+     * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+     * @param root {@link java.lang.Object} <p>The root parameter is <code>Object</code> type.</p>
+     * @param propertyPath {@link java.lang.String} <p>The property path parameter is <code>String</code> type.</p>
+     * @param type {@link java.lang.Class} <p>The type parameter is <code>Class</code> type.</p>
+     * @see  java.lang.Object
+     * @see  java.lang.String
+     * @see  java.lang.Class
+     * @see  java.lang.SuppressWarnings
+     * @return  T <p>The get property value return object is <code>T</code> type.</p>
+     */
+    @SuppressWarnings("unchecked")
 	public static <T> T getPropertyValue(Object root, String propertyPath, Class<T> type) {
 		Object value = getPropertyValue(root, propertyPath);
 		if (value != null) {

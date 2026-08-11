@@ -25,34 +25,41 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * Callback class for a Spring AOP reflective `MethodInvocation` that can be retried using
- * a {@link RetryOperations}.
- * <p>
- * In a concrete {@link org.springframework.retry.RetryListener} implementation, the
- * `MethodInvocation` can be analysed for providing insights on the method called as well
- * as its parameter values which could then be used for monitoring purposes.
- *
- * @param <T> the type of object returned by the callback
- * @param <E> the type of exception it declares may be thrown
- * @see StatefulRetryOperationsInterceptor
- * @see RetryOperationsInterceptor
- * @see org.springframework.retry.listener.MethodInvocationRetryListenerSupport
- * @author Marius Grama
- * @author Artem Bilan
- * @since 1.3
+ * <code>MethodInvocationRetryCallback</code>
+ * <p>The method invocation retry callback class.</p>
+ * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @param <E>  {@link java.lang.Throwable} <p>The generic parameter is <code>Throwable</code> type.</p>
+ * @see  java.lang.Throwable
+ * @see  org.springframework.retry.RetryCallback
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public abstract class MethodInvocationRetryCallback<T, E extends Throwable> implements RetryCallback<T, E> {
 
-	protected final MethodInvocation invocation;
+    /**
+     * <code>invocation</code>
+     * {@link org.aopalliance.intercept.MethodInvocation} <p>The <code>invocation</code> field.</p>
+     * @see  org.aopalliance.intercept.MethodInvocation
+     */
+    protected final MethodInvocation invocation;
 
-	protected final String label;
+    /**
+     * <code>label</code>
+     * {@link java.lang.String} <p>The <code>label</code> field.</p>
+     * @see  java.lang.String
+     */
+    protected final String label;
 
-	/**
-	 * Constructor for the class.
-	 * @param invocation the method invocation
-	 * @param label a unique label for statistics reporting.
-	 */
-	public MethodInvocationRetryCallback(MethodInvocation invocation, @Nullable String label) {
+    /**
+     * <code>MethodInvocationRetryCallback</code>
+     * <p>Instantiates a new method invocation retry callback.</p>
+     * @param invocation {@link org.aopalliance.intercept.MethodInvocation} <p>The invocation parameter is <code>MethodInvocation</code> type.</p>
+     * @param label {@link java.lang.String} <p>The label parameter is <code>String</code> type.</p>
+     * @see  org.aopalliance.intercept.MethodInvocation
+     * @see  java.lang.String
+     * @see  org.springframework.lang.Nullable
+     */
+    public MethodInvocationRetryCallback(MethodInvocation invocation, @Nullable String label) {
 		this.invocation = invocation;
 		if (StringUtils.hasText(label)) {
 			this.label = label;
@@ -62,7 +69,13 @@ public abstract class MethodInvocationRetryCallback<T, E extends Throwable> impl
 		}
 	}
 
-	public MethodInvocation getInvocation() {
+    /**
+     * <code>getInvocation</code>
+     * <p>The get invocation getter method.</p>
+     * @return  {@link org.aopalliance.intercept.MethodInvocation} <p>The get invocation return object is <code>MethodInvocation</code> type.</p>
+     * @see  org.aopalliance.intercept.MethodInvocation
+     */
+    public MethodInvocation getInvocation() {
 		return this.invocation;
 	}
 

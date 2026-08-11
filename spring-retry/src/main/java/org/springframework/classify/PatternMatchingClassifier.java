@@ -19,52 +19,48 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A {@link Classifier} that maps from String patterns with wildcards to a set of values
- * of a given type. An input String is matched with the most specific pattern possible to
- * the corresponding value in an input map. A default value should be specified with a
- * pattern key of "*".
- *
- * @author Dave Syer
- * @param <T> the output of the classifier
+ * <code>PatternMatchingClassifier</code>
+ * <p>The pattern matching classifier class.</p>
+ * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @see  org.springframework.classify.Classifier
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class PatternMatchingClassifier<T> implements Classifier<String, T> {
 
 	private PatternMatcher<T> values;
 
-	/**
-	 * Default constructor. Use the setter or the other constructor to create a sensible
-	 * classifier, otherwise all inputs will cause an exception.
-	 */
-	public PatternMatchingClassifier() {
+    /**
+     * <code>PatternMatchingClassifier</code>
+     * <p>Instantiates a new pattern matching classifier.</p>
+     */
+    public PatternMatchingClassifier() {
 		this(new HashMap<>());
 	}
 
-	/**
-	 * Create a classifier from the provided map. The keys are patterns, using '?' as a
-	 * single character and '*' as multi-character wildcard.
-	 * @param values the values to use in the {@link PatternMatcher}
-	 */
-	public PatternMatchingClassifier(Map<String, T> values) {
+    /**
+     * <code>PatternMatchingClassifier</code>
+     * <p>Instantiates a new pattern matching classifier.</p>
+     * @param values {@link java.util.Map} <p>The values parameter is <code>Map</code> type.</p>
+     * @see  java.util.Map
+     */
+    public PatternMatchingClassifier(Map<String, T> values) {
 		super();
 		this.values = new PatternMatcher<>(values);
 	}
 
-	/**
-	 * A map from pattern to value
-	 * @param values the pattern map to set
-	 */
-	public void setPatternMap(Map<String, T> values) {
+    /**
+     * <code>setPatternMap</code>
+     * <p>The set pattern map setter method.</p>
+     * @param values {@link java.util.Map} <p>The values parameter is <code>Map</code> type.</p>
+     * @see  java.util.Map
+     */
+    public void setPatternMap(Map<String, T> values) {
 		this.values = new PatternMatcher<>(values);
 	}
 
-	/**
-	 * Classify the input by matching it against the patterns provided in
-	 * {@link #setPatternMap(Map)}. The most specific pattern that matches will be used to
-	 * locate a value.
-	 * @return the value matching the most specific pattern possible
-	 * @throws IllegalStateException if no matching value is found.
-	 */
 	@Override
 	public T classify(String classifiable) {
 		T value = this.values.match(classifiable);

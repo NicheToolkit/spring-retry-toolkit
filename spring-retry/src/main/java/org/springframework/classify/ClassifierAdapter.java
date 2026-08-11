@@ -20,11 +20,13 @@ import org.springframework.classify.util.MethodInvokerUtils;
 import org.springframework.util.Assert;
 
 /**
- * Wrapper for an object to adapt it to the {@link Classifier} interface.
- *
- * @author Dave Syer
- * @param <C> the type of the thing to classify
- * @param <T> the output of the classifier
+ * <code>ClassifierAdapter</code>
+ * <p>The classifier adapter class.</p>
+ * @param <C>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class ClassifierAdapter<C, T> implements Classifier<C, T> {
@@ -33,47 +35,50 @@ public class ClassifierAdapter<C, T> implements Classifier<C, T> {
 
 	private Classifier<C, T> classifier;
 
-	/**
-	 * Default constructor for use with setter injection.
-	 */
-	public ClassifierAdapter() {
+    /**
+     * <code>ClassifierAdapter</code>
+     * <p>Instantiates a new classifier adapter.</p>
+     */
+    public ClassifierAdapter() {
 		super();
 	}
 
-	/**
-	 * Create a new {@link Classifier} from the delegate provided. Use the constructor as
-	 * an alternative to the {@link #setDelegate(Object)} method.
-	 * @param delegate the delegate
-	 */
-	public ClassifierAdapter(Object delegate) {
+    /**
+     * <code>ClassifierAdapter</code>
+     * <p>Instantiates a new classifier adapter.</p>
+     * @param delegate {@link java.lang.Object} <p>The delegate parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     */
+    public ClassifierAdapter(Object delegate) {
 		setDelegate(delegate);
 	}
 
-	/**
-	 * Create a new {@link Classifier} from the delegate provided. Use the constructor as
-	 * an alternative to the {@link #setDelegate(Classifier)} method.
-	 * @param delegate the classifier to delegate to
-	 */
-	public ClassifierAdapter(Classifier<C, T> delegate) {
+    /**
+     * <code>ClassifierAdapter</code>
+     * <p>Instantiates a new classifier adapter.</p>
+     * @param delegate {@link org.springframework.classify.Classifier} <p>The delegate parameter is <code>Classifier</code> type.</p>
+     */
+    public ClassifierAdapter(Classifier<C, T> delegate) {
 		this.classifier = delegate;
 	}
 
-	public void setDelegate(Classifier<C, T> delegate) {
+    /**
+     * <code>setDelegate</code>
+     * <p>The set delegate setter method.</p>
+     * @param delegate {@link org.springframework.classify.Classifier} <p>The delegate parameter is <code>Classifier</code> type.</p>
+     */
+    public void setDelegate(Classifier<C, T> delegate) {
 		this.classifier = delegate;
 		this.invoker = null;
 	}
 
-	/**
-	 * Search for the {@link org.springframework.classify.annotation.Classifier
-	 * Classifier} annotation on a method in the supplied delegate and use that to create
-	 * a {@link Classifier} from the parameter type to the return type. If the annotation
-	 * is not found a unique non-void method with a single parameter will be used, if it
-	 * exists. The signature of the method cannot be checked here, so might be a runtime
-	 * exception when the method is invoked if the signature doesn't match the classifier
-	 * types.
-	 * @param delegate an object with an annotated method
-	 */
-	public final void setDelegate(Object delegate) {
+    /**
+     * <code>setDelegate</code>
+     * <p>The set delegate setter method.</p>
+     * @param delegate {@link java.lang.Object} <p>The delegate parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     */
+    public final void setDelegate(Object delegate) {
 		this.classifier = null;
 		this.invoker = MethodInvokerUtils
 			.getMethodInvokerByAnnotation(org.springframework.classify.annotation.Classifier.class, delegate);
@@ -84,9 +89,6 @@ public class ClassifierAdapter<C, T> implements Classifier<C, T> {
 				+ "@Classifier was found in delegate of type " + delegate.getClass());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public T classify(C classifiable) {

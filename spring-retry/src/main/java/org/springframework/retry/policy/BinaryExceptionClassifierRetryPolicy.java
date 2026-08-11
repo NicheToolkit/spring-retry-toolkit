@@ -22,22 +22,35 @@ import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.context.RetryContextSupport;
 
 /**
- * A policy, that is based on {@link BinaryExceptionClassifier}. Usually, binary
- * classification is enough for retry purposes. If you need more flexible classification,
- * use {@link ExceptionClassifierRetryPolicy}.
- *
- * @author Aleksandr Shamukov
+ * <code>BinaryExceptionClassifierRetryPolicy</code>
+ * <p>The binary exception classifier retry policy class.</p>
+ * @see  org.springframework.retry.RetryPolicy
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class BinaryExceptionClassifierRetryPolicy implements RetryPolicy {
 
 	private final BinaryExceptionClassifier exceptionClassifier;
 
-	public BinaryExceptionClassifierRetryPolicy(BinaryExceptionClassifier exceptionClassifier) {
+    /**
+     * <code>BinaryExceptionClassifierRetryPolicy</code>
+     * <p>Instantiates a new binary exception classifier retry policy.</p>
+     * @param exceptionClassifier {@link org.springframework.classify.BinaryExceptionClassifier} <p>The exception classifier parameter is <code>BinaryExceptionClassifier</code> type.</p>
+     * @see  org.springframework.classify.BinaryExceptionClassifier
+     */
+    public BinaryExceptionClassifierRetryPolicy(BinaryExceptionClassifier exceptionClassifier) {
 		this.exceptionClassifier = exceptionClassifier;
 	}
 
-	public BinaryExceptionClassifier getExceptionClassifier() {
+    /**
+     * <code>getExceptionClassifier</code>
+     * <p>The get exception classifier getter method.</p>
+     * @return  {@link org.springframework.classify.BinaryExceptionClassifier} <p>The get exception classifier return object is <code>BinaryExceptionClassifier</code> type.</p>
+     * @see  org.springframework.classify.BinaryExceptionClassifier
+     */
+    public BinaryExceptionClassifier getExceptionClassifier() {
 		return exceptionClassifier;
 	}
 

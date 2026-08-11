@@ -26,116 +26,89 @@ import org.springframework.core.annotation.AliasFor;
 import org.springframework.retry.backoff.BackOffPolicy;
 
 /**
- * Collects metadata for a {@link BackOffPolicy}. Features:
- *
- * <ul>
- * <li>With no explicit settings the default is a fixed delay of 1000ms</li>
- * <li>Only the {@link #delay()} set: the backoff is a fixed delay with that value</li>
- * <li>When {@link #delay()} and {@link #maxDelay()} are set the backoff is uniformly
- * distributed between the two values</li>
- * <li>With {@link #delay()}, {@link #maxDelay()} and {@link #multiplier()} the backoff is
- * exponentially growing up to the maximum value</li>
- * <li>If, in addition, the {@link #random()} flag is set then the multiplier is chosen
- * for each delay from a uniform distribution in [1, multiplier-1]</li>
- * </ul>
- *
- * @author Dave Syer
- * @author Gary Russell
- * @author Aftab Shaikh
- * @since 1.1
- *
+ * <code>Backoff</code>
+ * <p>The backoff interface.</p>
+ * @see  java.lang.annotation.Annotation
+ * @see  java.lang.annotation.Target
+ * @see  java.lang.annotation.Retention
+ * @see  java.lang.annotation.Documented
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Backoff {
 
-	/**
-	 * Synonym for {@link #delay()}. When {@link #delay()} is non-zero, value of this
-	 * element is ignored, otherwise value of this element is taken.
-	 * @return the delay in milliseconds (default 1000)
-	 */
-	@AliasFor("delay")
+    /**
+     * <code>value</code>
+     * <p>The value method.</p>
+     * @return  long <p>The value return object is <code>long</code> type.</p>
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor("delay")
 	long value() default 1000;
 
-	/**
-	 * A canonical backoff period. Used as an initial value in the exponential case, and
-	 * as a minimum value in the uniform case. When the value of this element is 0, value
-	 * of element {@link #value()} is taken, otherwise value of this element is taken and
-	 * {@link #value()} is ignored.
-	 * @return the initial or canonical backoff period in milliseconds (default 1000)
-	 */
-	@AliasFor("value")
+    /**
+     * <code>delay</code>
+     * <p>The delay method.</p>
+     * @return  long <p>The delay return object is <code>long</code> type.</p>
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor("value")
 	long delay() default 1000;
 
-	/**
-	 * The maximum wait (in milliseconds) between retries. If less than the
-	 * {@link #delay()} then the default of
-	 * {@value org.springframework.retry.backoff.ExponentialBackOffPolicy#DEFAULT_MAX_INTERVAL}
-	 * is applied.
-	 * @return the maximum delay between retries (default 0 = ignored)
-	 */
-	long maxDelay() default 0;
+    /**
+     * <code>maxDelay</code>
+     * <p>The max delay method.</p>
+     * @return  long <p>The max delay return object is <code>long</code> type.</p>
+     */
+    long maxDelay() default 0;
 
-	/**
-	 * If greater than 1.0, used as a multiplier for generating the next delay for
-	 * backoff; any value less than or equal to 1.0 is treated as 1.0, meaning a fixed
-	 * delay.
-	 * @return a multiplier to use to calculate the next backoff delay (default 0 =
-	 * ignored)
-	 */
-	double multiplier() default 0;
+    /**
+     * <code>multiplier</code>
+     * <p>The multiplier method.</p>
+     * @return  double <p>The multiplier return object is <code>double</code> type.</p>
+     */
+    double multiplier() default 0;
 
-	/**
-	 * An expression evaluating to the canonical backoff period. Used as an initial value
-	 * in the exponential case, and as a minimum value in the uniform case. Overrides
-	 * {@link #delay()}. Use {@code #{...}} for one-time evaluation during initialization,
-	 * omit the delimiters for evaluation at runtime.
-	 * @return the initial or canonical backoff period in milliseconds.
-	 * @since 1.2
-	 */
-	String delayExpression() default "";
+    /**
+     * <code>delayExpression</code>
+     * <p>The delay expression method.</p>
+     * @return  {@link java.lang.String} <p>The delay expression return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String delayExpression() default "";
 
-	/**
-	 * An expression evaluating to the maximum wait (in milliseconds) between retries. If
-	 * less than the {@link #delay()} then the default of
-	 * {@value org.springframework.retry.backoff.ExponentialBackOffPolicy#DEFAULT_MAX_INTERVAL}
-	 * is applied. Overrides {@link #maxDelay()}. Use {@code #{...}} for one-time
-	 * evaluation during initialization, omit the delimiters for evaluation at runtime.
-	 * @return the maximum delay between retries (default 0 = ignored)
-	 * @since 1.2
-	 */
-	String maxDelayExpression() default "";
+    /**
+     * <code>maxDelayExpression</code>
+     * <p>The max delay expression method.</p>
+     * @return  {@link java.lang.String} <p>The max delay expression return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String maxDelayExpression() default "";
 
-	/**
-	 * Evaluates to a value used as a multiplier for generating the next delay for
-	 * backoff; ; any value less than or equal to 1.0 is treated as 1.0, meaning a fixed
-	 * delay. Overrides {@link #multiplier()}. Use {@code #{...}} for one-time evaluation
-	 * during initialization, omit the delimiters for evaluation at runtime.
-	 * @return a multiplier expression to use to calculate the next backoff delay (default
-	 * 0 = ignored)
-	 * @since 1.2
-	 */
-	String multiplierExpression() default "";
+    /**
+     * <code>multiplierExpression</code>
+     * <p>The multiplier expression method.</p>
+     * @return  {@link java.lang.String} <p>The multiplier expression return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String multiplierExpression() default "";
 
-	/**
-	 * In the exponential case ({@link #multiplier()} &gt; 1.0) set this to true to have
-	 * the backoff delays randomized with jitter, so that the maximum delay is multiplier
-	 * times the previous delay and the distribution is uniform between the two values.
-	 * @return the flag to signal randomization is required (default false)
-	 */
-	boolean random() default false;
+    /**
+     * <code>random</code>
+     * <p>The random method.</p>
+     * @return  boolean <p>The random return object is <code>boolean</code> type.</p>
+     */
+    boolean random() default false;
 
-	/**
-	 * Evaluates to a value. In the exponential case ({@link #multiplier()} &gt; 1.0) set
-	 * this to true to have the backoff delays randomized, so that the maximum delay is
-	 * multiplier times the previous delay and the distribution is uniform between the two
-	 * values. This expression is always evaluated during initialization. If the
-	 * expression returns true then
-	 * {@link org.springframework.retry.backoff.ExponentialRandomBackOffPolicy} is used
-	 * else {@link org.springframework.retry.backoff.ExponentialBackOffPolicy} is used.
-	 * @return the flag to signal randomization is required (default false)
-	 */
-	String randomExpression() default "";
+    /**
+     * <code>randomExpression</code>
+     * <p>The random expression method.</p>
+     * @return  {@link java.lang.String} <p>The random expression return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String randomExpression() default "";
 
 }

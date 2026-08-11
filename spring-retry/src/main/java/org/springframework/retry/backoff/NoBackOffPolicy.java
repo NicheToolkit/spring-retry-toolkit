@@ -17,11 +17,11 @@
 package org.springframework.retry.backoff;
 
 /**
- * Implementation of {@link BackOffPolicy} that performs a no-op and as such all retry
- * operation in a given set proceed one after the other with no pause.
- *
- * @author Rob Harrop
- * @since 2.1
+ * <code>NoBackOffPolicy</code>
+ * <p>The no back off policy class.</p>
+ * @see  org.springframework.retry.backoff.StatelessBackOffPolicy
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class NoBackOffPolicy extends StatelessBackOffPolicy {
 

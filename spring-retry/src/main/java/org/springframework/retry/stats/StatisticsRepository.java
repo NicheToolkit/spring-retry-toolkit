@@ -19,23 +19,69 @@ package org.springframework.retry.stats;
 import org.springframework.retry.RetryStatistics;
 
 /**
- * @author Dave Syer
- *
+ * <code>StatisticsRepository</code>
+ * <p>The statistics repository interface.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface StatisticsRepository {
 
-	RetryStatistics findOne(String name);
+    /**
+     * <code>findOne</code>
+     * <p>The find one method.</p>
+     * @param name {@link java.lang.String} <p>The name parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     * @see  org.springframework.retry.RetryStatistics
+     * @return  {@link org.springframework.retry.RetryStatistics} <p>The find one return object is <code>RetryStatistics</code> type.</p>
+     */
+    RetryStatistics findOne(String name);
 
-	Iterable<RetryStatistics> findAll();
+    /**
+     * <code>findAll</code>
+     * <p>The find all method.</p>
+     * @return  {@link java.lang.Iterable} <p>The find all return object is <code>Iterable</code> type.</p>
+     * @see  java.lang.Iterable
+     */
+    Iterable<RetryStatistics> findAll();
 
-	void addStarted(String name);
+    /**
+     * <code>addStarted</code>
+     * <p>The add started method.</p>
+     * @param name {@link java.lang.String} <p>The name parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    void addStarted(String name);
 
-	void addError(String name);
+    /**
+     * <code>addError</code>
+     * <p>The add error method.</p>
+     * @param name {@link java.lang.String} <p>The name parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    void addError(String name);
 
-	void addRecovery(String name);
+    /**
+     * <code>addRecovery</code>
+     * <p>The add recovery method.</p>
+     * @param name {@link java.lang.String} <p>The name parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    void addRecovery(String name);
 
-	void addComplete(String name);
+    /**
+     * <code>addComplete</code>
+     * <p>The add complete method.</p>
+     * @param name {@link java.lang.String} <p>The name parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    void addComplete(String name);
 
-	void addAbort(String name);
+    /**
+     * <code>addAbort</code>
+     * <p>The add abort method.</p>
+     * @param name {@link java.lang.String} <p>The name parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    void addAbort(String name);
 
 }

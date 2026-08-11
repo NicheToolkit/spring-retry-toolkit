@@ -21,28 +21,17 @@ import java.util.function.Supplier;
 import org.springframework.util.Assert;
 
 /**
- * Implementation of {@link BackOffPolicy} that pauses for a fixed period of time before
- * continuing. A pause is implemented using {@link Sleeper#sleep(long)}.
- *
- * {@link #setBackOffPeriod(long)} is thread-safe and it is safe to call
- * {@link #setBackOffPeriod} during execution from multiple threads, however this may
- * cause a single retry operation to have pauses of different intervals.
- *
- * @author Rob Harrop
- * @author Dave Syer
- * @author Artem Bilan
- * @author Marius Lichtblau
+ * <code>FixedBackOffPolicy</code>
+ * <p>The fixed back off policy class.</p>
+ * @see  org.springframework.retry.backoff.StatelessBackOffPolicy
+ * @see  org.springframework.retry.backoff.SleepingBackOffPolicy
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class FixedBackOffPolicy extends StatelessBackOffPolicy implements SleepingBackOffPolicy<FixedBackOffPolicy> {
 
-	/**
-	 * Default back off period - 1000ms.
-	 */
 	private static final long DEFAULT_BACK_OFF_PERIOD = 1000L;
 
-	/**
-	 * The back off period in milliseconds. Defaults to 1000ms.
-	 */
 	private Supplier<Long> backOffPeriod = () -> DEFAULT_BACK_OFF_PERIOD;
 
 	private Sleeper sleeper = new ThreadWaitSleeper();
@@ -54,45 +43,45 @@ public class FixedBackOffPolicy extends StatelessBackOffPolicy implements Sleepi
 		return res;
 	}
 
-	/**
-	 * Public setter for the {@link Sleeper} strategy.
-	 * @param sleeper the sleeper to set defaults to {@link ThreadWaitSleeper}.
-	 */
-	public void setSleeper(Sleeper sleeper) {
+    /**
+     * <code>setSleeper</code>
+     * <p>The set sleeper setter method.</p>
+     * @param sleeper {@link org.springframework.retry.backoff.Sleeper} <p>The sleeper parameter is <code>Sleeper</code> type.</p>
+     * @see  org.springframework.retry.backoff.Sleeper
+     */
+    public void setSleeper(Sleeper sleeper) {
 		this.sleeper = sleeper;
 	}
 
-	/**
-	 * Set the back off period in milliseconds. Cannot be &lt; 1. Default value is 1000ms.
-	 * @param backOffPeriod the back off period
-	 */
-	public void setBackOffPeriod(long backOffPeriod) {
+    /**
+     * <code>setBackOffPeriod</code>
+     * <p>The set back off period setter method.</p>
+     * @param backOffPeriod long <p>The back off period parameter is <code>long</code> type.</p>
+     */
+    public void setBackOffPeriod(long backOffPeriod) {
 		this.backOffPeriod = () -> (backOffPeriod > 0 ? backOffPeriod : 1);
 	}
 
-	/**
-	 * Set a supplier for the back off period in milliseconds. Cannot be &lt; 1. Default
-	 * supplier supplies 1000ms.
-	 * @param backOffPeriodSupplier the back off period
-	 * @since 2.0
-	 */
-	public void backOffPeriodSupplier(Supplier<Long> backOffPeriodSupplier) {
+    /**
+     * <code>backOffPeriodSupplier</code>
+     * <p>The back off period supplier method.</p>
+     * @param backOffPeriodSupplier {@link java.util.function.Supplier} <p>The back off period supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     */
+    public void backOffPeriodSupplier(Supplier<Long> backOffPeriodSupplier) {
 		Assert.notNull(backOffPeriodSupplier, "'backOffPeriodSupplier' cannot be null");
 		this.backOffPeriod = backOffPeriodSupplier;
 	}
 
-	/**
-	 * The backoff period in milliseconds.
-	 * @return the backoff period
-	 */
-	public long getBackOffPeriod() {
+    /**
+     * <code>getBackOffPeriod</code>
+     * <p>The get back off period getter method.</p>
+     * @return  long <p>The get back off period return object is <code>long</code> type.</p>
+     */
+    public long getBackOffPeriod() {
 		return this.backOffPeriod.get();
 	}
 
-	/**
-	 * Pause for the {@link #setBackOffPeriod(long)}.
-	 * @throws BackOffInterruptedException if interrupted during sleep.
-	 */
 	protected void doBackOff() throws BackOffInterruptedException {
 		try {
 			sleeper.sleep(this.backOffPeriod.get());

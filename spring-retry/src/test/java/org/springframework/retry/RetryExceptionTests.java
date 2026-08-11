@@ -18,6 +18,13 @@ package org.springframework.retry;
 
 import org.springframework.retry.RetryException;
 
+/**
+ * <code>RetryExceptionTests</code>
+ * <p>The retry exception tests class.</p>
+ * @see  org.springframework.retry.AbstractExceptionTests
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class RetryExceptionTests extends AbstractExceptionTests {
 
 	public Exception getException(String msg) {
@@ -28,7 +35,11 @@ public class RetryExceptionTests extends AbstractExceptionTests {
 		return new RetryException(msg, t);
 	}
 
-	public void testNothing() {
+    /**
+     * <code>testNothing</code>
+     * <p>The test nothing method.</p>
+     */
+    public void testNothing() {
 		// fool coverage tools...
 	}
 

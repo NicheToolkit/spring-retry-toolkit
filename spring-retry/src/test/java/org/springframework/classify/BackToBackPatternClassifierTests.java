@@ -28,8 +28,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
- * @author Dave Syer
- *
+ * <code>BackToBackPatternClassifierTests</code>
+ * <p>The back to back pattern classifier tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class BackToBackPatternClassifierTests {
 
@@ -37,19 +39,34 @@ public class BackToBackPatternClassifierTests {
 
 	private Map<String, String> map;
 
-	@BeforeEach
+    /**
+     * <code>createMap</code>
+     * <p>The create map method.</p>
+     * @see  org.junit.jupiter.api.BeforeEach
+     */
+    @BeforeEach
 	public void createMap() {
 		map = new HashMap<>();
 		map.put("foo", "bar");
 		map.put("*", "spam");
 	}
 
-	@Test
+    /**
+     * <code>testNoClassifiers</code>
+     * <p>The test no classifiers method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testNoClassifiers() {
 		assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> classifier.classify("foo"));
 	}
 
-	@Test
+    /**
+     * <code>testCreateFromConstructor</code>
+     * <p>The test create from constructor method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCreateFromConstructor() {
 		classifier = new BackToBackPatternClassifier<>(
 				new PatternMatchingClassifier<>(Collections.singletonMap("oof", "bucket")),
@@ -57,7 +74,12 @@ public class BackToBackPatternClassifierTests {
 		assertThat(classifier.classify("oof")).isEqualTo("spam");
 	}
 
-	@Test
+    /**
+     * <code>testSetRouterDelegate</code>
+     * <p>The test set router delegate method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSetRouterDelegate() {
 		classifier.setRouterDelegate(new Object() {
 			@Classifier
@@ -69,7 +91,12 @@ public class BackToBackPatternClassifierTests {
 		assertThat(classifier.classify("oof")).isEqualTo("spam");
 	}
 
-	@Test
+    /**
+     * <code>testSingleMethodWithNoAnnotation</code>
+     * <p>The test single method with no annotation method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSingleMethodWithNoAnnotation() {
 		classifier = new BackToBackPatternClassifier<>();
 		classifier.setRouterDelegate(new RouterDelegate());

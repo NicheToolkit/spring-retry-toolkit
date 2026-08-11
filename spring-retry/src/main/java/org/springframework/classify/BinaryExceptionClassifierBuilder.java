@@ -22,39 +22,27 @@ import java.util.List;
 import org.springframework.util.Assert;
 
 /**
- * Fluent API for BinaryExceptionClassifier configuration.
- * <p>
- * Can be used in while list style: <pre>{@code
- * BinaryExceptionClassifier.newBuilder()
- * 			.retryOn(IOException.class)
- * 			.retryOn(IllegalArgumentException.class)
- * 			.build();
- * } </pre> or in black list style: <pre>{@code
- * BinaryExceptionClassifier.newBuilder()
- *            .notRetryOn(Error.class)
- *            .build();
- * } </pre>
- * <p>
- * Provides traverseCauses=false by default, and no default rules for exceptions.
- * <p>
- * Not thread safe. Building should be performed in a single thread, publishing of newly
- * created instance should be safe.
- *
- * @author Aleksandr Shamukov
+ * <code>BinaryExceptionClassifierBuilder</code>
+ * <p>The binary exception classifier builder class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class BinaryExceptionClassifierBuilder {
 
-	/**
-	 * Building notation type (white list or black list) - null: has not selected yet -
-	 * true: white list - false: black list
-	 */
 	private Boolean isWhiteList = null;
 
 	private boolean traverseCauses = false;
 
 	private final List<Class<? extends Throwable>> exceptionClasses = new ArrayList<>();
 
-	public BinaryExceptionClassifierBuilder retryOn(Class<? extends Throwable> throwable) {
+    /**
+     * <code>retryOn</code>
+     * <p>The retry on method.</p>
+     * @param throwable {@link java.lang.Class} <p>The throwable parameter is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @return  {@link org.springframework.classify.BinaryExceptionClassifierBuilder} <p>The retry on return object is <code>BinaryExceptionClassifierBuilder</code> type.</p>
+     */
+    public BinaryExceptionClassifierBuilder retryOn(Class<? extends Throwable> throwable) {
 		Assert.isTrue(isWhiteList == null || isWhiteList, "Please use only retryOn() or only notRetryOn()");
 		Assert.notNull(throwable, "Exception class can not be null");
 		isWhiteList = true;
@@ -63,7 +51,14 @@ public class BinaryExceptionClassifierBuilder {
 
 	}
 
-	public BinaryExceptionClassifierBuilder notRetryOn(Class<? extends Throwable> throwable) {
+    /**
+     * <code>notRetryOn</code>
+     * <p>The not retry on method.</p>
+     * @param throwable {@link java.lang.Class} <p>The throwable parameter is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @return  {@link org.springframework.classify.BinaryExceptionClassifierBuilder} <p>The not retry on return object is <code>BinaryExceptionClassifierBuilder</code> type.</p>
+     */
+    public BinaryExceptionClassifierBuilder notRetryOn(Class<? extends Throwable> throwable) {
 		Assert.isTrue(isWhiteList == null || !isWhiteList, "Please use only retryOn() or only notRetryOn()");
 		Assert.notNull(throwable, "Exception class can not be null");
 		isWhiteList = false;
@@ -71,12 +66,22 @@ public class BinaryExceptionClassifierBuilder {
 		return this;
 	}
 
-	public BinaryExceptionClassifierBuilder traversingCauses() {
+    /**
+     * <code>traversingCauses</code>
+     * <p>The traversing causes method.</p>
+     * @return  {@link org.springframework.classify.BinaryExceptionClassifierBuilder} <p>The traversing causes return object is <code>BinaryExceptionClassifierBuilder</code> type.</p>
+     */
+    public BinaryExceptionClassifierBuilder traversingCauses() {
 		this.traverseCauses = true;
 		return this;
 	}
 
-	public BinaryExceptionClassifier build() {
+    /**
+     * <code>build</code>
+     * <p>The build method.</p>
+     * @return  {@link org.springframework.classify.BinaryExceptionClassifier} <p>The build return object is <code>BinaryExceptionClassifier</code> type.</p>
+     */
+    public BinaryExceptionClassifier build() {
 		Assert.isTrue(!exceptionClasses.isEmpty(),
 				"Attempt to build classifier with empty rules. To build always true, or always false "
 						+ "instance, please use explicit rule for Throwable");

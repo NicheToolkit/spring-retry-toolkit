@@ -22,9 +22,20 @@ import org.springframework.retry.RetryContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * <code>NeverRetryPolicyTests</code>
+ * <p>The never retry policy tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class NeverRetryPolicyTests {
 
-	@Test
+    /**
+     * <code>testSimpleOperations</code>
+     * <p>The test simple operations method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSimpleOperations() {
 		NeverRetryPolicy policy = new NeverRetryPolicy();
 		RetryContext context = policy.open(null);
@@ -38,7 +49,12 @@ public class NeverRetryPolicyTests {
 		assertThat(policy.canRetry(context)).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testRetryCount</code>
+     * <p>The test retry count method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRetryCount() {
 		NeverRetryPolicy policy = new NeverRetryPolicy();
 		RetryContext context = policy.open(null);
@@ -50,7 +66,12 @@ public class NeverRetryPolicyTests {
 		assertThat(context.getLastThrowable().getMessage()).isEqualTo("foo");
 	}
 
-	@Test
+    /**
+     * <code>testParent</code>
+     * <p>The test parent method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testParent() {
 		NeverRetryPolicy policy = new NeverRetryPolicy();
 		RetryContext context = policy.open(null);

@@ -22,14 +22,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
- * @author Tomaz Fernandes
- * @author Gary Russell
- * @author Marius Lichtblau
- * @since 1.3.2
+ * <code>UniformRandomBackOffPolicyTests</code>
+ * <p>The uniform random back off policy tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class UniformRandomBackOffPolicyTests {
 
-	@Test
+    /**
+     * <code>testSetSleeper</code>
+     * <p>The test set sleeper method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSetSleeper() {
 		UniformRandomBackOffPolicy backOffPolicy = new UniformRandomBackOffPolicy();
 		int minBackOff = 1000;
@@ -50,7 +55,12 @@ public class UniformRandomBackOffPolicyTests {
 		assertThat(dummySleeper.getBackOffs()[0]).isLessThan(maxBackOff);
 	}
 
-	@Test
+    /**
+     * <code>testInterruptedStatusIsRestored</code>
+     * <p>The test interrupted status is restored method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testInterruptedStatusIsRestored() {
 		UniformRandomBackOffPolicy backOffPolicy = new UniformRandomBackOffPolicy();
 		int minBackOff = 1000;
@@ -68,7 +78,12 @@ public class UniformRandomBackOffPolicyTests {
 		assertThat(Thread.interrupted()).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testMaxBackOffLessThanMinBackOff</code>
+     * <p>The test max back off less than min back off method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testMaxBackOffLessThanMinBackOff() {
 		UniformRandomBackOffPolicy backOffPolicy = new UniformRandomBackOffPolicy();
 		int minBackOff = 1000;

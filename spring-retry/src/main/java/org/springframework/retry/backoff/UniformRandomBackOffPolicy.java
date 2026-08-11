@@ -22,29 +22,18 @@ import java.util.function.Supplier;
 import org.springframework.util.Assert;
 
 /**
- * Implementation of {@link BackOffPolicy} that pauses for a random period of time before
- * continuing. A pause is implemented using {@link Sleeper#sleep(long)}.
- *
- * {@link #setMinBackOffPeriod(long)} is thread-safe and it is safe to call
- * {@link #setMaxBackOffPeriod(long)} during execution from multiple threads, however this
- * may cause a single retry operation to have pauses of different intervals.
- *
- * @author Rob Harrop
- * @author Dave Syer
- * @author Tomaz Fernandes
- * @author Marius Lichtblau
+ * <code>UniformRandomBackOffPolicy</code>
+ * <p>The uniform random back off policy class.</p>
+ * @see  org.springframework.retry.backoff.StatelessBackOffPolicy
+ * @see  org.springframework.retry.backoff.SleepingBackOffPolicy
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class UniformRandomBackOffPolicy extends StatelessBackOffPolicy
 		implements SleepingBackOffPolicy<UniformRandomBackOffPolicy> {
 
-	/**
-	 * Default min back off period - 500ms.
-	 */
 	private static final long DEFAULT_BACK_OFF_MIN_PERIOD = 500L;
 
-	/**
-	 * Default max back off period - 1500ms.
-	 */
 	private static final long DEFAULT_BACK_OFF_MAX_PERIOD = 1500L;
 
 	private Supplier<Long> minBackOffPeriod = () -> DEFAULT_BACK_OFF_MIN_PERIOD;
@@ -63,74 +52,74 @@ public class UniformRandomBackOffPolicy extends StatelessBackOffPolicy
 		return res;
 	}
 
-	/**
-	 * Public setter for the {@link Sleeper} strategy.
-	 * @param sleeper the sleeper to set defaults to {@link ThreadWaitSleeper}.
-	 */
-	public void setSleeper(Sleeper sleeper) {
+    /**
+     * <code>setSleeper</code>
+     * <p>The set sleeper setter method.</p>
+     * @param sleeper {@link org.springframework.retry.backoff.Sleeper} <p>The sleeper parameter is <code>Sleeper</code> type.</p>
+     * @see  org.springframework.retry.backoff.Sleeper
+     */
+    public void setSleeper(Sleeper sleeper) {
 		this.sleeper = sleeper;
 	}
 
-	/**
-	 * Set the minimum back off period in milliseconds. Cannot be &lt; 1. Default value is
-	 * 500ms.
-	 * @param backOffPeriod the backoff period
-	 */
-	public void setMinBackOffPeriod(long backOffPeriod) {
+    /**
+     * <code>setMinBackOffPeriod</code>
+     * <p>The set min back off period setter method.</p>
+     * @param backOffPeriod long <p>The back off period parameter is <code>long</code> type.</p>
+     */
+    public void setMinBackOffPeriod(long backOffPeriod) {
 		this.minBackOffPeriod = () -> (backOffPeriod > 0 ? backOffPeriod : 1);
 	}
 
-	/**
-	 * Set a supplier for the minimum back off period in milliseconds. Cannot be &lt; 1.
-	 * Default supplier supplies 500ms.
-	 * @param backOffPeriodSupplier the backoff period
-	 * @since 2.0
-	 */
-	public void minBackOffPeriodSupplier(Supplier<Long> backOffPeriodSupplier) {
+    /**
+     * <code>minBackOffPeriodSupplier</code>
+     * <p>The min back off period supplier method.</p>
+     * @param backOffPeriodSupplier {@link java.util.function.Supplier} <p>The back off period supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     */
+    public void minBackOffPeriodSupplier(Supplier<Long> backOffPeriodSupplier) {
 		Assert.notNull(backOffPeriodSupplier, "'backOffPeriodSupplier' cannot be null");
 		this.minBackOffPeriod = backOffPeriodSupplier;
 	}
 
-	/**
-	 * The minimum backoff period in milliseconds.
-	 * @return the backoff period
-	 */
-	public long getMinBackOffPeriod() {
+    /**
+     * <code>getMinBackOffPeriod</code>
+     * <p>The get min back off period getter method.</p>
+     * @return  long <p>The get min back off period return object is <code>long</code> type.</p>
+     */
+    public long getMinBackOffPeriod() {
 		return minBackOffPeriod.get();
 	}
 
-	/**
-	 * Set the maximum back off period in milliseconds. Cannot be &lt; 1. Default value is
-	 * 1500ms.
-	 * @param backOffPeriod the back off period
-	 */
-	public void setMaxBackOffPeriod(long backOffPeriod) {
+    /**
+     * <code>setMaxBackOffPeriod</code>
+     * <p>The set max back off period setter method.</p>
+     * @param backOffPeriod long <p>The back off period parameter is <code>long</code> type.</p>
+     */
+    public void setMaxBackOffPeriod(long backOffPeriod) {
 		this.maxBackOffPeriod = () -> (backOffPeriod > 0 ? backOffPeriod : 1);
 	}
 
-	/**
-	 * Set a supplier for the maximum back off period in milliseconds. Cannot be &lt; 1.
-	 * Default supplier supplies 1500ms.
-	 * @param backOffPeriodSupplier the back off period
-	 * @since 2.0
-	 */
-	public void maxBackOffPeriodSupplier(Supplier<Long> backOffPeriodSupplier) {
+    /**
+     * <code>maxBackOffPeriodSupplier</code>
+     * <p>The max back off period supplier method.</p>
+     * @param backOffPeriodSupplier {@link java.util.function.Supplier} <p>The back off period supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     */
+    public void maxBackOffPeriodSupplier(Supplier<Long> backOffPeriodSupplier) {
 		Assert.notNull(backOffPeriodSupplier, "'backOffPeriodSupplier' cannot be null");
 		this.maxBackOffPeriod = backOffPeriodSupplier;
 	}
 
-	/**
-	 * The maximum backoff period in milliseconds.
-	 * @return the backoff period
-	 */
-	public long getMaxBackOffPeriod() {
+    /**
+     * <code>getMaxBackOffPeriod</code>
+     * <p>The get max back off period getter method.</p>
+     * @return  long <p>The get max back off period return object is <code>long</code> type.</p>
+     */
+    public long getMaxBackOffPeriod() {
 		return maxBackOffPeriod.get();
 	}
 
-	/**
-	 * Pause for the {@link #setMinBackOffPeriod(long)}.
-	 * @throws BackOffInterruptedException if interrupted during sleep.
-	 */
 	protected void doBackOff() throws BackOffInterruptedException {
 		try {
 			Long min = this.minBackOffPeriod.get();

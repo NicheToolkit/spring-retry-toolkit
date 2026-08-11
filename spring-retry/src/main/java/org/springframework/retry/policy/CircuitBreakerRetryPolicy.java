@@ -27,15 +27,29 @@ import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.context.RetryContextSupport;
 
 /**
- * @author Dave Syer
- *
+ * <code>CircuitBreakerRetryPolicy</code>
+ * <p>The circuit breaker retry policy class.</p>
+ * @see  org.springframework.retry.RetryPolicy
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class CircuitBreakerRetryPolicy implements RetryPolicy {
 
-	public static final String CIRCUIT_OPEN = "circuit.open";
+    /**
+     * <code>CIRCUIT_OPEN</code>
+     * {@link java.lang.String} <p>The constant <code>CIRCUIT_OPEN</code> field.</p>
+     * @see  java.lang.String
+     */
+    public static final String CIRCUIT_OPEN = "circuit.open";
 
-	public static final String CIRCUIT_SHORT_COUNT = "circuit.shortCount";
+    /**
+     * <code>CIRCUIT_SHORT_COUNT</code>
+     * {@link java.lang.String} <p>The constant <code>CIRCUIT_SHORT_COUNT</code> field.</p>
+     * @see  java.lang.String
+     */
+    public static final String CIRCUIT_SHORT_COUNT = "circuit.shortCount";
 
 	private static final Log logger = LogFactory.getLog(CircuitBreakerRetryPolicy.class);
 
@@ -49,52 +63,59 @@ public class CircuitBreakerRetryPolicy implements RetryPolicy {
 
 	private Supplier<Long> openTimeoutSupplier;
 
-	public CircuitBreakerRetryPolicy() {
+    /**
+     * <code>CircuitBreakerRetryPolicy</code>
+     * <p>Instantiates a new circuit breaker retry policy.</p>
+     */
+    public CircuitBreakerRetryPolicy() {
 		this(new SimpleRetryPolicy());
 	}
 
-	public CircuitBreakerRetryPolicy(RetryPolicy delegate) {
+    /**
+     * <code>CircuitBreakerRetryPolicy</code>
+     * <p>Instantiates a new circuit breaker retry policy.</p>
+     * @param delegate {@link org.springframework.retry.RetryPolicy} <p>The delegate parameter is <code>RetryPolicy</code> type.</p>
+     * @see  org.springframework.retry.RetryPolicy
+     */
+    public CircuitBreakerRetryPolicy(RetryPolicy delegate) {
 		this.delegate = delegate;
 	}
 
-	/**
-	 * Timeout for resetting circuit in milliseconds. After the circuit opens it will
-	 * re-close after this time has elapsed and the context will be restarted.
-	 * @param timeout the timeout to set in milliseconds
-	 */
-	public void setResetTimeout(long timeout) {
+    /**
+     * <code>setResetTimeout</code>
+     * <p>The set reset timeout setter method.</p>
+     * @param timeout long <p>The timeout parameter is <code>long</code> type.</p>
+     */
+    public void setResetTimeout(long timeout) {
 		this.resetTimeout = timeout;
 	}
 
-	/**
-	 * A supplier for the timeout for resetting circuit in milliseconds. After the circuit
-	 * opens it will re-close after this time has elapsed and the context will be
-	 * restarted.
-	 * @param timeoutSupplier a supplier for the timeout to set in milliseconds
-	 * @since 2.0
-	 */
-	public void resetTimeoutSupplier(Supplier<Long> timeoutSupplier) {
+    /**
+     * <code>resetTimeoutSupplier</code>
+     * <p>The reset timeout supplier method.</p>
+     * @param timeoutSupplier {@link java.util.function.Supplier} <p>The timeout supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     */
+    public void resetTimeoutSupplier(Supplier<Long> timeoutSupplier) {
 		this.resetTimeoutSupplier = timeoutSupplier;
 	}
 
-	/**
-	 * Timeout for tripping the open circuit. If the delegate policy cannot retry and the
-	 * time elapsed since the context was started is less than this window, then the
-	 * circuit is opened.
-	 * @param timeout the timeout to set in milliseconds
-	 */
-	public void setOpenTimeout(long timeout) {
+    /**
+     * <code>setOpenTimeout</code>
+     * <p>The set open timeout setter method.</p>
+     * @param timeout long <p>The timeout parameter is <code>long</code> type.</p>
+     */
+    public void setOpenTimeout(long timeout) {
 		this.openTimeout = timeout;
 	}
 
-	/**
-	 * A supplier for the Timeout for tripping the open circuit. If the delegate policy
-	 * cannot retry and the time elapsed since the context was started is less than this
-	 * window, then the circuit is opened.
-	 * @param timeoutSupplier a supplier for the timeout to set in milliseconds
-	 * @since 2.0
-	 */
-	public void openTimeoutSupplier(Supplier<Long> timeoutSupplier) {
+    /**
+     * <code>openTimeoutSupplier</code>
+     * <p>The open timeout supplier method.</p>
+     * @param timeoutSupplier {@link java.util.function.Supplier} <p>The timeout supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     */
+    public void openTimeoutSupplier(Supplier<Long> timeoutSupplier) {
 		this.openTimeoutSupplier = timeoutSupplier;
 	}
 
@@ -137,7 +158,14 @@ public class CircuitBreakerRetryPolicy implements RetryPolicy {
 		this.delegate.registerThrowable(circuit.context, throwable);
 	}
 
-	static class CircuitBreakerRetryContext extends RetryContextSupport {
+    /**
+     * <code>CircuitBreakerRetryContext</code>
+     * <p>The circuit breaker retry context class.</p>
+     * @see  org.springframework.retry.context.RetryContextSupport
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    static class CircuitBreakerRetryContext extends RetryContextSupport {
 
 		private volatile RetryContext context;
 
@@ -151,7 +179,17 @@ public class CircuitBreakerRetryPolicy implements RetryPolicy {
 
 		private final AtomicInteger shortCircuitCount = new AtomicInteger();
 
-		public CircuitBreakerRetryContext(RetryContext parent, RetryPolicy policy, long timeout, long openWindow) {
+        /**
+         * <code>CircuitBreakerRetryContext</code>
+         * <p>Instantiates a new circuit breaker retry context.</p>
+         * @param parent {@link org.springframework.retry.RetryContext} <p>The parent parameter is <code>RetryContext</code> type.</p>
+         * @param policy {@link org.springframework.retry.RetryPolicy} <p>The policy parameter is <code>RetryPolicy</code> type.</p>
+         * @param timeout long <p>The timeout parameter is <code>long</code> type.</p>
+         * @param openWindow long <p>The open window parameter is <code>long</code> type.</p>
+         * @see  org.springframework.retry.RetryContext
+         * @see  org.springframework.retry.RetryPolicy
+         */
+        public CircuitBreakerRetryContext(RetryContext parent, RetryPolicy policy, long timeout, long openWindow) {
 			super(parent);
 			this.policy = policy;
 			this.timeout = timeout;
@@ -160,12 +198,20 @@ public class CircuitBreakerRetryPolicy implements RetryPolicy {
 			setAttribute("state.global", true);
 		}
 
-		public void reset() {
+        /**
+         * <code>reset</code>
+         * <p>The reset method.</p>
+         */
+        public void reset() {
 			shortCircuitCount.set(0);
 			setAttribute(CIRCUIT_SHORT_COUNT, shortCircuitCount.get());
 		}
 
-		public void incrementShortCircuitCount() {
+        /**
+         * <code>incrementShortCircuitCount</code>
+         * <p>The increment short circuit count method.</p>
+         */
+        public void incrementShortCircuitCount() {
 			shortCircuitCount.incrementAndGet();
 			setAttribute(CIRCUIT_SHORT_COUNT, shortCircuitCount.get());
 		}
@@ -176,7 +222,12 @@ public class CircuitBreakerRetryPolicy implements RetryPolicy {
 			return context;
 		}
 
-		public boolean isOpen() {
+        /**
+         * <code>isOpen</code>
+         * <p>The is open method.</p>
+         * @return  boolean <p>The is open return object is <code>boolean</code> type.</p>
+         */
+        public boolean isOpen() {
 			long time = System.currentTimeMillis() - this.start;
 			boolean retryable = this.policy.canRetry(this.context);
 			if (!retryable) {

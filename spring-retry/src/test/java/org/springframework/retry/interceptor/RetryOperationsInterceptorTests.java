@@ -53,13 +53,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * @author Dave Syer
- * @author Marius Grama
- * @author Gary Russell
- * @author Stéphane Nicoll
- * @author Henning Pöttker
- * @author Artem Bilan
- * @author Kim Jun Hyeong
+ * <code>RetryOperationsInterceptorTests</code>
+ * <p>The retry operations interceptor tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RetryOperationsInterceptorTests {
 
@@ -75,7 +72,12 @@ public class RetryOperationsInterceptorTests {
 
 	private RetryContext context;
 
-	@BeforeEach
+    /**
+     * <code>setUp</code>
+     * <p>The set up setter method.</p>
+     * @see  org.junit.jupiter.api.BeforeEach
+     */
+    @BeforeEach
 	public void setUp() {
 		this.interceptor = new RetryOperationsInterceptor();
 		RetryTemplate retryTemplate = new RetryTemplate();
@@ -114,14 +116,28 @@ public class RetryOperationsInterceptorTests {
 		transactionCount = 0;
 	}
 
-	@Test
+    /**
+     * <code>testDefaultInterceptorSunnyDay</code>
+     * <p>The test default interceptor sunny day method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	public void testDefaultInterceptorSunnyDay() throws Exception {
 		((Advised) this.service).addAdvice(this.interceptor);
 		this.service.service();
 		assertThat(count).isEqualTo(2);
 	}
 
-	@Test
+    /**
+     * <code>testDefaultInterceptorWithLabel</code>
+     * <p>The test default interceptor with label method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	public void testDefaultInterceptorWithLabel() throws Exception {
 		this.interceptor.setLabel("FOO");
 		((Advised) this.service).addAdvice(this.interceptor);
@@ -136,7 +152,14 @@ public class RetryOperationsInterceptorTests {
 			.isEqualTo(new Object[0]);
 	}
 
-	@Test
+    /**
+     * <code>testDefaultInterceptorWithRetryListenerInspectingTheMethodInvocation</code>
+     * <p>The test default interceptor with retry listener inspecting the method invocation method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	public void testDefaultInterceptorWithRetryListenerInspectingTheMethodInvocation() throws Exception {
 
 		final String label = "FOO";
@@ -181,7 +204,14 @@ public class RetryOperationsInterceptorTests {
 		assertThat(argumentsAsExpected.get()).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testDefaultInterceptorWithRecovery</code>
+     * <p>The test default interceptor with recovery method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	public void testDefaultInterceptorWithRecovery() throws Exception {
 		RetryTemplate template = new RetryTemplate();
 		template.setRetryPolicy(new SimpleRetryPolicy(1));
@@ -192,7 +222,14 @@ public class RetryOperationsInterceptorTests {
 		assertThat(count).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>testInterceptorChainWithRetry</code>
+     * <p>The test interceptor chain with retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	public void testInterceptorChainWithRetry() throws Exception {
 		((Advised) this.service).addAdvice(this.interceptor);
 		final List<String> list = new ArrayList<>();
@@ -208,7 +245,12 @@ public class RetryOperationsInterceptorTests {
 		assertThat(list).hasSize(2);
 	}
 
-	@Test
+    /**
+     * <code>testRetryExceptionAfterTooManyAttempts</code>
+     * <p>The test retry exception after too many attempts method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRetryExceptionAfterTooManyAttempts() {
 		((Advised) this.service).addAdvice(this.interceptor);
 		RetryTemplate template = new RetryTemplate();
@@ -218,7 +260,12 @@ public class RetryOperationsInterceptorTests {
 		assertThat(count).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>testOutsideTransaction</code>
+     * <p>The test outside transaction method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOutsideTransaction() {
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
 				ClassUtils.addResourcePathToPackagePath(getClass(), "retry-transaction-test.xml"));
@@ -232,7 +279,12 @@ public class RetryOperationsInterceptorTests {
 		context.close();
 	}
 
-	@Test
+    /**
+     * <code>testIllegalMethodInvocationType</code>
+     * <p>The test illegal method invocation type method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testIllegalMethodInvocationType() {
 		assertThatIllegalStateException().isThrownBy(() -> this.interceptor.invoke(new MethodInvocation() {
 			@Override
@@ -262,7 +314,12 @@ public class RetryOperationsInterceptorTests {
 		})).withMessageContaining("MethodInvocation");
 	}
 
-	@Test
+    /**
+     * <code>testProxyAttributeCleanupWithCorrectKey</code>
+     * <p>The test proxy attribute cleanup with correct key method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testProxyAttributeCleanupWithCorrectKey() {
 		RetryContext directContext = new RetryContextSupport(null);
 		Object mockProxy = new Object();
@@ -274,7 +331,12 @@ public class RetryOperationsInterceptorTests {
 		RetrySynchronizationManager.clear();
 	}
 
-	@Test
+    /**
+     * <code>testProxyAttributeRemainWithWrongKey</code>
+     * <p>The test proxy attribute remain with wrong key method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testProxyAttributeRemainWithWrongKey() {
 		RetryContext directContext = new RetryContextSupport(null);
 		Object mockProxy = new Object();
@@ -288,7 +350,14 @@ public class RetryOperationsInterceptorTests {
 		RetrySynchronizationManager.clear();
 	}
 
-	@Test
+    /**
+     * <code>testProxyAttributeCleanupEvenWhenIllegalStateExceptionThrown</code>
+     * <p>The test proxy attribute cleanup even when illegal state exception thrown method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.NoSuchMethodException
+     * @throws NoSuchMethodException {@link java.lang.NoSuchMethodException} <p>The no such method exception is <code>NoSuchMethodException</code> type.</p>
+     */
+    @Test
 	public void testProxyAttributeCleanupEvenWhenIllegalStateExceptionThrown() throws NoSuchMethodException {
 		RetryContext context = new RetryContextSupport(null);
 		Object mockProxy = new Object();
@@ -304,15 +373,37 @@ public class RetryOperationsInterceptorTests {
 		RetrySynchronizationManager.clear();
 	}
 
-	public static interface Service {
+    /**
+     * <code>Service</code>
+     * <p>The service interface.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public static interface Service {
 
-		void service() throws Exception;
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+         * @see  java.lang.Exception
+         */
+        void service() throws Exception;
 
-		void doTransactional();
+        /**
+         * <code>doTransactional</code>
+         * <p>The do transactional method.</p>
+         */
+        void doTransactional();
 
 	}
 
-	public static class ServiceImpl implements Service {
+    /**
+     * <code>ServiceImpl</code>
+     * <p>The service class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public static class ServiceImpl implements Service {
 
 		private boolean enteredTransaction = false;
 

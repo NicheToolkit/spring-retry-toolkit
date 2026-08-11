@@ -16,6 +16,14 @@
 
 package org.springframework.retry.policy;
 
+/**
+ * <code>MockRetryPolicySupport</code>
+ * <p>The mock retry policy support class.</p>
+ * @see  org.springframework.retry.policy.AlwaysRetryPolicy
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 @SuppressWarnings("serial")
 public class MockRetryPolicySupport extends AlwaysRetryPolicy {
 

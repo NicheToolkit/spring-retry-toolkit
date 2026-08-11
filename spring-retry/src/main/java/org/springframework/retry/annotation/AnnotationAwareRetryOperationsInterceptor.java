@@ -69,15 +69,12 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * Interceptor that parses the retry metadata on the method it is invoking and delegates
- * to an appropriate RetryOperationsInterceptor.
- *
- * @author Dave Syer
- * @author Artem Bilan
- * @author Gary Russell
- * @author Roman Akentev
- * @author Aftab Shaikh
- * @since 1.1
+ * <code>AnnotationAwareRetryOperationsInterceptor</code>
+ * <p>The annotation aware retry operations interceptor class.</p>
+ * @see  org.springframework.aop.IntroductionInterceptor
+ * @see  org.springframework.beans.factory.BeanFactoryAware
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class AnnotationAwareRetryOperationsInterceptor implements IntroductionInterceptor, BeanFactoryAware {
 
@@ -108,50 +105,63 @@ public class AnnotationAwareRetryOperationsInterceptor implements IntroductionIn
 
 	private RetryListener[] globalListeners;
 
-	/**
-	 * @param sleeper the sleeper to set
-	 */
-	public void setSleeper(Sleeper sleeper) {
+    /**
+     * <code>setSleeper</code>
+     * <p>The set sleeper setter method.</p>
+     * @param sleeper {@link org.springframework.retry.backoff.Sleeper} <p>The sleeper parameter is <code>Sleeper</code> type.</p>
+     * @see  org.springframework.retry.backoff.Sleeper
+     */
+    public void setSleeper(Sleeper sleeper) {
 		this.sleeper = sleeper;
 	}
 
-	/**
-	 * Public setter for the {@link RetryContextCache}.
-	 * @param retryContextCache the {@link RetryContextCache} to set.
-	 */
-	public void setRetryContextCache(RetryContextCache retryContextCache) {
+    /**
+     * <code>setRetryContextCache</code>
+     * <p>The set retry context cache setter method.</p>
+     * @param retryContextCache {@link org.springframework.retry.policy.RetryContextCache} <p>The retry context cache parameter is <code>RetryContextCache</code> type.</p>
+     * @see  org.springframework.retry.policy.RetryContextCache
+     */
+    public void setRetryContextCache(RetryContextCache retryContextCache) {
 		this.retryContextCache = retryContextCache;
 	}
 
-	/**
-	 * Set the {@link RetryContextCache} to use for stateful retries that are used by
-	 * circuit breakers.
-	 * @param circuitBreakerRetryContextCache the {@link RetryContextCache} to use
-	 * @since 1.3.5
-	 */
-	public void setCircuitBreakerRetryContextCache(RetryContextCache circuitBreakerRetryContextCache) {
+    /**
+     * <code>setCircuitBreakerRetryContextCache</code>
+     * <p>The set circuit breaker retry context cache setter method.</p>
+     * @param circuitBreakerRetryContextCache {@link org.springframework.retry.policy.RetryContextCache} <p>The circuit breaker retry context cache parameter is <code>RetryContextCache</code> type.</p>
+     * @see  org.springframework.retry.policy.RetryContextCache
+     */
+    public void setCircuitBreakerRetryContextCache(RetryContextCache circuitBreakerRetryContextCache) {
 		this.circuitBreakerRetryContextCache = circuitBreakerRetryContextCache;
 	}
 
-	/**
-	 * @param methodArgumentsKeyGenerator the {@link MethodArgumentsKeyGenerator}
-	 */
-	public void setKeyGenerator(MethodArgumentsKeyGenerator methodArgumentsKeyGenerator) {
+    /**
+     * <code>setKeyGenerator</code>
+     * <p>The set key generator setter method.</p>
+     * @param methodArgumentsKeyGenerator {@link org.springframework.retry.interceptor.MethodArgumentsKeyGenerator} <p>The method arguments key generator parameter is <code>MethodArgumentsKeyGenerator</code> type.</p>
+     * @see  org.springframework.retry.interceptor.MethodArgumentsKeyGenerator
+     */
+    public void setKeyGenerator(MethodArgumentsKeyGenerator methodArgumentsKeyGenerator) {
 		this.methodArgumentsKeyGenerator = methodArgumentsKeyGenerator;
 	}
 
-	/**
-	 * @param newMethodArgumentsIdentifier the {@link NewMethodArgumentsIdentifier}
-	 */
-	public void setNewItemIdentifier(NewMethodArgumentsIdentifier newMethodArgumentsIdentifier) {
+    /**
+     * <code>setNewItemIdentifier</code>
+     * <p>The set new item identifier setter method.</p>
+     * @param newMethodArgumentsIdentifier {@link org.springframework.retry.interceptor.NewMethodArgumentsIdentifier} <p>The new method arguments identifier parameter is <code>NewMethodArgumentsIdentifier</code> type.</p>
+     * @see  org.springframework.retry.interceptor.NewMethodArgumentsIdentifier
+     */
+    public void setNewItemIdentifier(NewMethodArgumentsIdentifier newMethodArgumentsIdentifier) {
 		this.newMethodArgumentsIdentifier = newMethodArgumentsIdentifier;
 	}
 
-	/**
-	 * Default retry listeners to apply to all operations.
-	 * @param globalListeners the default listeners
-	 */
-	public void setListeners(Collection<RetryListener> globalListeners) {
+    /**
+     * <code>setListeners</code>
+     * <p>The set listeners setter method.</p>
+     * @param globalListeners {@link java.util.Collection} <p>The global listeners parameter is <code>Collection</code> type.</p>
+     * @see  java.util.Collection
+     */
+    public void setListeners(Collection<RetryListener> globalListeners) {
 		ArrayList<RetryListener> retryListeners = new ArrayList<>(globalListeners);
 		AnnotationAwareOrderComparator.sort(retryListeners);
 		this.globalListeners = retryListeners.toArray(new RetryListener[0]);
@@ -542,11 +552,6 @@ public class AnnotationAwareRetryOperationsInterceptor implements IntroductionIn
 		return expression.getValue(this.evaluationContext, args, type);
 	}
 
-	/**
-	 * Resolve the specified value if possible.
-	 *
-	 * @see ConfigurableBeanFactory#resolveEmbeddedValue
-	 */
 	private String resolve(String value) {
 		if (this.beanFactory != null && this.beanFactory instanceof ConfigurableBeanFactory) {
 			return ((ConfigurableBeanFactory) this.beanFactory).resolveEmbeddedValue(value);

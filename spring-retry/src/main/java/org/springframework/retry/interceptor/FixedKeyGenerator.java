@@ -17,14 +17,23 @@
 package org.springframework.retry.interceptor;
 
 /**
- * @author Dave Syer
- *
+ * <code>FixedKeyGenerator</code>
+ * <p>The fixed key generator class.</p>
+ * @see  org.springframework.retry.interceptor.MethodArgumentsKeyGenerator
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class FixedKeyGenerator implements MethodArgumentsKeyGenerator {
 
 	private final String label;
 
-	public FixedKeyGenerator(String label) {
+    /**
+     * <code>FixedKeyGenerator</code>
+     * <p>Instantiates a new fixed key generator.</p>
+     * @param label {@link java.lang.String} <p>The label parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    public FixedKeyGenerator(String label) {
 		this.label = label;
 	}
 

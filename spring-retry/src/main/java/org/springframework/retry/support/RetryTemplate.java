@@ -44,51 +44,22 @@ import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.util.Assert;
 
 /**
- * Template class that simplifies the execution of operations with retry semantics.
- * <p>
- * Retryable operations are encapsulated in implementations of the {@link RetryCallback}
- * interface and are executed using one of the supplied execute methods.
- * <p>
- * By default, an operation is retried if is throws any {@link Exception} or subclass of
- * {@link Exception}. This behaviour can be changed by using the
- * {@link #setRetryPolicy(RetryPolicy)} method.
- * <p>
- * Also by default, each operation is retried for a maximum of three attempts with no back
- * off in between. This behaviour can be configured using the
- * {@link #setRetryPolicy(RetryPolicy)} and {@link #setBackOffPolicy(BackOffPolicy)}
- * properties. The {@link BackOffPolicy} controls how
- * long the pause is between each individual retry attempt.
- * <p>
- * A new instance can be fluently configured via {@link #builder}, e.g: <pre> {@code
- * RetryTemplate.builder()
- *                 .maxAttempts(10)
- *                 .fixedBackoff(1000)
- *                 .build();
- * }</pre> See {@link RetryTemplateBuilder} for more examples and details.
- * <p>
- * This class is thread-safe and suitable for concurrent access when executing operations
- * and when performing configuration changes. As such, it is possible to change the number
- * of retries on the fly, as well as the {@link BackOffPolicy} used and no in progress
- * retryable operations will be affected.
- *
- * @author Rob Harrop
- * @author Dave Syer
- * @author Gary Russell
- * @author Artem Bilan
- * @author Josh Long
- * @author Aleksandr Shamukov
- * @author Emanuele Ivaldi
- * @author Tobias Soloschenko
+ * <code>RetryTemplate</code>
+ * <p>The retry template class.</p>
+ * @see  org.springframework.retry.RetryOperations
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RetryTemplate implements RetryOperations {
 
-	/**
-	 * Retry context attribute name that indicates the context should be considered global
-	 * state (never closed). TODO: convert this to a flag in the RetryState.
-	 */
 	private static final String GLOBAL_STATE = "state.global";
 
-	protected Log logger = LogFactory.getLog(getClass());
+    /**
+     * <code>logger</code>
+     * {@link org.apache.commons.logging.Log} <p>The <code>logger</code> field.</p>
+     * @see  org.apache.commons.logging.Log
+     */
+    protected Log logger = LogFactory.getLog(getClass());
 
 	private volatile BackOffPolicy backOffPolicy = new NoBackOffPolicy();
 
@@ -100,84 +71,83 @@ public class RetryTemplate implements RetryOperations {
 
 	private boolean throwLastExceptionOnExhausted;
 
-	/**
-	 * Main entry point to configure RetryTemplate using fluent API. See
-	 * {@link RetryTemplateBuilder} for usage examples and details.
-	 * @return a new instance of RetryTemplateBuilder with preset default behaviour, that
-	 * can be overwritten during manual configuration
-	 * @since 1.3
-	 */
-	public static RetryTemplateBuilder builder() {
+    /**
+     * <code>builder</code>
+     * <p>The builder method.</p>
+     * @return  {@link org.springframework.retry.support.RetryTemplateBuilder} <p>The builder return object is <code>RetryTemplateBuilder</code> type.</p>
+     * @see  org.springframework.retry.support.RetryTemplateBuilder
+     */
+    public static RetryTemplateBuilder builder() {
 		return new RetryTemplateBuilder();
 	}
 
-	/**
-	 * Creates a new default instance. The properties of default instance are described in
-	 * {@link RetryTemplateBuilder} documentation.
-	 * @return a new instance of RetryTemplate with default behaviour
-	 * @since 1.3
-	 */
-	public static RetryTemplate defaultInstance() {
+    /**
+     * <code>defaultInstance</code>
+     * <p>The default instance method.</p>
+     * @return  {@link org.springframework.retry.support.RetryTemplate} <p>The default instance return object is <code>RetryTemplate</code> type.</p>
+     */
+    public static RetryTemplate defaultInstance() {
 		return new RetryTemplateBuilder().build();
 	}
 
-	/**
-	 * Whether to re-throw last exception or wrap into {@link ExhaustedRetryException}
-	 * when all retry attempts are exhausted. Defaults to {@code false}; applied only in
-	 * case of supplied state, e.g.
-	 * {@link org.springframework.retry.interceptor.StatefulRetryOperationsInterceptor}.
-	 * @param throwLastExceptionOnExhausted the throwLastExceptionOnExhausted to set
-	 */
-	public void setThrowLastExceptionOnExhausted(boolean throwLastExceptionOnExhausted) {
+    /**
+     * <code>setThrowLastExceptionOnExhausted</code>
+     * <p>The set throw last exception on exhausted setter method.</p>
+     * @param throwLastExceptionOnExhausted boolean <p>The throw last exception on exhausted parameter is <code>boolean</code> type.</p>
+     */
+    public void setThrowLastExceptionOnExhausted(boolean throwLastExceptionOnExhausted) {
 		this.throwLastExceptionOnExhausted = throwLastExceptionOnExhausted;
 	}
 
-	/**
-	 * Public setter for the {@link RetryContextCache}.
-	 * @param retryContextCache the {@link RetryContextCache} to set.
-	 */
-	public void setRetryContextCache(RetryContextCache retryContextCache) {
+    /**
+     * <code>setRetryContextCache</code>
+     * <p>The set retry context cache setter method.</p>
+     * @param retryContextCache {@link org.springframework.retry.policy.RetryContextCache} <p>The retry context cache parameter is <code>RetryContextCache</code> type.</p>
+     * @see  org.springframework.retry.policy.RetryContextCache
+     */
+    public void setRetryContextCache(RetryContextCache retryContextCache) {
 		this.retryContextCache = this.retryContextCache.withStatefulCache(retryContextCache);
 	}
 
-	/**
-	 * Set the {@link RetryContextCache} to use for stateful retries that are used by
-	 * circuit breakers.
-	 * @param circuitBreakerRetryContextCache the {@link RetryContextCache} to use
-	 * @since 1.3.5
-	 */
-	public void setCircuitBreakerRetryContextCache(RetryContextCache circuitBreakerRetryContextCache) {
+    /**
+     * <code>setCircuitBreakerRetryContextCache</code>
+     * <p>The set circuit breaker retry context cache setter method.</p>
+     * @param circuitBreakerRetryContextCache {@link org.springframework.retry.policy.RetryContextCache} <p>The circuit breaker retry context cache parameter is <code>RetryContextCache</code> type.</p>
+     * @see  org.springframework.retry.policy.RetryContextCache
+     */
+    public void setCircuitBreakerRetryContextCache(RetryContextCache circuitBreakerRetryContextCache) {
 		this.retryContextCache = retryContextCache.withCircuitBreakerCache(circuitBreakerRetryContextCache);
 	}
 
-	/**
-	 * Setter for listeners. The listeners are executed before and after a retry block
-	 * (i.e. before and after all the attempts), and on an error (every attempt).
-	 * @param listeners the {@link RetryListener}s
-	 * @see RetryListener
-	 */
-	public void setListeners(RetryListener[] listeners) {
+    /**
+     * <code>setListeners</code>
+     * <p>The set listeners setter method.</p>
+     * @param listeners {@link org.springframework.retry.RetryListener} <p>The listeners parameter is <code>RetryListener</code> type.</p>
+     * @see  org.springframework.retry.RetryListener
+     */
+    public void setListeners(RetryListener[] listeners) {
 		Assert.notNull(listeners, "'listeners' must not be null");
 		this.listeners = Arrays.copyOf(listeners, listeners.length);
 	}
 
-	/**
-	 * Register an additional listener at the end of the list.
-	 * @param listener the {@link RetryListener}
-	 * @see #setListeners(RetryListener[])
-	 */
-	public void registerListener(RetryListener listener) {
+    /**
+     * <code>registerListener</code>
+     * <p>The register listener method.</p>
+     * @param listener {@link org.springframework.retry.RetryListener} <p>The listener parameter is <code>RetryListener</code> type.</p>
+     * @see  org.springframework.retry.RetryListener
+     */
+    public void registerListener(RetryListener listener) {
 		registerListener(listener, this.listeners.length);
 	}
 
-	/**
-	 * Register an additional listener at the specified index.
-	 * @param listener the {@link RetryListener}
-	 * @param index the position in the list.
-	 * @since 1.3
-	 * @see #setListeners(RetryListener[])
-	 */
-	public void registerListener(RetryListener listener, int index) {
+    /**
+     * <code>registerListener</code>
+     * <p>The register listener method.</p>
+     * @param listener {@link org.springframework.retry.RetryListener} <p>The listener parameter is <code>RetryListener</code> type.</p>
+     * @param index int <p>The index parameter is <code>int</code> type.</p>
+     * @see  org.springframework.retry.RetryListener
+     */
+    public void registerListener(RetryListener listener, int index) {
 		List<RetryListener> list = new ArrayList<>(Arrays.asList(this.listeners));
 		if (index >= list.size()) {
 			list.add(listener);
@@ -188,118 +158,87 @@ public class RetryTemplate implements RetryOperations {
 		this.listeners = list.toArray(new RetryListener[0]);
 	}
 
-	/**
-	 * Return true if at least one listener is registered.
-	 * @return true if listeners present.
-	 * @since 1.3
-	 */
-	public boolean hasListeners() {
+    /**
+     * <code>hasListeners</code>
+     * <p>The has listeners method.</p>
+     * @return  boolean <p>The has listeners return object is <code>boolean</code> type.</p>
+     */
+    public boolean hasListeners() {
 		return this.listeners.length > 0;
 	}
 
-	/**
-	 * Setter for {@link Log}. If not applied the following is used:
-	 * <p>
-	 * {@code LogFactory.getLog(getClass())}
-	 * </p>
-	 * @param logger the logger the retry template uses for logging
-	 * @since 2.0.10
-	 */
-	public void setLogger(Log logger) {
+    /**
+     * <code>setLogger</code>
+     * <p>The set logger setter method.</p>
+     * @param logger {@link org.apache.commons.logging.Log} <p>The logger parameter is <code>Log</code> type.</p>
+     * @see  org.apache.commons.logging.Log
+     */
+    public void setLogger(Log logger) {
 		this.logger = logger;
 	}
 
-	/**
-	 * Setter for {@link BackOffPolicy}.
-	 * @param backOffPolicy the {@link BackOffPolicy}
-	 */
-	public void setBackOffPolicy(BackOffPolicy backOffPolicy) {
+    /**
+     * <code>setBackOffPolicy</code>
+     * <p>The set back off policy setter method.</p>
+     * @param backOffPolicy {@link org.springframework.retry.backoff.BackOffPolicy} <p>The back off policy parameter is <code>BackOffPolicy</code> type.</p>
+     * @see  org.springframework.retry.backoff.BackOffPolicy
+     */
+    public void setBackOffPolicy(BackOffPolicy backOffPolicy) {
 		this.backOffPolicy = backOffPolicy;
 	}
 
-	/**
-	 * Setter for {@link RetryPolicy}.
-	 * @param retryPolicy the {@link RetryPolicy}
-	 */
-	public void setRetryPolicy(RetryPolicy retryPolicy) {
+    /**
+     * <code>setRetryPolicy</code>
+     * <p>The set retry policy setter method.</p>
+     * @param retryPolicy {@link org.springframework.retry.RetryPolicy} <p>The retry policy parameter is <code>RetryPolicy</code> type.</p>
+     * @see  org.springframework.retry.RetryPolicy
+     */
+    public void setRetryPolicy(RetryPolicy retryPolicy) {
 		this.retryPolicy = retryPolicy;
 	}
 
-	/**
-	 * Keep executing the callback until it either succeeds or the policy dictates that we
-	 * stop, in which case the most recent exception thrown by the callback will be
-	 * rethrown.
-	 *
-	 * @see RetryOperations#execute(RetryCallback)
-	 * @param retryCallback the {@link RetryCallback}
-	 * @throws TerminatedRetryException if the retry has been manually terminated by a
-	 * listener.
-	 */
 	@Override
 	public final <T, E extends Throwable> T execute(RetryCallback<T, E> retryCallback) throws E {
 		return doExecute(retryCallback, null, null);
 	}
 
-	/**
-	 * Keep executing the callback until it either succeeds or the policy dictates that we
-	 * stop, in which case the recovery callback will be executed.
-	 *
-	 * @see RetryOperations#execute(RetryCallback, RecoveryCallback)
-	 * @param retryCallback the {@link RetryCallback}
-	 * @param recoveryCallback the {@link RecoveryCallback}
-	 * @throws TerminatedRetryException if the retry has been manually terminated by a
-	 * listener.
-	 */
 	@Override
 	public final <T, E extends Throwable> T execute(RetryCallback<T, E> retryCallback,
 			RecoveryCallback<T> recoveryCallback) throws E {
 		return doExecute(retryCallback, recoveryCallback, null);
 	}
 
-	/**
-	 * Execute the callback once if the policy dictates that we can, re-throwing any
-	 * exception encountered so that clients can re-present the same task later.
-	 *
-	 * @see RetryOperations#execute(RetryCallback, RetryState)
-	 * @param retryCallback the {@link RetryCallback}
-	 * @param retryState the {@link RetryState}
-	 * @throws ExhaustedRetryException if the retry has been exhausted.
-	 */
 	@Override
 	public final <T, E extends Throwable> T execute(RetryCallback<T, E> retryCallback, RetryState retryState)
 			throws E, ExhaustedRetryException {
 		return doExecute(retryCallback, null, retryState);
 	}
 
-	/**
-	 * Execute the callback once if the policy dictates that we can, re-throwing any
-	 * exception encountered so that clients can re-present the same task later.
-	 *
-	 * @see RetryOperations#execute(RetryCallback, RetryState)
-	 * @param retryCallback the {@link RetryCallback}
-	 * @param recoveryCallback the {@link RecoveryCallback}
-	 * @param retryState the {@link RetryState}
-	 */
 	@Override
 	public final <T, E extends Throwable> T execute(RetryCallback<T, E> retryCallback,
 			RecoveryCallback<T> recoveryCallback, RetryState retryState) throws E, ExhaustedRetryException {
 		return doExecute(retryCallback, recoveryCallback, retryState);
 	}
 
-	/**
-	 * Execute the callback once if the policy dictates that we can, otherwise execute the
-	 * recovery callback.
-	 * @param recoveryCallback the {@link RecoveryCallback}
-	 * @param retryCallback the {@link RetryCallback}
-	 * @param state the {@link RetryState}
-	 * @param <T> the type of the return value
-	 * @param <E> the exception type to throw
-	 * @see RetryOperations#execute(RetryCallback, RecoveryCallback, RetryState)
-	 * @throws ExhaustedRetryException if the retry has been exhausted.
-	 * @throws E an exception if the retry operation fails
-	 * @return T the retried value
-	 */
-	protected <T, E extends Throwable> T doExecute(RetryCallback<T, E> retryCallback,
+    /**
+     * <code>doExecute</code>
+     * <p>The do execute method.</p>
+     * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+     * @param <E>  {@link java.lang.Throwable} <p>The generic parameter is <code>Throwable</code> type.</p>
+     * @param retryCallback {@link org.springframework.retry.RetryCallback} <p>The retry callback parameter is <code>RetryCallback</code> type.</p>
+     * @param recoveryCallback {@link org.springframework.retry.RecoveryCallback} <p>The recovery callback parameter is <code>RecoveryCallback</code> type.</p>
+     * @param state {@link org.springframework.retry.RetryState} <p>The state parameter is <code>RetryState</code> type.</p>
+     * @see  java.lang.Throwable
+     * @see  org.springframework.retry.RetryCallback
+     * @see  org.springframework.retry.RecoveryCallback
+     * @see  org.springframework.retry.RetryState
+     * @see  E
+     * @see  org.springframework.retry.ExhaustedRetryException
+     * @return  T <p>The do execute return object is <code>T</code> type.</p>
+     * @throws E E <p>The e is <code>E</code> type.</p>
+     * @throws ExhaustedRetryException {@link org.springframework.retry.ExhaustedRetryException} <p>The exhausted retry exception is <code>ExhaustedRetryException</code> type.</p>
+     */
+    protected <T, E extends Throwable> T doExecute(RetryCallback<T, E> retryCallback,
 			RecoveryCallback<T> recoveryCallback, RetryState state) throws E, ExhaustedRetryException {
 
 		RetryPolicy retryPolicy = this.retryPolicy;
@@ -439,27 +378,31 @@ public class RetryTemplate implements RetryOperations {
 
 	}
 
-	/**
-	 * Decide whether to proceed with the ongoing retry attempt. This method is called
-	 * before the {@link RetryCallback} is executed, but after the backoff and open
-	 * interceptors.
-	 * @param retryPolicy the policy to apply
-	 * @param context the current retry context
-	 * @return true if we can continue with the attempt
-	 */
-	protected boolean canRetry(RetryPolicy retryPolicy, RetryContext context) {
+    /**
+     * <code>canRetry</code>
+     * <p>The can retry method.</p>
+     * @param retryPolicy {@link org.springframework.retry.RetryPolicy} <p>The retry policy parameter is <code>RetryPolicy</code> type.</p>
+     * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+     * @see  org.springframework.retry.RetryPolicy
+     * @see  org.springframework.retry.RetryContext
+     * @return  boolean <p>The can retry return object is <code>boolean</code> type.</p>
+     */
+    protected boolean canRetry(RetryPolicy retryPolicy, RetryContext context) {
 		return retryPolicy.canRetry(context);
 	}
 
-	/**
-	 * Clean up the cache if necessary and close the context provided (if the flag
-	 * indicates that processing was successful).
-	 * @param retryPolicy the {@link RetryPolicy}
-	 * @param context the {@link RetryContext}
-	 * @param state the {@link RetryState}
-	 * @param succeeded whether the close succeeded
-	 */
-	protected void close(RetryPolicy retryPolicy, RetryContext context, RetryState state, boolean succeeded) {
+    /**
+     * <code>close</code>
+     * <p>The close method.</p>
+     * @param retryPolicy {@link org.springframework.retry.RetryPolicy} <p>The retry policy parameter is <code>RetryPolicy</code> type.</p>
+     * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+     * @param state {@link org.springframework.retry.RetryState} <p>The state parameter is <code>RetryState</code> type.</p>
+     * @param succeeded boolean <p>The succeeded parameter is <code>boolean</code> type.</p>
+     * @see  org.springframework.retry.RetryPolicy
+     * @see  org.springframework.retry.RetryContext
+     * @see  org.springframework.retry.RetryState
+     */
+    protected void close(RetryPolicy retryPolicy, RetryContext context, RetryState state, boolean succeeded) {
 		if (state != null) {
 			if (succeeded) {
 				this.retryContextCache.remove(state.getKey(), context);
@@ -473,7 +416,19 @@ public class RetryTemplate implements RetryOperations {
 		}
 	}
 
-	protected void registerThrowable(RetryPolicy retryPolicy, RetryState state, RetryContext context, Throwable e) {
+    /**
+     * <code>registerThrowable</code>
+     * <p>The register throwable method.</p>
+     * @param retryPolicy {@link org.springframework.retry.RetryPolicy} <p>The retry policy parameter is <code>RetryPolicy</code> type.</p>
+     * @param state {@link org.springframework.retry.RetryState} <p>The state parameter is <code>RetryState</code> type.</p>
+     * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+     * @param e {@link java.lang.Throwable} <p>The e parameter is <code>Throwable</code> type.</p>
+     * @see  org.springframework.retry.RetryPolicy
+     * @see  org.springframework.retry.RetryState
+     * @see  org.springframework.retry.RetryContext
+     * @see  java.lang.Throwable
+     */
+    protected void registerThrowable(RetryPolicy retryPolicy, RetryState state, RetryContext context, Throwable e) {
 		retryPolicy.registerThrowable(context, e);
 		registerContext(context, state);
 	}
@@ -492,15 +447,17 @@ public class RetryTemplate implements RetryOperations {
 		}
 	}
 
-	/**
-	 * Delegate to the {@link RetryPolicy} having checked in the cache for an existing
-	 * value if the state is not null.
-	 * @param state a {@link RetryState}
-	 * @param retryPolicy a {@link RetryPolicy} to delegate the context creation
-	 * @return a retry context, either a new one or the one used last time the same state
-	 * was encountered
-	 */
-	protected RetryContext open(RetryPolicy retryPolicy, RetryState state) {
+    /**
+     * <code>open</code>
+     * <p>The open method.</p>
+     * @param retryPolicy {@link org.springframework.retry.RetryPolicy} <p>The retry policy parameter is <code>RetryPolicy</code> type.</p>
+     * @param state {@link org.springframework.retry.RetryState} <p>The state parameter is <code>RetryState</code> type.</p>
+     * @see  org.springframework.retry.RetryPolicy
+     * @see  org.springframework.retry.RetryState
+     * @see  org.springframework.retry.RetryContext
+     * @return  {@link org.springframework.retry.RetryContext} <p>The open return object is <code>RetryContext</code> type.</p>
+     */
+    protected RetryContext open(RetryPolicy retryPolicy, RetryState state) {
 
 		if (state == null) {
 			return doOpenInternal(retryPolicy);
@@ -553,22 +510,21 @@ public class RetryTemplate implements RetryOperations {
 		return doOpenInternal(retryPolicy, null);
 	}
 
-	/**
-	 * Actions to take after final attempt has failed. If there is state clean up the
-	 * cache. If there is a recovery callback, execute that and return its result.
-	 * Otherwise, throw an exception.
-	 * @param recoveryCallback the callback for recovery (might be null)
-	 * @param context the current retry context
-	 * @param state the {@link RetryState}
-	 * @param <T> the type to classify
-	 * @throws Exception if the callback does, and if there is no callback and the state
-	 * is null then the last exception from the context
-	 * @throws ExhaustedRetryException if the state is not null and there is no recovery
-	 * callback
-	 * @return T the payload to return
-	 * @throws Throwable if there is an error
-	 */
-	protected <T> T handleRetryExhausted(RecoveryCallback<T> recoveryCallback, RetryContext context, RetryState state)
+    /**
+     * <code>handleRetryExhausted</code>
+     * <p>The handle retry exhausted method.</p>
+     * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+     * @param recoveryCallback {@link org.springframework.retry.RecoveryCallback} <p>The recovery callback parameter is <code>RecoveryCallback</code> type.</p>
+     * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+     * @param state {@link org.springframework.retry.RetryState} <p>The state parameter is <code>RetryState</code> type.</p>
+     * @see  org.springframework.retry.RecoveryCallback
+     * @see  org.springframework.retry.RetryContext
+     * @see  org.springframework.retry.RetryState
+     * @see  java.lang.Throwable
+     * @return  T <p>The handle retry exhausted return object is <code>T</code> type.</p>
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    protected <T> T handleRetryExhausted(RecoveryCallback<T> recoveryCallback, RetryContext context, RetryState state)
 			throws Throwable {
 		context.setAttribute(RetryContext.EXHAUSTED, true);
 		if (state != null) {
@@ -598,7 +554,20 @@ public class RetryTemplate implements RetryOperations {
 		throw wrapIfNecessary(context.getLastThrowable());
 	}
 
-	protected <E extends Throwable> void rethrow(RetryContext context, String message, boolean wrap) throws E {
+    /**
+     * <code>rethrow</code>
+     * <p>The rethrow method.</p>
+     * @param <E>  {@link java.lang.Throwable} <p>The generic parameter is <code>Throwable</code> type.</p>
+     * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+     * @param message {@link java.lang.String} <p>The message parameter is <code>String</code> type.</p>
+     * @param wrap boolean <p>The wrap parameter is <code>boolean</code> type.</p>
+     * @see  java.lang.Throwable
+     * @see  org.springframework.retry.RetryContext
+     * @see  java.lang.String
+     * @see  E
+     * @throws E E <p>The e is <code>E</code> type.</p>
+     */
+    protected <E extends Throwable> void rethrow(RetryContext context, String message, boolean wrap) throws E {
 		if (wrap) {
 			@SuppressWarnings("unchecked")
 			E rethrow = (E) context.getLastThrowable();
@@ -609,16 +578,18 @@ public class RetryTemplate implements RetryOperations {
 		}
 	}
 
-	/**
-	 * Extension point for subclasses to decide on behaviour after catching an exception
-	 * in a {@link RetryCallback}. Normal stateless behaviour is not to rethrow, and if
-	 * there is state we rethrow.
-	 * @param retryPolicy the retry policy
-	 * @param context the current context
-	 * @param state the current retryState
-	 * @return true if the state is not null but subclasses might choose otherwise
-	 */
-	protected boolean shouldRethrow(RetryPolicy retryPolicy, RetryContext context, RetryState state) {
+    /**
+     * <code>shouldRethrow</code>
+     * <p>The should rethrow method.</p>
+     * @param retryPolicy {@link org.springframework.retry.RetryPolicy} <p>The retry policy parameter is <code>RetryPolicy</code> type.</p>
+     * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+     * @param state {@link org.springframework.retry.RetryState} <p>The state parameter is <code>RetryState</code> type.</p>
+     * @see  org.springframework.retry.RetryPolicy
+     * @see  org.springframework.retry.RetryContext
+     * @see  org.springframework.retry.RetryState
+     * @return  boolean <p>The should rethrow return object is <code>boolean</code> type.</p>
+     */
+    protected boolean shouldRethrow(RetryPolicy retryPolicy, RetryContext context, RetryState state) {
 		return state != null && state.rollbackFor(context.getLastThrowable());
 	}
 
@@ -655,10 +626,6 @@ public class RetryTemplate implements RetryOperations {
 		}
 	}
 
-	/**
-	 * Re-throws the original throwable if it is an Exception, and wraps non-exceptions
-	 * into {@link RetryException}.
-	 */
 	private static <E extends Throwable> E wrapIfNecessary(Throwable throwable) throws RetryException {
 		if (throwable instanceof Error) {
 			throw (Error) throwable;
@@ -679,7 +646,11 @@ public class RetryTemplate implements RetryOperations {
 
 		private final RetryContextCache circuitBreakerCache;
 
-		public CompositeRetryContextCache() {
+        /**
+         * <code>CompositeRetryContextCache</code>
+         * <p>Instantiates a new composite retry context cache.</p>
+         */
+        public CompositeRetryContextCache() {
 			this(new MapRetryContextCache(MapRetryContextCache.DEFAULT_CAPACITY, true),
 					new MapRetryContextCache(MapRetryContextCache.DEFAULT_CAPACITY, false));
 		}
@@ -689,20 +660,50 @@ public class RetryTemplate implements RetryOperations {
 			this.circuitBreakerCache = circuitBreakerCache;
 		}
 
-		CompositeRetryContextCache withStatefulCache(RetryContextCache statefulCache) {
+        /**
+         * <code>withStatefulCache</code>
+         * <p>The with stateful cache method.</p>
+         * @param statefulCache {@link org.springframework.retry.policy.RetryContextCache} <p>The stateful cache parameter is <code>RetryContextCache</code> type.</p>
+         * @see  org.springframework.retry.policy.RetryContextCache
+         * @return  {@link org.springframework.retry.support.RetryTemplate.CompositeRetryContextCache} <p>The with stateful cache return object is <code>CompositeRetryContextCache</code> type.</p>
+         */
+        CompositeRetryContextCache withStatefulCache(RetryContextCache statefulCache) {
 			return new CompositeRetryContextCache(statefulCache, this.circuitBreakerCache);
 		}
 
-		CompositeRetryContextCache withCircuitBreakerCache(RetryContextCache circuitBreakerCache) {
+        /**
+         * <code>withCircuitBreakerCache</code>
+         * <p>The with circuit breaker cache method.</p>
+         * @param circuitBreakerCache {@link org.springframework.retry.policy.RetryContextCache} <p>The circuit breaker cache parameter is <code>RetryContextCache</code> type.</p>
+         * @see  org.springframework.retry.policy.RetryContextCache
+         * @return  {@link org.springframework.retry.support.RetryTemplate.CompositeRetryContextCache} <p>The with circuit breaker cache return object is <code>CompositeRetryContextCache</code> type.</p>
+         */
+        CompositeRetryContextCache withCircuitBreakerCache(RetryContextCache circuitBreakerCache) {
 			return new CompositeRetryContextCache(this.statefulCache, circuitBreakerCache);
 		}
 
-		public RetryContext get(Object key) {
+        /**
+         * <code>get</code>
+         * <p>The get method.</p>
+         * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+         * @see  java.lang.Object
+         * @see  org.springframework.retry.RetryContext
+         * @return  {@link org.springframework.retry.RetryContext} <p>The get return object is <code>RetryContext</code> type.</p>
+         */
+        public RetryContext get(Object key) {
 			RetryContext retryContext = this.statefulCache.get(key);
 			return (retryContext != null) ? retryContext : this.circuitBreakerCache.get(key);
 		}
 
-		public void put(Object key, RetryContext context) {
+        /**
+         * <code>put</code>
+         * <p>The put method.</p>
+         * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+         * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+         * @see  java.lang.Object
+         * @see  org.springframework.retry.RetryContext
+         */
+        public void put(Object key, RetryContext context) {
 			if (context.hasAttribute(GLOBAL_STATE)) {
 				this.circuitBreakerCache.put(key, context);
 			}
@@ -711,17 +712,41 @@ public class RetryTemplate implements RetryOperations {
 			}
 		}
 
-		public void remove(Object key, RetryContext context) {
+        /**
+         * <code>remove</code>
+         * <p>The remove method.</p>
+         * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+         * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+         * @see  java.lang.Object
+         * @see  org.springframework.retry.RetryContext
+         */
+        public void remove(Object key, RetryContext context) {
 			if (!context.hasAttribute(GLOBAL_STATE)) {
 				this.statefulCache.remove(key);
 			}
 		}
 
-		public boolean containsKey(Object key) {
+        /**
+         * <code>containsKey</code>
+         * <p>The contains key method.</p>
+         * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+         * @see  java.lang.Object
+         * @return  boolean <p>The contains key return object is <code>boolean</code> type.</p>
+         */
+        public boolean containsKey(Object key) {
 			return this.statefulCache.containsKey(key) || this.circuitBreakerCache.containsKey(key);
 		}
 
-		public boolean containsKey(Object key, RetryContext context) {
+        /**
+         * <code>containsKey</code>
+         * <p>The contains key method.</p>
+         * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+         * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+         * @see  java.lang.Object
+         * @see  org.springframework.retry.RetryContext
+         * @return  boolean <p>The contains key return object is <code>boolean</code> type.</p>
+         */
+        public boolean containsKey(Object key, RetryContext context) {
 			if (context.hasAttribute(GLOBAL_STATE)) {
 				return this.circuitBreakerCache.containsKey(key);
 			}

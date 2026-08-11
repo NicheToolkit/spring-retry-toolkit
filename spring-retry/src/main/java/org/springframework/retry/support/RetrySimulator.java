@@ -26,25 +26,10 @@ import org.springframework.retry.backoff.Sleeper;
 import org.springframework.retry.backoff.SleepingBackOffPolicy;
 
 /**
- * A {@link RetrySimulator} is a tool for exercising retry + backoff operations.
- *
- * When calibrating a set of retry + backoff pairs, it is useful to know the behaviour of
- * the retry for various scenarios.
- *
- * Things you may want to know: - Does a 'maxInterval' of 5000 ms in my backoff even
- * matter? (This is often the case when retry counts are low -- so why set the max
- * interval at something that cannot be achieved?) - What are the typical sleep durations
- * for threads in a retry - What was the longest sleep duration for any retry sequence
- *
- * The simulator provides this information by executing a retry + backoff pair until
- * failure (that is all retries are exhausted). The information about each retry is
- * provided as part of the {@link RetrySimulation}.
- *
- * Note that the impetus for this class was to expose the timings which are possible with
- * {@link org.springframework.retry.backoff.ExponentialRandomBackOffPolicy}, which
- * provides random values and must be looked at over a series of trials.
- *
- * @author Jon Travis
+ * <code>RetrySimulator</code>
+ * <p>The retry simulator class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RetrySimulator {
 
@@ -52,17 +37,27 @@ public class RetrySimulator {
 
 	private final RetryPolicy retryPolicy;
 
-	public RetrySimulator(SleepingBackOffPolicy<?> backOffPolicy, RetryPolicy retryPolicy) {
+    /**
+     * <code>RetrySimulator</code>
+     * <p>Instantiates a new retry simulator.</p>
+     * @param backOffPolicy {@link org.springframework.retry.backoff.SleepingBackOffPolicy} <p>The back off policy parameter is <code>SleepingBackOffPolicy</code> type.</p>
+     * @param retryPolicy {@link org.springframework.retry.RetryPolicy} <p>The retry policy parameter is <code>RetryPolicy</code> type.</p>
+     * @see  org.springframework.retry.backoff.SleepingBackOffPolicy
+     * @see  org.springframework.retry.RetryPolicy
+     */
+    public RetrySimulator(SleepingBackOffPolicy<?> backOffPolicy, RetryPolicy retryPolicy) {
 		this.backOffPolicy = backOffPolicy;
 		this.retryPolicy = retryPolicy;
 	}
 
-	/**
-	 * Execute the simulator for a give # of iterations.
-	 * @param numSimulations Number of simulations to run
-	 * @return the outcome of all simulations
-	 */
-	public RetrySimulation executeSimulation(int numSimulations) {
+    /**
+     * <code>executeSimulation</code>
+     * <p>The execute simulation method.</p>
+     * @param numSimulations int <p>The num simulations parameter is <code>int</code> type.</p>
+     * @return  {@link org.springframework.retry.support.RetrySimulation} <p>The execute simulation return object is <code>RetrySimulation</code> type.</p>
+     * @see  org.springframework.retry.support.RetrySimulation
+     */
+    public RetrySimulation executeSimulation(int numSimulations) {
 		RetrySimulation simulation = new RetrySimulation();
 
 		for (int i = 0; i < numSimulations; i++) {
@@ -71,11 +66,13 @@ public class RetrySimulator {
 		return simulation;
 	}
 
-	/**
-	 * Execute a single simulation
-	 * @return The sleeps which occurred within the single simulation.
-	 */
-	public List<Long> executeSingleSimulation() {
+    /**
+     * <code>executeSingleSimulation</code>
+     * <p>The execute single simulation method.</p>
+     * @return  {@link java.util.List} <p>The execute single simulation return object is <code>List</code> type.</p>
+     * @see  java.util.List
+     */
+    public List<Long> executeSingleSimulation() {
 		StealingSleeper stealingSleeper = new StealingSleeper();
 		SleepingBackOffPolicy<?> stealingBackoff = backOffPolicy.withSleeper(stealingSleeper);
 
@@ -96,7 +93,14 @@ public class RetrySimulator {
 		return stealingSleeper.getSleeps();
 	}
 
-	static class FailingRetryCallback implements RetryCallback<Object, Exception> {
+    /**
+     * <code>FailingRetryCallback</code>
+     * <p>The failing retry callback class.</p>
+     * @see  org.springframework.retry.RetryCallback
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    static class FailingRetryCallback implements RetryCallback<Object, Exception> {
 
 		public Object doWithRetry(RetryContext context) throws Exception {
 			throw new FailingRetryException();
@@ -104,12 +108,28 @@ public class RetrySimulator {
 
 	}
 
-	@SuppressWarnings("serial")
+    /**
+     * <code>FailingRetryException</code>
+     * <p>The failing retry exception class.</p>
+     * @see  java.lang.Exception
+     * @see  java.lang.SuppressWarnings
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    @SuppressWarnings("serial")
 	static class FailingRetryException extends Exception {
 
 	}
 
-	@SuppressWarnings("serial")
+    /**
+     * <code>StealingSleeper</code>
+     * <p>The stealing sleeper class.</p>
+     * @see  org.springframework.retry.backoff.Sleeper
+     * @see  java.lang.SuppressWarnings
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    @SuppressWarnings("serial")
 	static class StealingSleeper implements Sleeper {
 
 		private final List<Long> sleeps = new ArrayList<>();
@@ -118,7 +138,13 @@ public class RetrySimulator {
 			sleeps.add(backOffPeriod);
 		}
 
-		public List<Long> getSleeps() {
+        /**
+         * <code>getSleeps</code>
+         * <p>The get sleeps getter method.</p>
+         * @return  {@link java.util.List} <p>The get sleeps return object is <code>List</code> type.</p>
+         * @see  java.util.List
+         */
+        public List<Long> getSleeps() {
 			return sleeps;
 		}
 

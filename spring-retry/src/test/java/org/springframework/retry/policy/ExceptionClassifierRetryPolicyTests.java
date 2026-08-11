@@ -28,17 +28,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * <code>ExceptionClassifierRetryPolicyTests</code>
+ * <p>The exception classifier retry policy tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class ExceptionClassifierRetryPolicyTests {
 
 	private final ExceptionClassifierRetryPolicy policy = new ExceptionClassifierRetryPolicy();
 
-	@Test
+    /**
+     * <code>testDefaultPolicies</code>
+     * <p>The test default policies method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testDefaultPolicies() {
 		RetryContext context = policy.open(null);
 		assertThat(context).isNotNull();
 	}
 
-	@Test
+    /**
+     * <code>testTrivialPolicies</code>
+     * <p>The test trivial policies method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testTrivialPolicies() {
 		policy.setPolicyMap(Collections.<Class<? extends Throwable>, RetryPolicy>singletonMap(Exception.class,
 				new MockRetryPolicySupport()));
@@ -47,14 +63,24 @@ public class ExceptionClassifierRetryPolicyTests {
 		assertTrue(policy.canRetry(context));
 	}
 
-	@Test
+    /**
+     * <code>testNullPolicies</code>
+     * <p>The test null policies method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testNullPolicies() {
 		policy.setPolicyMap(new HashMap<>());
 		RetryContext context = policy.open(null);
 		assertThat(context).isNotNull();
 	}
 
-	@Test
+    /**
+     * <code>testNullContext</code>
+     * <p>The test null context method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testNullContext() {
 		policy.setPolicyMap(Collections.<Class<? extends Throwable>, RetryPolicy>singletonMap(Exception.class,
 				new NeverRetryPolicy()));
@@ -65,7 +91,13 @@ public class ExceptionClassifierRetryPolicyTests {
 		assertTrue(policy.canRetry(context));
 	}
 
-	@SuppressWarnings("serial")
+    /**
+     * <code>testClassifierOperates</code>
+     * <p>The test classifier operates method.</p>
+     * @see  java.lang.SuppressWarnings
+     * @see  org.junit.jupiter.api.Test
+     */
+    @SuppressWarnings("serial")
 	@Test
 	public void testClassifierOperates() {
 
@@ -97,9 +129,19 @@ public class ExceptionClassifierRetryPolicyTests {
 
 	}
 
-	int count = 0;
+    /**
+     * <code>count</code>
+     * <p>The <code>count</code> field.</p>
+     */
+    int count = 0;
 
-	@SuppressWarnings("serial")
+    /**
+     * <code>testClose</code>
+     * <p>The test close method.</p>
+     * @see  java.lang.SuppressWarnings
+     * @see  org.junit.jupiter.api.Test
+     */
+    @SuppressWarnings("serial")
 	@Test
 	public void testClose() {
 		policy.setExceptionClassifier(throwable -> new MockRetryPolicySupport() {
@@ -120,7 +162,12 @@ public class ExceptionClassifierRetryPolicyTests {
 		assertThat(count).isEqualTo(1); // now classified
 	}
 
-	@Test
+    /**
+     * <code>testRetryCount</code>
+     * <p>The test retry count method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRetryCount() {
 		ExceptionClassifierRetryPolicy policy = new ExceptionClassifierRetryPolicy();
 		RetryContext context = policy.open(null);
@@ -132,7 +179,12 @@ public class ExceptionClassifierRetryPolicyTests {
 		assertThat(context.getLastThrowable().getMessage()).isEqualTo("foo");
 	}
 
-	@Test
+    /**
+     * <code>testParent</code>
+     * <p>The test parent method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testParent() {
 		ExceptionClassifierRetryPolicy policy = new ExceptionClassifierRetryPolicy();
 		RetryContext context = policy.open(null);

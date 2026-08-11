@@ -38,29 +38,12 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * A recoverer for method invocations based on the <code>@Recover</code> annotation. A
- * suitable recovery method is one with a Throwable type as the first parameter and the
- * same return type and arguments as the method that failed. The Throwable first argument
- * is optional and if omitted the method is treated as a default (called when there are no
- * other matches). Generally the best matching method is chosen based on the type of the
- * first parameter and the type of the exception being handled. The closest match in the
- * class hierarchy is chosen, so for instance if an IllegalArgumentException is being
- * handled and there is a method whose first argument is RuntimeException, then it will be
- * preferred over a method whose first argument is Throwable.
- *
- * @param <T> the type of the return value from the recovery
- * @author Dave Syer
- * @author Josh Long
- * @author Aldo Sinanaj
- * @author Randell Callahan
- * @author Nathanaël Roberts
- * @author Maksim Kita
- * @author Gary Russell
- * @author Artem Bilan
- * @author Gianluca Medici
- * @author Lijinliang
- * @author Yanming Zhou
- * @author Chih-Yu Huang
+ * <code>RecoverAnnotationRecoveryHandler</code>
+ * <p>The recover annotation recovery handler class.</p>
+ * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @see  org.springframework.retry.interceptor.MethodInvocationRecoverer
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RecoverAnnotationRecoveryHandler<T> implements MethodInvocationRecoverer<T> {
 
@@ -72,7 +55,15 @@ public class RecoverAnnotationRecoveryHandler<T> implements MethodInvocationReco
 
 	private String recoverMethodName;
 
-	public RecoverAnnotationRecoveryHandler(Object target, Method method) {
+    /**
+     * <code>RecoverAnnotationRecoveryHandler</code>
+     * <p>Instantiates a new recover annotation recovery handler.</p>
+     * @param target {@link java.lang.Object} <p>The target parameter is <code>Object</code> type.</p>
+     * @param method {@link java.lang.reflect.Method} <p>The method parameter is <code>Method</code> type.</p>
+     * @see  java.lang.Object
+     * @see  java.lang.reflect.Method
+     */
+    public RecoverAnnotationRecoveryHandler(Object target, Method method) {
 		this.target = target;
 		init(target, method);
 	}
@@ -269,15 +260,6 @@ public class RecoverAnnotationRecoveryHandler<T> implements MethodInvocationReco
 		optionallyFilterMethodsBy(failingMethod.getReturnType());
 	}
 
-	/**
-	 * Returns {@code true} if the input methodReturnType is a direct match of the
-	 * failingMethodReturnType. Takes nested generics into consideration as well, while
-	 * deciding a match.
-	 * @param methodReturnType the method return type
-	 * @param failingMethodReturnType the failing method return type
-	 * @return true if the parameterized return types match.
-	 * @since 1.3.2
-	 */
 	private static boolean isParameterizedTypeAssignable(ParameterizedType methodReturnType,
 			ParameterizedType failingMethodReturnType) {
 
@@ -352,21 +334,48 @@ public class RecoverAnnotationRecoveryHandler<T> implements MethodInvocationReco
 
 		private final Class<? extends Throwable> type;
 
-		public SimpleMetadata(int argCount, Class<? extends Throwable> type) {
+        /**
+         * <code>SimpleMetadata</code>
+         * <p>Instantiates a new simple metadata.</p>
+         * @param argCount int <p>The arg count parameter is <code>int</code> type.</p>
+         * @param type {@link java.lang.Class} <p>The type parameter is <code>Class</code> type.</p>
+         * @see  java.lang.Class
+         */
+        public SimpleMetadata(int argCount, Class<? extends Throwable> type) {
 			super();
 			this.argCount = argCount;
 			this.type = type;
 		}
 
-		public int getArgCount() {
+        /**
+         * <code>getArgCount</code>
+         * <p>The get arg count getter method.</p>
+         * @return  int <p>The get arg count return object is <code>int</code> type.</p>
+         */
+        public int getArgCount() {
 			return this.argCount;
 		}
 
-		public Class<? extends Throwable> getType() {
+        /**
+         * <code>getType</code>
+         * <p>The get type getter method.</p>
+         * @return  {@link java.lang.Class} <p>The get type return object is <code>Class</code> type.</p>
+         * @see  java.lang.Class
+         */
+        public Class<? extends Throwable> getType() {
 			return this.type;
 		}
 
-		public Object[] getArgs(Throwable t, Object[] args) {
+        /**
+         * <code>getArgs</code>
+         * <p>The get args method.</p>
+         * @param t {@link java.lang.Throwable} <p>The t parameter is <code>Throwable</code> type.</p>
+         * @param args {@link java.lang.Object} <p>The args parameter is <code>Object</code> type.</p>
+         * @see  java.lang.Throwable
+         * @see  java.lang.Object
+         * @return  {@link java.lang.Object} <p>The get args return object is <code>Object</code> type.</p>
+         */
+        public Object[] getArgs(Throwable t, Object[] args) {
 			Object[] result = new Object[getArgCount()];
 			int startArgs = 0;
 			if (this.type != null) {

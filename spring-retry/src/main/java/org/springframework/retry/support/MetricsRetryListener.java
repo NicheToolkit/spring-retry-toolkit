@@ -31,34 +31,20 @@ import org.springframework.retry.RetryListener;
 import org.springframework.util.Assert;
 
 /**
- * The {@link RetryListener} implementation for Micrometer {@link Timer}s around retry
- * operations.
- * <p>
- * The {@link Timer#start} is called from the {@link #open(RetryContext, RetryCallback)}
- * and stopped in the {@link #close(RetryContext, RetryCallback, Throwable)}. This
- * {@link Timer.Sample} is associated with the provided {@link RetryContext} to make this
- * {@link MetricsRetryListener} instance reusable for many retry operation.
- * <p>
- * The registered {@value #TIMER_NAME} {@link Timer} has these tags by default:
- * <ul>
- * <li>{@code name} - {@link RetryCallback#getLabel()} if not null, otherwise
- * {@code RetryCallback#getClass().getName()}</li>
- * <li>{@code retry.count} - the number of attempts - 1; essentially the successful first
- * call means no counts</li>
- * <li>{@code exception} - the thrown back to the caller (after all the retry attempts)
- * exception class name</li>
- * </ul>
- * <p>
- * The {@link #setCustomTags(Iterable)} and {@link #setCustomTagsProvider(Function)} can
- * be used to further customize tags on the timers.
- *
- * @author Artem Bilan
- * @author Huijin Hong
- * @since 2.0.8
+ * <code>MetricsRetryListener</code>
+ * <p>The metrics retry listener class.</p>
+ * @see  org.springframework.retry.RetryListener
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class MetricsRetryListener implements RetryListener {
 
-	public static final String TIMER_NAME = "spring.retry";
+    /**
+     * <code>TIMER_NAME</code>
+     * {@link java.lang.String} <p>The constant <code>TIMER_NAME</code> field.</p>
+     * @see  java.lang.String
+     */
+    public static final String TIMER_NAME = "spring.retry";
 
 	private final MeterRegistry meterRegistry;
 
@@ -69,30 +55,35 @@ public class MetricsRetryListener implements RetryListener {
 
 	private Function<RetryContext, Iterable<Tag>> customTagsProvider = retryContext -> Tags.empty();
 
-	/**
-	 * Construct an instance based on the provided {@link MeterRegistry}.
-	 * @param meterRegistry the {@link MeterRegistry} to use for timers.
-	 */
-	public MetricsRetryListener(MeterRegistry meterRegistry) {
+    /**
+     * <code>MetricsRetryListener</code>
+     * <p>Instantiates a new metrics retry listener.</p>
+     * @param meterRegistry {@link io.micrometer.core.instrument.MeterRegistry} <p>The meter registry parameter is <code>MeterRegistry</code> type.</p>
+     * @see  io.micrometer.core.instrument.MeterRegistry
+     */
+    public MetricsRetryListener(MeterRegistry meterRegistry) {
 		Assert.notNull(meterRegistry, "'meterRegistry' must not be null");
 		this.meterRegistry = meterRegistry;
 	}
 
-	/**
-	 * Supply tags which are going to be used for all the timers managed by this listener.
-	 * @param customTags the list of additional tags for all the timers.
-	 */
-	public void setCustomTags(@Nullable Iterable<Tag> customTags) {
+    /**
+     * <code>setCustomTags</code>
+     * <p>The set custom tags setter method.</p>
+     * @param customTags {@link java.lang.Iterable} <p>The custom tags parameter is <code>Iterable</code> type.</p>
+     * @see  java.lang.Iterable
+     * @see  org.springframework.lang.Nullable
+     */
+    public void setCustomTags(@Nullable Iterable<Tag> customTags) {
 		this.customTags = this.customTags.and(customTags);
 	}
 
-	/**
-	 * Supply a {@link Function} to build additional tags for all the timers based on the
-	 * {@link RetryContext}.
-	 * @param customTagsProvider the {@link Function} for additional tags with a
-	 * {@link RetryContext} scope.
-	 */
-	public void setCustomTagsProvider(Function<RetryContext, Iterable<Tag>> customTagsProvider) {
+    /**
+     * <code>setCustomTagsProvider</code>
+     * <p>The set custom tags provider setter method.</p>
+     * @param customTagsProvider {@link java.util.function.Function} <p>The custom tags provider parameter is <code>Function</code> type.</p>
+     * @see  java.util.function.Function
+     */
+    public void setCustomTagsProvider(Function<RetryContext, Iterable<Tag>> customTagsProvider) {
 		Assert.notNull(customTagsProvider, "'customTagsProvider' must not be null");
 		this.customTagsProvider = customTagsProvider;
 	}

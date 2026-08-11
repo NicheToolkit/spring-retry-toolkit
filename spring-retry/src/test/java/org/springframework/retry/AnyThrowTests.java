@@ -21,25 +21,41 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
- * @author Dave Syer
- * @author Gary Russell
- *
+ * <code>AnyThrowTests</code>
+ * <p>The any throw tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class AnyThrowTests {
 
-	@Test
+    /**
+     * <code>testRuntimeException</code>
+     * <p>The test runtime exception method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRuntimeException() {
 		assertThatExceptionOfType(RuntimeException.class)
 			.isThrownBy(() -> AnyThrow.throwAny(new RuntimeException("planned")));
 	}
 
-	@Test
+    /**
+     * <code>testUncheckedRuntimeException</code>
+     * <p>The test unchecked runtime exception method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testUncheckedRuntimeException() {
 		assertThatExceptionOfType(RuntimeException.class)
 			.isThrownBy(() -> AnyThrow.throwUnchecked(new RuntimeException("planned")));
 	}
 
-	@Test
+    /**
+     * <code>testCheckedException</code>
+     * <p>The test checked exception method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCheckedException() {
 		assertThatExceptionOfType(Exception.class).isThrownBy(() -> AnyThrow.throwAny(new Exception("planned")));
 	}

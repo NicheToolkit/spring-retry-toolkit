@@ -24,6 +24,14 @@ import org.springframework.transaction.support.AbstractPlatformTransactionManage
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+/**
+ * <code>ResourcelessTransactionManager</code>
+ * <p>The resourceless transaction manager class.</p>
+ * @see  org.springframework.transaction.support.AbstractPlatformTransactionManager
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 @SuppressWarnings("serial")
 public class ResourcelessTransactionManager extends AbstractPlatformTransactionManager {
 
@@ -80,15 +88,28 @@ public class ResourcelessTransactionManager extends AbstractPlatformTransactionM
 
 		private boolean active = false;
 
-		public boolean isActive() {
+        /**
+         * <code>isActive</code>
+         * <p>The is active method.</p>
+         * @return  boolean <p>The is active return object is <code>boolean</code> type.</p>
+         */
+        public boolean isActive() {
 			return active;
 		}
 
-		public void begin() {
+        /**
+         * <code>begin</code>
+         * <p>The begin method.</p>
+         */
+        public void begin() {
 			active = true;
 		}
 
-		public void clear() {
+        /**
+         * <code>clear</code>
+         * <p>The clear method.</p>
+         */
+        public void clear() {
 			active = false;
 		}
 

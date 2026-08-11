@@ -23,16 +23,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for a method invocation that is a recovery handler. A suitable recovery
- * handler has a first parameter of type Throwable (or a subtype of Throwable) and a
- * return value of the same type as the <code>@Retryable</code> method to recover from.
- * The Throwable first argument is optional (but a method without it will only be called
- * if no others match). Subsequent arguments are populated from the argument list of the
- * failed method in order.
- *
- * @author Dave Syer
- * @since 2.0
- *
+ * <code>Recover</code>
+ * <p>The recover interface.</p>
+ * @see  java.lang.annotation.Annotation
+ * @see  java.lang.annotation.Target
+ * @see  java.lang.annotation.Retention
+ * @see  java.lang.annotation.Documented
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)

@@ -25,17 +25,10 @@ import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryOperations;
 
 /**
- * Global variable support for retry clients. Normally it is not necessary for clients to
- * be aware of the surrounding environment because a {@link RetryCallback} can always use
- * the context it is passed by the enclosing {@link RetryOperations}. But occasionally it
- * might be helpful to have lower level access to the ongoing {@link RetryContext} so we
- * provide a global accessor here. The mutator methods ({@link #clear()} and
- * {@link #register(RetryContext)} should not be used except internally by
- * {@link RetryOperations} implementations.
- *
- * @author Dave Syer
- * @author Gary Russell
- *
+ * <code>RetrySynchronizationManager</code>
+ * <p>The retry synchronization manager class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public final class RetrySynchronizationManager {
 
@@ -48,30 +41,32 @@ public final class RetrySynchronizationManager {
 
 	private static boolean useThreadLocal = true;
 
-	/**
-	 * Set to false to store the context in a map (keyed by the current thread) instead of
-	 * in a {@link ThreadLocal}. Recommended when using virtual threads.
-	 * @param use true to use a {@link ThreadLocal} (default true).
-	 * @since 2.0.3
-	 */
-	public static void setUseThreadLocal(boolean use) {
+    /**
+     * <code>setUseThreadLocal</code>
+     * <p>The set use thread local setter method.</p>
+     * @param use boolean <p>The use parameter is <code>boolean</code> type.</p>
+     */
+    public static void setUseThreadLocal(boolean use) {
 		useThreadLocal = use;
 	}
 
-	/**
-	 * Return true if contexts are held in a ThreadLocal (default) rather than a Map.
-	 * @return the useThreadLocal
-	 * @since 2.0.3
-	 */
-	public static boolean isUseThreadLocal() {
+    /**
+     * <code>isUseThreadLocal</code>
+     * <p>The is use thread local method.</p>
+     * @return  boolean <p>The is use thread local return object is <code>boolean</code> type.</p>
+     */
+    public static boolean isUseThreadLocal() {
 		return useThreadLocal;
 	}
 
-	/**
-	 * Public accessor for the locally enclosing {@link RetryContext}.
-	 * @return the current retry context, or null if there isn't one
-	 */
-	@Nullable public static RetryContext getContext() {
+    /**
+     * <code>getContext</code>
+     * <p>The get context getter method.</p>
+     * @return  {@link org.springframework.retry.RetryContext} <p>The get context return object is <code>RetryContext</code> type.</p>
+     * @see  org.springframework.retry.RetryContext
+     * @see  org.springframework.lang.Nullable
+     */
+    @Nullable public static RetryContext getContext() {
 		if (useThreadLocal) {
 			return context.get();
 		}
@@ -80,14 +75,15 @@ public final class RetrySynchronizationManager {
 		}
 	}
 
-	/**
-	 * Method for registering a context - should only be used by {@link RetryOperations}
-	 * implementations to ensure that {@link #getContext()} always returns the correct
-	 * value.
-	 * @param context the new context to register
-	 * @return the old context if there was one
-	 */
-	@Nullable public static RetryContext register(RetryContext context) {
+    /**
+     * <code>register</code>
+     * <p>The register method.</p>
+     * @param context {@link org.springframework.retry.RetryContext} <p>The context parameter is <code>RetryContext</code> type.</p>
+     * @see  org.springframework.retry.RetryContext
+     * @see  org.springframework.lang.Nullable
+     * @return  {@link org.springframework.retry.RetryContext} <p>The register return object is <code>RetryContext</code> type.</p>
+     */
+    @Nullable public static RetryContext register(RetryContext context) {
 		if (useThreadLocal) {
 			RetryContext oldContext = getContext();
 			RetrySynchronizationManager.context.set(context);
@@ -100,12 +96,14 @@ public final class RetrySynchronizationManager {
 		}
 	}
 
-	/**
-	 * Clear the current context at the end of a batch - should only be used by
-	 * {@link RetryOperations} implementations.
-	 * @return the old value if there was one.
-	 */
-	@Nullable public static RetryContext clear() {
+    /**
+     * <code>clear</code>
+     * <p>The clear method.</p>
+     * @return  {@link org.springframework.retry.RetryContext} <p>The clear return object is <code>RetryContext</code> type.</p>
+     * @see  org.springframework.retry.RetryContext
+     * @see  org.springframework.lang.Nullable
+     */
+    @Nullable public static RetryContext clear() {
 		RetryContext value = getContext();
 		RetryContext parent = value == null ? null : value.getParent();
 		if (useThreadLocal) {

@@ -60,19 +60,19 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
 /**
- * Basic configuration for <code>@Retryable</code> processing. For stateful retry, if
- * there is a unique bean elsewhere in the context of type {@link RetryContextCache},
- * {@link MethodArgumentsKeyGenerator} or {@link NewMethodArgumentsIdentifier} it will be
- * used by the corresponding retry interceptor (otherwise sensible defaults are adopted).
- *
- * @author Dave Syer
- * @author Artem Bilan
- * @author Markus Heiden
- * @author Gary Russell
- * @author Yanming Zhou
- * @author Evgeny Lazarev
- * @since 1.1
- *
+ * <code>RetryConfiguration</code>
+ * <p>The retry configuration class.</p>
+ * @see  org.springframework.aop.support.AbstractPointcutAdvisor
+ * @see  org.springframework.aop.IntroductionAdvisor
+ * @see  org.springframework.beans.factory.BeanFactoryAware
+ * @see  org.springframework.beans.factory.InitializingBean
+ * @see  org.springframework.beans.factory.SmartInitializingSingleton
+ * @see  org.springframework.context.annotation.ImportAware
+ * @see  java.lang.SuppressWarnings
+ * @see  org.springframework.context.annotation.Role
+ * @see  org.springframework.stereotype.Component
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
@@ -80,7 +80,13 @@ import org.springframework.util.ReflectionUtils;
 public class RetryConfiguration extends AbstractPointcutAdvisor
 		implements IntroductionAdvisor, BeanFactoryAware, InitializingBean, SmartInitializingSingleton, ImportAware {
 
-	@Nullable
+    /**
+     * <code>enableRetry</code>
+     * {@link org.springframework.core.annotation.AnnotationAttributes} <p>The <code>enableRetry</code> field.</p>
+     * @see  org.springframework.core.annotation.AnnotationAttributes
+     * @see  org.springframework.lang.Nullable
+     */
+    @Nullable
 	protected AnnotationAttributes enableRetry;
 
 	private AnnotationAwareRetryOperationsInterceptor advice;
@@ -163,9 +169,6 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 		return null;
 	}
 
-	/**
-	 * Set the {@code BeanFactory} to be used when looking up executors by qualifier.
-	 */
 	@Override
 	public void setBeanFactory(BeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
@@ -195,7 +198,13 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 		return this.pointcut;
 	}
 
-	protected AnnotationAwareRetryOperationsInterceptor buildAdvice() {
+    /**
+     * <code>buildAdvice</code>
+     * <p>The build advice method.</p>
+     * @return  {@link org.springframework.retry.annotation.AnnotationAwareRetryOperationsInterceptor} <p>The build advice return object is <code>AnnotationAwareRetryOperationsInterceptor</code> type.</p>
+     * @see  org.springframework.retry.annotation.AnnotationAwareRetryOperationsInterceptor
+     */
+    protected AnnotationAwareRetryOperationsInterceptor buildAdvice() {
 		AnnotationAwareRetryOperationsInterceptor interceptor = new AnnotationAwareRetryOperationsInterceptor();
 		if (this.retryContextCache != null) {
 			interceptor.setRetryContextCache(this.retryContextCache);
@@ -215,12 +224,15 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 		return interceptor;
 	}
 
-	/**
-	 * Calculate a pointcut for the given retry annotation types, if any.
-	 * @param retryAnnotationTypes the retry annotation types to introspect
-	 * @return the applicable Pointcut object, or {@code null} if none
-	 */
-	protected Pointcut buildPointcut(Set<Class<? extends Annotation>> retryAnnotationTypes) {
+    /**
+     * <code>buildPointcut</code>
+     * <p>The build pointcut method.</p>
+     * @param retryAnnotationTypes {@link java.util.Set} <p>The retry annotation types parameter is <code>Set</code> type.</p>
+     * @see  java.util.Set
+     * @see  org.springframework.aop.Pointcut
+     * @return  {@link org.springframework.aop.Pointcut} <p>The build pointcut return object is <code>Pointcut</code> type.</p>
+     */
+    protected Pointcut buildPointcut(Set<Class<? extends Annotation>> retryAnnotationTypes) {
 		ComposablePointcut result = null;
 		for (Class<? extends Annotation> retryAnnotationType : retryAnnotationTypes) {
 			Pointcut filter = new AnnotationClassOrMethodPointcut(retryAnnotationType);
@@ -238,7 +250,13 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 
 		private final MethodMatcher methodResolver;
 
-		AnnotationClassOrMethodPointcut(Class<? extends Annotation> annotationType) {
+        /**
+         * <code>AnnotationClassOrMethodPointcut</code>
+         * <p>Instantiates a new annotation class or method pointcut.</p>
+         * @param annotationType {@link java.lang.Class} <p>The annotation type parameter is <code>Class</code> type.</p>
+         * @see  java.lang.Class
+         */
+        AnnotationClassOrMethodPointcut(Class<? extends Annotation> annotationType) {
 			this.methodResolver = new AnnotationMethodMatcher(annotationType);
 			setClassFilter(new AnnotationClassOrMethodFilter(annotationType));
 		}
@@ -271,7 +289,13 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 
 		private final AnnotationMethodsResolver methodResolver;
 
-		AnnotationClassOrMethodFilter(Class<? extends Annotation> annotationType) {
+        /**
+         * <code>AnnotationClassOrMethodFilter</code>
+         * <p>Instantiates a new annotation class or method filter.</p>
+         * @param annotationType {@link java.lang.Class} <p>The annotation type parameter is <code>Class</code> type.</p>
+         * @see  java.lang.Class
+         */
+        AnnotationClassOrMethodFilter(Class<? extends Annotation> annotationType) {
 			super(annotationType, true);
 			this.methodResolver = new AnnotationMethodsResolver(annotationType);
 		}
@@ -287,11 +311,24 @@ public class RetryConfiguration extends AbstractPointcutAdvisor
 
 		private final Class<? extends Annotation> annotationType;
 
-		public AnnotationMethodsResolver(Class<? extends Annotation> annotationType) {
+        /**
+         * <code>AnnotationMethodsResolver</code>
+         * <p>Instantiates a new annotation methods resolver.</p>
+         * @param annotationType {@link java.lang.Class} <p>The annotation type parameter is <code>Class</code> type.</p>
+         * @see  java.lang.Class
+         */
+        public AnnotationMethodsResolver(Class<? extends Annotation> annotationType) {
 			this.annotationType = annotationType;
 		}
 
-		public boolean hasAnnotatedMethods(Class<?> clazz) {
+        /**
+         * <code>hasAnnotatedMethods</code>
+         * <p>The has annotated methods method.</p>
+         * @param clazz {@link java.lang.Class} <p>The clazz parameter is <code>Class</code> type.</p>
+         * @see  java.lang.Class
+         * @return  boolean <p>The has annotated methods return object is <code>boolean</code> type.</p>
+         */
+        public boolean hasAnnotatedMethods(Class<?> clazz) {
 			final AtomicBoolean found = new AtomicBoolean(false);
 			ReflectionUtils.doWithMethods(clazz, method -> {
 				if (found.get()) {

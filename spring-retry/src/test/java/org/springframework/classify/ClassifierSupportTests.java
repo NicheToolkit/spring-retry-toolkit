@@ -20,15 +20,31 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * <code>ClassifierSupportTests</code>
+ * <p>The classifier support tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class ClassifierSupportTests {
 
-	@Test
+    /**
+     * <code>testClassifyNullIsDefault</code>
+     * <p>The test classify null is default method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyNullIsDefault() {
 		ClassifierSupport<String, String> classifier = new ClassifierSupport<>("foo");
 		assertThat(classifier.classify(null)).isEqualTo("foo");
 	}
 
-	@Test
+    /**
+     * <code>testClassifyRandomException</code>
+     * <p>The test classify random exception method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyRandomException() {
 		ClassifierSupport<Throwable, String> classifier = new ClassifierSupport<>("foo");
 		assertThat(classifier.classify(new IllegalStateException("Foo"))).isEqualTo(classifier.classify(null));

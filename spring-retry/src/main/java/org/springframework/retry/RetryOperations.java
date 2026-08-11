@@ -19,77 +19,78 @@ package org.springframework.retry;
 import org.springframework.retry.support.DefaultRetryState;
 
 /**
- * Defines the basic set of operations implemented by {@link RetryOperations} to execute
- * operations with configurable retry behaviour.
- *
- * @author Rob Harrop
- * @author Dave Syer
+ * <code>RetryOperations</code>
+ * <p>The retry operations interface.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface RetryOperations {
 
 	/**
-	 * Execute the supplied {@link RetryCallback} with the configured retry semantics. See
-	 * implementations for configuration details.
-	 * @param <T> the return value
-	 * @param retryCallback the {@link RetryCallback}
-	 * @param <E> the exception to throw
-	 * @return the value returned by the {@link RetryCallback} upon successful invocation.
-	 * @throws E any {@link Exception} raised by the {@link RetryCallback} upon
-	 * unsuccessful retry.
-	 * @throws E the exception thrown
+	 * <code>execute</code>
+	 * <p>The execute method.</p>
+	 * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+	 * @param <E>  {@link java.lang.Throwable} <p>The generic parameter is <code>Throwable</code> type.</p>
+	 * @param retryCallback {@link org.springframework.retry.RetryCallback} <p>The retry callback parameter is <code>RetryCallback</code> type.</p>
+	 * @see  java.lang.Throwable
+	 * @see  org.springframework.retry.RetryCallback
+	 * @see  E
+	 * @return  T <p>The execute return object is <code>T</code> type.</p>
+	 * @throws E E <p>The e is <code>E</code> type.</p>
 	 */
 	<T, E extends Throwable> T execute(RetryCallback<T, E> retryCallback) throws E;
 
 	/**
-	 * Execute the supplied {@link RetryCallback} with a fallback on exhausted retry to
-	 * the {@link RecoveryCallback}. See implementations for configuration details.
-	 * @param recoveryCallback the {@link RecoveryCallback}
-	 * @param retryCallback the {@link RetryCallback} {@link RecoveryCallback} upon
-	 * @param <T> the type to return
-	 * @param <E> the type of the exception
-	 * @return the value returned by the {@link RetryCallback} upon successful invocation,
-	 * and that returned by the {@link RecoveryCallback} otherwise.
-	 * @throws E any {@link Exception} raised by the unsuccessful retry.
+	 * <code>execute</code>
+	 * <p>The execute method.</p>
+	 * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+	 * @param <E>  {@link java.lang.Throwable} <p>The generic parameter is <code>Throwable</code> type.</p>
+	 * @param retryCallback {@link org.springframework.retry.RetryCallback} <p>The retry callback parameter is <code>RetryCallback</code> type.</p>
+	 * @param recoveryCallback {@link org.springframework.retry.RecoveryCallback} <p>The recovery callback parameter is <code>RecoveryCallback</code> type.</p>
+	 * @see  java.lang.Throwable
+	 * @see  org.springframework.retry.RetryCallback
+	 * @see  org.springframework.retry.RecoveryCallback
+	 * @see  E
+	 * @return  T <p>The execute return object is <code>T</code> type.</p>
+	 * @throws E E <p>The e is <code>E</code> type.</p>
 	 */
 	<T, E extends Throwable> T execute(RetryCallback<T, E> retryCallback, RecoveryCallback<T> recoveryCallback)
 			throws E;
 
 	/**
-	 * A simple stateful retry. Execute the supplied {@link RetryCallback} with a target
-	 * object for the attempt identified by the {@link DefaultRetryState}. Exceptions
-	 * thrown by the callback are always propagated immediately so the state is required
-	 * to be able to identify the previous attempt, if there is one - hence the state is
-	 * required. Normal patterns would see this method being used inside a transaction,
-	 * where the callback might invalidate the transaction if it fails.
-	 *
-	 * See implementations for configuration details.
-	 * @param retryCallback the {@link RetryCallback}
-	 * @param retryState the {@link RetryState}
-	 * @param <T> the type of the return value
-	 * @param <E> the type of the exception to return
-	 * @return the value returned by the {@link RetryCallback} upon successful invocation,
-	 * and that returned by the {@link RecoveryCallback} otherwise.
-	 * @throws E any {@link Exception} raised by the {@link RecoveryCallback}.
-	 * @throws ExhaustedRetryException if the last attempt for this state has already been
-	 * reached
+	 * <code>execute</code>
+	 * <p>The execute method.</p>
+	 * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+	 * @param <E>  {@link java.lang.Throwable} <p>The generic parameter is <code>Throwable</code> type.</p>
+	 * @param retryCallback {@link org.springframework.retry.RetryCallback} <p>The retry callback parameter is <code>RetryCallback</code> type.</p>
+	 * @param retryState {@link org.springframework.retry.RetryState} <p>The retry state parameter is <code>RetryState</code> type.</p>
+	 * @see  java.lang.Throwable
+	 * @see  org.springframework.retry.RetryCallback
+	 * @see  org.springframework.retry.RetryState
+	 * @see  E
+	 * @see  org.springframework.retry.ExhaustedRetryException
+	 * @return  T <p>The execute return object is <code>T</code> type.</p>
+	 * @throws E E <p>The e is <code>E</code> type.</p>
+	 * @throws ExhaustedRetryException {@link org.springframework.retry.ExhaustedRetryException} <p>The exhausted retry exception is <code>ExhaustedRetryException</code> type.</p>
 	 */
 	<T, E extends Throwable> T execute(RetryCallback<T, E> retryCallback, RetryState retryState)
 			throws E, ExhaustedRetryException;
 
 	/**
-	 * A stateful retry with a recovery path. Execute the supplied {@link RetryCallback}
-	 * with a fallback on exhausted retry to the {@link RecoveryCallback} and a target
-	 * object for the retry attempt identified by the {@link DefaultRetryState}.
-	 * @param recoveryCallback the {@link RecoveryCallback}
-	 * @param retryState the {@link RetryState}
-	 * @param retryCallback the {@link RetryCallback}
-	 * @param <T> the return value type
-	 * @param <E> the exception type
-	 * @see #execute(RetryCallback, RetryState)
-	 * @return the value returned by the {@link RetryCallback} upon successful invocation,
-	 * and that returned by the {@link RecoveryCallback} otherwise.
-	 * @throws E any {@link Exception} raised by the {@link RecoveryCallback} upon
-	 * unsuccessful retry.
+	 * <code>execute</code>
+	 * <p>The execute method.</p>
+	 * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+	 * @param <E>  {@link java.lang.Throwable} <p>The generic parameter is <code>Throwable</code> type.</p>
+	 * @param retryCallback {@link org.springframework.retry.RetryCallback} <p>The retry callback parameter is <code>RetryCallback</code> type.</p>
+	 * @param recoveryCallback {@link org.springframework.retry.RecoveryCallback} <p>The recovery callback parameter is <code>RecoveryCallback</code> type.</p>
+	 * @param retryState {@link org.springframework.retry.RetryState} <p>The retry state parameter is <code>RetryState</code> type.</p>
+	 * @see  java.lang.Throwable
+	 * @see  org.springframework.retry.RetryCallback
+	 * @see  org.springframework.retry.RecoveryCallback
+	 * @see  org.springframework.retry.RetryState
+	 * @see  E
+	 * @return  T <p>The execute return object is <code>T</code> type.</p>
+	 * @throws E E <p>The e is <code>E</code> type.</p>
 	 */
 	<T, E extends Throwable> T execute(RetryCallback<T, E> retryCallback, RecoveryCallback<T> recoveryCallback,
 			RetryState retryState) throws E;

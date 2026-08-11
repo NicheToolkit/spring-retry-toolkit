@@ -33,9 +33,10 @@ import org.springframework.retry.support.RetrySynchronizationManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Dave Syer
- * @author Artem Bilan
- *
+ * <code>CircuitBreakerInterceptorStatisticsTests</code>
+ * <p>The circuit breaker interceptor statistics tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class CircuitBreakerInterceptorStatisticsTests {
 
@@ -49,7 +50,12 @@ public class CircuitBreakerInterceptorStatisticsTests {
 
 	private AnnotationConfigApplicationContext context;
 
-	@BeforeEach
+    /**
+     * <code>init</code>
+     * <p>The init method.</p>
+     * @see  org.junit.jupiter.api.BeforeEach
+     */
+    @BeforeEach
 	public void init() {
 		context = new AnnotationConfigApplicationContext(TestConfiguration.class);
 		this.callback = context.getBean(Service.class);
@@ -57,14 +63,26 @@ public class CircuitBreakerInterceptorStatisticsTests {
 		this.callback.setAttemptsBeforeSuccess(1);
 	}
 
-	@AfterEach
+    /**
+     * <code>close</code>
+     * <p>The close method.</p>
+     * @see  org.junit.jupiter.api.AfterEach
+     */
+    @AfterEach
 	public void close() {
 		if (context != null) {
 			context.close();
 		}
 	}
 
-	@Test
+    /**
+     * <code>testCircuitOpenWhenNotRetryable</code>
+     * <p>The test circuit open when not retryable method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testCircuitOpenWhenNotRetryable() throws Throwable {
 		Object result = callback.service("one");
 		RetryStatistics stats = repository.findOne("test");
@@ -78,28 +96,65 @@ public class CircuitBreakerInterceptorStatisticsTests {
 			.isEqualTo(1);
 	}
 
-	@Configuration
+    /**
+     * <code>TestConfiguration</code>
+     * <p>The test configuration class.</p>
+     * @see  org.springframework.context.annotation.Configuration
+     * @see  org.springframework.retry.annotation.EnableRetry
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    @Configuration
 	@EnableRetry
 	protected static class TestConfiguration {
 
-		@Bean
+        /**
+         * <code>repository</code>
+         * <p>The repository method.</p>
+         * @return  {@link org.springframework.retry.stats.StatisticsRepository} <p>The repository return object is <code>StatisticsRepository</code> type.</p>
+         * @see  org.springframework.retry.stats.StatisticsRepository
+         * @see  org.springframework.context.annotation.Bean
+         */
+        @Bean
 		public StatisticsRepository repository() {
 			return new DefaultStatisticsRepository();
 		}
 
-		@Bean
+        /**
+         * <code>listener</code>
+         * <p>The listener method.</p>
+         * @param repository {@link org.springframework.retry.stats.StatisticsRepository} <p>The repository parameter is <code>StatisticsRepository</code> type.</p>
+         * @see  org.springframework.retry.stats.StatisticsRepository
+         * @see  org.springframework.retry.stats.StatisticsListener
+         * @see  org.springframework.context.annotation.Bean
+         * @return  {@link org.springframework.retry.stats.StatisticsListener} <p>The listener return object is <code>StatisticsListener</code> type.</p>
+         */
+        @Bean
 		public StatisticsListener listener(StatisticsRepository repository) {
 			return new StatisticsListener(repository);
 		}
 
-		@Bean
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         * @return  {@link org.springframework.retry.stats.CircuitBreakerInterceptorStatisticsTests.Service} <p>The service return object is <code>Service</code> type.</p>
+         * @see  org.springframework.retry.stats.CircuitBreakerInterceptorStatisticsTests.Service
+         * @see  org.springframework.context.annotation.Bean
+         */
+        @Bean
 		public Service service() {
 			return new Service();
 		}
 
 	}
 
-	protected static class Service {
+    /**
+     * <code>Service</code>
+     * <p>The service class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    protected static class Service {
 
 		private int attemptsBeforeSuccess;
 
@@ -107,7 +162,18 @@ public class CircuitBreakerInterceptorStatisticsTests {
 
 		private RetryContext status;
 
-		@CircuitBreaker(label = "test", maxAttempts = 1, recover = "recover")
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         * @param input {@link java.lang.String} <p>The input parameter is <code>String</code> type.</p>
+         * @see  java.lang.String
+         * @see  java.lang.Object
+         * @see  org.springframework.retry.annotation.CircuitBreaker
+         * @see  java.lang.Exception
+         * @return  {@link java.lang.Object} <p>The service return object is <code>Object</code> type.</p>
+         * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+         */
+        @CircuitBreaker(label = "test", maxAttempts = 1, recover = "recover")
 		public Object service(String input) throws Exception {
 			this.status = RetrySynchronizationManager.getContext();
 			Integer attempts = (Integer) status.getAttribute("attempts");
@@ -122,26 +188,59 @@ public class CircuitBreakerInterceptorStatisticsTests {
 			return RESULT;
 		}
 
-		@Recover
+        /**
+         * <code>recover</code>
+         * <p>The recover method.</p>
+         * @param input {@link java.lang.String} <p>The input parameter is <code>String</code> type.</p>
+         * @see  java.lang.String
+         * @see  java.lang.Object
+         * @see  org.springframework.retry.annotation.Recover
+         * @return  {@link java.lang.Object} <p>The recover return object is <code>Object</code> type.</p>
+         */
+        @Recover
 		public Object recover(String input) {
 			this.status.setAttribute(RECOVERED, true);
 			return RECOVERED;
 		}
 
-		@Recover
+        /**
+         * <code>anotherRecover</code>
+         * <p>The another recover method.</p>
+         * @param input {@link java.lang.Object} <p>The input parameter is <code>Object</code> type.</p>
+         * @see  java.lang.Object
+         * @see  org.springframework.retry.annotation.Recover
+         * @return  {@link java.lang.Object} <p>The another recover return object is <code>Object</code> type.</p>
+         */
+        @Recover
 		public Object anotherRecover(Object input) {
 			return null;
 		}
 
-		public boolean isOpen() {
+        /**
+         * <code>isOpen</code>
+         * <p>The is open method.</p>
+         * @return  boolean <p>The is open return object is <code>boolean</code> type.</p>
+         */
+        public boolean isOpen() {
 			return this.status != null && this.status.getAttribute("open") == Boolean.TRUE;
 		}
 
-		public void setAttemptsBeforeSuccess(int attemptsBeforeSuccess) {
+        /**
+         * <code>setAttemptsBeforeSuccess</code>
+         * <p>The set attempts before success setter method.</p>
+         * @param attemptsBeforeSuccess int <p>The attempts before success parameter is <code>int</code> type.</p>
+         */
+        public void setAttemptsBeforeSuccess(int attemptsBeforeSuccess) {
 			this.attemptsBeforeSuccess = attemptsBeforeSuccess;
 		}
 
-		public void setExceptionToThrow(Exception exceptionToThrow) {
+        /**
+         * <code>setExceptionToThrow</code>
+         * <p>The set exception to throw setter method.</p>
+         * @param exceptionToThrow {@link java.lang.Exception} <p>The exception to throw parameter is <code>Exception</code> type.</p>
+         * @see  java.lang.Exception
+         */
+        public void setExceptionToThrow(Exception exceptionToThrow) {
 			this.exceptionToThrow = exceptionToThrow;
 		}
 

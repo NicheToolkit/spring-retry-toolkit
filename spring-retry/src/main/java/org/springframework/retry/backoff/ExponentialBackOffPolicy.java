@@ -26,83 +26,62 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 /**
- * Implementation of {@link BackOffPolicy} that increases the back off period for each
- * retry attempt in a given set up to a limit.
- *
- * This implementation is thread-safe and suitable for concurrent access. Modifications to
- * the configuration do not affect any retry sets that are already in progress.
- *
- * The {@link #setInitialInterval(long)} property controls the initial delay value for the
- * first retry and the {@link #setMultiplier(double)} property controls by how much the
- * delay is increased for each subsequent attempt. The delay interval is capped at
- * {@link #setMaxInterval(long)}.
- *
- * @author Rob Harrop
- * @author Dave Syer
- * @author Gary Russell
- * @author Artem Bilan
- * @author Marius Lichtblau
- * @author Anton Aharkau
- * @author Kim Sumin
+ * <code>ExponentialBackOffPolicy</code>
+ * <p>The exponential back off policy class.</p>
+ * @see  org.springframework.retry.backoff.SleepingBackOffPolicy
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class ExponentialBackOffPolicy implements SleepingBackOffPolicy<ExponentialBackOffPolicy> {
 
-	protected final Log logger = LogFactory.getLog(this.getClass());
+    /**
+     * <code>logger</code>
+     * {@link org.apache.commons.logging.Log} <p>The <code>logger</code> field.</p>
+     * @see  org.apache.commons.logging.Log
+     */
+    protected final Log logger = LogFactory.getLog(this.getClass());
 
-	/**
-	 * The default 'initialInterval' value - 100 millisecs. Coupled with the default
-	 * 'multiplier' value this gives a useful initial spread of pauses for 1-5 retries.
-	 */
-	public static final long DEFAULT_INITIAL_INTERVAL = 100L;
+    /**
+     * <code>DEFAULT_INITIAL_INTERVAL</code>
+     * <p>The constant <code>DEFAULT_INITIAL_INTERVAL</code> field.</p>
+     */
+    public static final long DEFAULT_INITIAL_INTERVAL = 100L;
 
-	/**
-	 * The default maximum backoff time (30 seconds).
-	 */
-	public static final long DEFAULT_MAX_INTERVAL = 30000L;
+    /**
+     * <code>DEFAULT_MAX_INTERVAL</code>
+     * <p>The constant <code>DEFAULT_MAX_INTERVAL</code> field.</p>
+     */
+    public static final long DEFAULT_MAX_INTERVAL = 30000L;
 
-	/**
-	 * The default 'multiplier' value - value 2 (100% increase per backoff).
-	 */
-	public static final double DEFAULT_MULTIPLIER = 2;
+    /**
+     * <code>DEFAULT_MULTIPLIER</code>
+     * <p>The constant <code>DEFAULT_MULTIPLIER</code> field.</p>
+     */
+    public static final double DEFAULT_MULTIPLIER = 2;
 
-	/**
-	 * The initial backoff interval.
-	 */
 	private long initialInterval = DEFAULT_INITIAL_INTERVAL;
 
-	/**
-	 * The maximum value of the backoff period in milliseconds.
-	 */
 	private long maxInterval = DEFAULT_MAX_INTERVAL;
 
-	/**
-	 * The value to add to the backoff period for each retry attempt.
-	 */
 	private double multiplier = DEFAULT_MULTIPLIER;
 
-	/**
-	 * The initial backoff interval.
-	 */
 	private Supplier<Long> initialIntervalSupplier;
 
-	/**
-	 * The maximum value of the backoff period in milliseconds.
-	 */
 	private Supplier<Long> maxIntervalSupplier;
 
-	/**
-	 * The value to add to the backoff period for each retry attempt.
-	 */
 	private Supplier<Double> multiplierSupplier;
 
 	private Sleeper sleeper = new ThreadWaitSleeper();
 
-	/**
-	 * Public setter for the {@link Sleeper} strategy.
-	 * @param sleeper the sleeper to set defaults to {@link ThreadWaitSleeper}.
-	 */
-	public void setSleeper(Sleeper sleeper) {
+    /**
+     * <code>setSleeper</code>
+     * <p>The set sleeper setter method.</p>
+     * @param sleeper {@link org.springframework.retry.backoff.Sleeper} <p>The sleeper parameter is <code>Sleeper</code> type.</p>
+     * @see  org.springframework.retry.backoff.Sleeper
+     */
+    public void setSleeper(Sleeper sleeper) {
 		this.sleeper = sleeper;
 	}
 
@@ -114,138 +93,159 @@ public class ExponentialBackOffPolicy implements SleepingBackOffPolicy<Exponenti
 		return res;
 	}
 
-	protected ExponentialBackOffPolicy newInstance() {
+    /**
+     * <code>newInstance</code>
+     * <p>The new instance method.</p>
+     * @return  {@link org.springframework.retry.backoff.ExponentialBackOffPolicy} <p>The new instance return object is <code>ExponentialBackOffPolicy</code> type.</p>
+     */
+    protected ExponentialBackOffPolicy newInstance() {
 		return new ExponentialBackOffPolicy();
 	}
 
-	protected void cloneValues(ExponentialBackOffPolicy target) {
+    /**
+     * <code>cloneValues</code>
+     * <p>The clone values method.</p>
+     * @param target {@link org.springframework.retry.backoff.ExponentialBackOffPolicy} <p>The target parameter is <code>ExponentialBackOffPolicy</code> type.</p>
+     */
+    protected void cloneValues(ExponentialBackOffPolicy target) {
 		target.setInitialInterval(getInitialInterval());
 		target.setMaxInterval(getMaxInterval());
 		target.setMultiplier(getMultiplier());
 		target.setSleeper(this.sleeper);
 	}
 
-	/**
-	 * Set the initial sleep interval value. Default is {@code 100} millisecond. Cannot be
-	 * set to a value less than one.
-	 * @param initialInterval the initial interval
-	 */
-	public void setInitialInterval(long initialInterval) {
+    /**
+     * <code>setInitialInterval</code>
+     * <p>The set initial interval setter method.</p>
+     * @param initialInterval long <p>The initial interval parameter is <code>long</code> type.</p>
+     */
+    public void setInitialInterval(long initialInterval) {
 		if (initialInterval < 1) {
 			logger.warn("Initial interval must be at least 1, but was " + initialInterval);
 		}
 		this.initialInterval = initialInterval > 1 ? initialInterval : 1;
 	}
 
-	/**
-	 * Set the multiplier value. Default is '<code>2.0</code>'. Hint: do not use values
-	 * much in excess of 1.0 (or the backoff will get very long very fast).
-	 * @param multiplier the multiplier
-	 */
-	public void setMultiplier(double multiplier) {
+    /**
+     * <code>setMultiplier</code>
+     * <p>The set multiplier setter method.</p>
+     * @param multiplier double <p>The multiplier parameter is <code>double</code> type.</p>
+     */
+    public void setMultiplier(double multiplier) {
 		if (multiplier <= 1.0) {
 			logger.warn("Multiplier must be > 1.0 for effective exponential backoff, but was " + multiplier);
 		}
 		this.multiplier = multiplier > 1.0 ? multiplier : 1.0;
 	}
 
-	/**
-	 * Setter for maximum back off period. Default is 30000 (30 seconds). the value will
-	 * be reset to 1 if this method is called with a value less than 1. Set this to avoid
-	 * infinite waits if backing off a large number of times (or if the multiplier is set
-	 * too high).
-	 * @param maxInterval in milliseconds.
-	 */
-	public void setMaxInterval(long maxInterval) {
+    /**
+     * <code>setMaxInterval</code>
+     * <p>The set max interval setter method.</p>
+     * @param maxInterval long <p>The max interval parameter is <code>long</code> type.</p>
+     */
+    public void setMaxInterval(long maxInterval) {
 		if (maxInterval < 1) {
 			logger.warn("Max interval must be positive, but was " + maxInterval);
 		}
 		this.maxInterval = maxInterval > 0 ? maxInterval : 1;
 	}
 
-	/**
-	 * Set the initial sleep interval value. Default supplier supplies {@code 100}
-	 * millisecond.
-	 * @param initialIntervalSupplier the initial interval
-	 * @since 2.0
-	 */
-	public void initialIntervalSupplier(Supplier<Long> initialIntervalSupplier) {
+    /**
+     * <code>initialIntervalSupplier</code>
+     * <p>The initial interval supplier method.</p>
+     * @param initialIntervalSupplier {@link java.util.function.Supplier} <p>The initial interval supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     */
+    public void initialIntervalSupplier(Supplier<Long> initialIntervalSupplier) {
 		Assert.notNull(initialIntervalSupplier, "'initialIntervalSupplier' cannot be null");
 		this.initialIntervalSupplier = initialIntervalSupplier;
 	}
 
-	/**
-	 * Set the multiplier value. Default supplier supplies '<code>2.0</code>'. Hint: do
-	 * not use values much in excess of 1.0 (or the backoff will get very long very fast).
-	 * @param multiplierSupplier the multiplier
-	 * @since 2.0
-	 */
-	public void multiplierSupplier(Supplier<Double> multiplierSupplier) {
+    /**
+     * <code>multiplierSupplier</code>
+     * <p>The multiplier supplier method.</p>
+     * @param multiplierSupplier {@link java.util.function.Supplier} <p>The multiplier supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     */
+    public void multiplierSupplier(Supplier<Double> multiplierSupplier) {
 		Assert.notNull(multiplierSupplier, "'multiplierSupplier' cannot be null");
 		this.multiplierSupplier = multiplierSupplier;
 	}
 
-	/**
-	 * Setter for maximum back off period. Default is 30000 (30 seconds). the value will
-	 * be reset to 1 if this method is called with a value less than 1. Set this to avoid
-	 * infinite waits if backing off a large number of times (or if the multiplier is set
-	 * too high).
-	 * @param maxIntervalSupplier in milliseconds.
-	 * @since 2.0
-	 */
-	public void maxIntervalSupplier(Supplier<Long> maxIntervalSupplier) {
+    /**
+     * <code>maxIntervalSupplier</code>
+     * <p>The max interval supplier method.</p>
+     * @param maxIntervalSupplier {@link java.util.function.Supplier} <p>The max interval supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     */
+    public void maxIntervalSupplier(Supplier<Long> maxIntervalSupplier) {
 		Assert.notNull(maxIntervalSupplier, "'maxIntervalSupplier' cannot be null");
 		this.maxIntervalSupplier = maxIntervalSupplier;
 	}
 
-	protected Supplier<Long> getInitialIntervalSupplier() {
+    /**
+     * <code>getInitialIntervalSupplier</code>
+     * <p>The get initial interval supplier getter method.</p>
+     * @return  {@link java.util.function.Supplier} <p>The get initial interval supplier return object is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     */
+    protected Supplier<Long> getInitialIntervalSupplier() {
 		return initialIntervalSupplier;
 	}
 
-	protected Supplier<Long> getMaxIntervalSupplier() {
+    /**
+     * <code>getMaxIntervalSupplier</code>
+     * <p>The get max interval supplier getter method.</p>
+     * @return  {@link java.util.function.Supplier} <p>The get max interval supplier return object is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     */
+    protected Supplier<Long> getMaxIntervalSupplier() {
 		return maxIntervalSupplier;
 	}
 
-	protected Supplier<Double> getMultiplierSupplier() {
+    /**
+     * <code>getMultiplierSupplier</code>
+     * <p>The get multiplier supplier getter method.</p>
+     * @return  {@link java.util.function.Supplier} <p>The get multiplier supplier return object is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     */
+    protected Supplier<Double> getMultiplierSupplier() {
 		return multiplierSupplier;
 	}
 
-	/**
-	 * The initial period to sleep on the first backoff.
-	 * @return the initial interval
-	 */
-	public long getInitialInterval() {
+    /**
+     * <code>getInitialInterval</code>
+     * <p>The get initial interval getter method.</p>
+     * @return  long <p>The get initial interval return object is <code>long</code> type.</p>
+     */
+    public long getInitialInterval() {
 		return this.initialIntervalSupplier != null ? this.initialIntervalSupplier.get() : this.initialInterval;
 	}
 
-	/**
-	 * The maximum interval to sleep for. Defaults to 30 seconds.
-	 * @return the maximum interval.
-	 */
-	public long getMaxInterval() {
+    /**
+     * <code>getMaxInterval</code>
+     * <p>The get max interval getter method.</p>
+     * @return  long <p>The get max interval return object is <code>long</code> type.</p>
+     */
+    public long getMaxInterval() {
 		return this.maxIntervalSupplier != null ? this.maxIntervalSupplier.get() : this.maxInterval;
 	}
 
-	/**
-	 * The multiplier to use to generate the next backoff interval from the last.
-	 * @return the multiplier in use
-	 */
-	public double getMultiplier() {
+    /**
+     * <code>getMultiplier</code>
+     * <p>The get multiplier getter method.</p>
+     * @return  double <p>The get multiplier return object is <code>double</code> type.</p>
+     */
+    public double getMultiplier() {
 		return this.multiplierSupplier != null ? this.multiplierSupplier.get() : this.multiplier;
 	}
 
-	/**
-	 * Returns a new instance of {@link BackOffContext} with the configured properties.
-	 */
 	@Override
 	public BackOffContext start(RetryContext context) {
 		return new ExponentialBackOffContext(this.initialInterval, this.multiplier, this.maxInterval,
 				this.initialIntervalSupplier, this.multiplierSupplier, this.maxIntervalSupplier);
 	}
 
-	/**
-	 * Pause for the current backoff interval.
-	 */
 	@Override
 	public void backOff(BackOffContext backOffContext) throws BackOffInterruptedException {
 		ExponentialBackOffContext context = (ExponentialBackOffContext) backOffContext;
@@ -262,7 +262,14 @@ public class ExponentialBackOffPolicy implements SleepingBackOffPolicy<Exponenti
 		}
 	}
 
-	static class ExponentialBackOffContext implements BackOffContext {
+    /**
+     * <code>ExponentialBackOffContext</code>
+     * <p>The exponential back off context class.</p>
+     * @see  org.springframework.retry.backoff.BackOffContext
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    static class ExponentialBackOffContext implements BackOffContext {
 
 		private final double multiplier;
 
@@ -276,7 +283,18 @@ public class ExponentialBackOffPolicy implements SleepingBackOffPolicy<Exponenti
 
 		private Supplier<Long> maxIntervalSupplier;
 
-		public ExponentialBackOffContext(long interval, double multiplier, long maxInterval,
+        /**
+         * <code>ExponentialBackOffContext</code>
+         * <p>Instantiates a new exponential back off context.</p>
+         * @param interval long <p>The interval parameter is <code>long</code> type.</p>
+         * @param multiplier double <p>The multiplier parameter is <code>double</code> type.</p>
+         * @param maxInterval long <p>The max interval parameter is <code>long</code> type.</p>
+         * @param intervalSupplier {@link java.util.function.Supplier} <p>The interval supplier parameter is <code>Supplier</code> type.</p>
+         * @param multiplierSupplier {@link java.util.function.Supplier} <p>The multiplier supplier parameter is <code>Supplier</code> type.</p>
+         * @param maxIntervalSupplier {@link java.util.function.Supplier} <p>The max interval supplier parameter is <code>Supplier</code> type.</p>
+         * @see  java.util.function.Supplier
+         */
+        public ExponentialBackOffContext(long interval, double multiplier, long maxInterval,
 				Supplier<Long> intervalSupplier, Supplier<Double> multiplierSupplier,
 				Supplier<Long> maxIntervalSupplier) {
 			this.interval = interval;
@@ -287,7 +305,12 @@ public class ExponentialBackOffPolicy implements SleepingBackOffPolicy<Exponenti
 			this.maxIntervalSupplier = maxIntervalSupplier;
 		}
 
-		public synchronized long getSleepAndIncrement() {
+        /**
+         * <code>getSleepAndIncrement</code>
+         * <p>The get sleep and increment getter method.</p>
+         * @return  long <p>The get sleep and increment return object is <code>long</code> type.</p>
+         */
+        public synchronized long getSleepAndIncrement() {
 			long sleep = getInterval();
 			long max = getMaxInterval();
 			if (sleep > max) {
@@ -299,15 +322,30 @@ public class ExponentialBackOffPolicy implements SleepingBackOffPolicy<Exponenti
 			return sleep;
 		}
 
-		protected long getNextInterval() {
+        /**
+         * <code>getNextInterval</code>
+         * <p>The get next interval getter method.</p>
+         * @return  long <p>The get next interval return object is <code>long</code> type.</p>
+         */
+        protected long getNextInterval() {
 			return (long) (this.interval * getMultiplier());
 		}
 
-		public double getMultiplier() {
+        /**
+         * <code>getMultiplier</code>
+         * <p>The get multiplier getter method.</p>
+         * @return  double <p>The get multiplier return object is <code>double</code> type.</p>
+         */
+        public double getMultiplier() {
 			return this.multiplierSupplier != null ? this.multiplierSupplier.get() : this.multiplier;
 		}
 
-		public long getInterval() {
+        /**
+         * <code>getInterval</code>
+         * <p>The get interval getter method.</p>
+         * @return  long <p>The get interval return object is <code>long</code> type.</p>
+         */
+        public long getInterval() {
 			if (this.initialIntervalSupplier != null) {
 				this.interval = this.initialIntervalSupplier.get();
 				this.initialIntervalSupplier = null;
@@ -315,7 +353,12 @@ public class ExponentialBackOffPolicy implements SleepingBackOffPolicy<Exponenti
 			return this.interval;
 		}
 
-		public long getMaxInterval() {
+        /**
+         * <code>getMaxInterval</code>
+         * <p>The get max interval getter method.</p>
+         * @return  long <p>The get max interval return object is <code>long</code> type.</p>
+         */
+        public long getMaxInterval() {
 			return this.maxIntervalSupplier != null ? this.maxIntervalSupplier.get() : this.maxInterval;
 		}
 

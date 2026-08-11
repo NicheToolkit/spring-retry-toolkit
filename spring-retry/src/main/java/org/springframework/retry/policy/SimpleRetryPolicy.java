@@ -29,44 +29,21 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 /**
- * Simple retry policy that retries a fixed number of times for a set of named exceptions
- * (and subclasses). The number of attempts includes the initial try, so e.g.
- *
- * <pre>
- * retryTemplate = new RetryTemplate(new SimpleRetryPolicy(3));
- * retryTemplate.execute(callback);
- * </pre>
- *
- * will execute the callback at least once, and as many as 3 times.
- * <p>
- * Since version 1.3 it is not necessary to use this class. The same behaviour can be
- * achieved by constructing a {@link CompositeRetryPolicy} with
- * {@link MaxAttemptsRetryPolicy} and {@link BinaryExceptionClassifierRetryPolicy} inside,
- * that is actually performed by:
- *
- * <pre>
- * RetryTemplate.builder()
- *                  .maxAttempts(3)
- *                  .retryOn(Exception.class)
- *                  .build();
- * </pre>
- *
- * or by {@link org.springframework.retry.support.RetryTemplate#defaultInstance()}
- *
- * @author Dave Syer
- * @author Rob Harrop
- * @author Gary Russell
- * @author Aleksandr Shamukov
- * @author Artem Bilan
- * @author Emanuele Ivaldi
+ * <code>SimpleRetryPolicy</code>
+ * <p>The simple retry policy class.</p>
+ * @see  org.springframework.retry.RetryPolicy
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class SimpleRetryPolicy implements RetryPolicy {
 
-	/**
-	 * The default limit to the number of attempts for a new policy.
-	 */
-	public final static int DEFAULT_MAX_ATTEMPTS = 3;
+    /**
+     * <code>DEFAULT_MAX_ATTEMPTS</code>
+     * <p>The constant <code>DEFAULT_MAX_ATTEMPTS</code> field.</p>
+     */
+    public final static int DEFAULT_MAX_ATTEMPTS = 3;
 
 	private int maxAttempts;
 
@@ -77,60 +54,57 @@ public class SimpleRetryPolicy implements RetryPolicy {
 	private BinaryExceptionClassifier recoverableClassifier = new BinaryExceptionClassifier(Collections.emptyMap(),
 			true, true);
 
-	/**
-	 * Create a {@link SimpleRetryPolicy} with the default number of retry attempts,
-	 * retrying all exceptions.
-	 */
-	public SimpleRetryPolicy() {
+    /**
+     * <code>SimpleRetryPolicy</code>
+     * <p>Instantiates a new simple retry policy.</p>
+     */
+    public SimpleRetryPolicy() {
 		this(DEFAULT_MAX_ATTEMPTS, BinaryExceptionClassifier.defaultClassifier());
 	}
 
-	/**
-	 * Create a {@link SimpleRetryPolicy} with the specified number of retry attempts,
-	 * retrying all exceptions.
-	 * @param maxAttempts the maximum number of attempts
-	 */
-	public SimpleRetryPolicy(int maxAttempts) {
+    /**
+     * <code>SimpleRetryPolicy</code>
+     * <p>Instantiates a new simple retry policy.</p>
+     * @param maxAttempts int <p>The max attempts parameter is <code>int</code> type.</p>
+     */
+    public SimpleRetryPolicy(int maxAttempts) {
 		this(maxAttempts, BinaryExceptionClassifier.defaultClassifier());
 	}
 
-	/**
-	 * Create a {@link SimpleRetryPolicy} with the specified number of retry attempts.
-	 * @param maxAttempts the maximum number of attempts
-	 * @param retryableExceptions the map of exceptions that are retryable
-	 */
-	public SimpleRetryPolicy(int maxAttempts, Map<Class<? extends Throwable>, Boolean> retryableExceptions) {
+    /**
+     * <code>SimpleRetryPolicy</code>
+     * <p>Instantiates a new simple retry policy.</p>
+     * @param maxAttempts int <p>The max attempts parameter is <code>int</code> type.</p>
+     * @param retryableExceptions {@link java.util.Map} <p>The retryable exceptions parameter is <code>Map</code> type.</p>
+     * @see  java.util.Map
+     */
+    public SimpleRetryPolicy(int maxAttempts, Map<Class<? extends Throwable>, Boolean> retryableExceptions) {
 		this(maxAttempts, retryableExceptions, false);
 	}
 
-	/**
-	 * Create a {@link SimpleRetryPolicy} with the specified number of retry attempts. If
-	 * traverseCauses is true, the exception causes will be traversed until a match or the
-	 * root cause is found.
-	 * @param maxAttempts the maximum number of attempts
-	 * @param retryableExceptions the map of exceptions that are retryable based on the
-	 * map value (true/false).
-	 * @param traverseCauses true to traverse the exception cause chain until a classified
-	 * exception is found or the root cause is reached.
-	 */
-	public SimpleRetryPolicy(int maxAttempts, Map<Class<? extends Throwable>, Boolean> retryableExceptions,
+    /**
+     * <code>SimpleRetryPolicy</code>
+     * <p>Instantiates a new simple retry policy.</p>
+     * @param maxAttempts int <p>The max attempts parameter is <code>int</code> type.</p>
+     * @param retryableExceptions {@link java.util.Map} <p>The retryable exceptions parameter is <code>Map</code> type.</p>
+     * @param traverseCauses boolean <p>The traverse causes parameter is <code>boolean</code> type.</p>
+     * @see  java.util.Map
+     */
+    public SimpleRetryPolicy(int maxAttempts, Map<Class<? extends Throwable>, Boolean> retryableExceptions,
 			boolean traverseCauses) {
 		this(maxAttempts, retryableExceptions, traverseCauses, false);
 	}
 
-	/**
-	 * Create a {@link SimpleRetryPolicy} with the specified number of retry attempts. If
-	 * traverseCauses is true, the exception causes will be traversed until a match or the
-	 * root cause is found. The default value indicates whether to retry or not for
-	 * exceptions (or super classes thereof) that are not found in the map.
-	 * @param maxAttempts the maximum number of attempts
-	 * @param retryableExceptions the map of exceptions that are retryable based on the
-	 * map value (true/false).
-	 * @param traverseCauses true to traverse the exception cause chain until a classified
-	 * exception is found or the root cause is reached.
-	 * @param defaultValue the default action.
-	 */
-	public SimpleRetryPolicy(int maxAttempts, Map<Class<? extends Throwable>, Boolean> retryableExceptions,
+    /**
+     * <code>SimpleRetryPolicy</code>
+     * <p>Instantiates a new simple retry policy.</p>
+     * @param maxAttempts int <p>The max attempts parameter is <code>int</code> type.</p>
+     * @param retryableExceptions {@link java.util.Map} <p>The retryable exceptions parameter is <code>Map</code> type.</p>
+     * @param traverseCauses boolean <p>The traverse causes parameter is <code>boolean</code> type.</p>
+     * @param defaultValue boolean <p>The default value parameter is <code>boolean</code> type.</p>
+     * @see  java.util.Map
+     */
+    public SimpleRetryPolicy(int maxAttempts, Map<Class<? extends Throwable>, Boolean> retryableExceptions,
 			boolean traverseCauses, boolean defaultValue) {
 		super();
 		this.maxAttempts = maxAttempts;
@@ -138,35 +112,36 @@ public class SimpleRetryPolicy implements RetryPolicy {
 		this.retryableClassifier.setTraverseCauses(traverseCauses);
 	}
 
-	/**
-	 * Create a {@link SimpleRetryPolicy} with the specified number of retry attempts and
-	 * provided exception classifier.
-	 * @param maxAttempts the maximum number of attempts
-	 * @param classifier custom exception classifier
-	 */
-	public SimpleRetryPolicy(int maxAttempts, BinaryExceptionClassifier classifier) {
+    /**
+     * <code>SimpleRetryPolicy</code>
+     * <p>Instantiates a new simple retry policy.</p>
+     * @param maxAttempts int <p>The max attempts parameter is <code>int</code> type.</p>
+     * @param classifier {@link org.springframework.classify.BinaryExceptionClassifier} <p>The classifier parameter is <code>BinaryExceptionClassifier</code> type.</p>
+     * @see  org.springframework.classify.BinaryExceptionClassifier
+     */
+    public SimpleRetryPolicy(int maxAttempts, BinaryExceptionClassifier classifier) {
 		super();
 		this.maxAttempts = maxAttempts;
 		this.retryableClassifier = classifier;
 	}
 
-	/**
-	 * Set the number of attempts before retries are exhausted. Includes the initial
-	 * attempt before the retries begin so, generally, will be {@code >= 1}. For example
-	 * setting this property to 3 means 3 attempts total (initial + 2 retries).
-	 * @param maxAttempts the maximum number of attempts including the initial attempt.
-	 */
-	public void setMaxAttempts(int maxAttempts) {
+    /**
+     * <code>setMaxAttempts</code>
+     * <p>The set max attempts setter method.</p>
+     * @param maxAttempts int <p>The max attempts parameter is <code>int</code> type.</p>
+     */
+    public void setMaxAttempts(int maxAttempts) {
 		this.maxAttempts = maxAttempts;
 	}
 
-	/**
-	 * Configure throwables that should not be passed to a recoverer (if present) but
-	 * thrown immediately.
-	 * @param noRecovery the throwables.
-	 * @since 3.0
-	 */
-	@SuppressWarnings("unchecked")
+    /**
+     * <code>setNotRecoverable</code>
+     * <p>The set not recoverable setter method.</p>
+     * @param noRecovery {@link java.lang.Class} <p>The no recovery parameter is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  java.lang.SuppressWarnings
+     */
+    @SuppressWarnings("unchecked")
 	public void setNotRecoverable(Class<? extends Throwable>... noRecovery) {
 		Map<Class<? extends Throwable>, Boolean> map = new HashMap<>();
 		for (Class<? extends Throwable> clazz : noRecovery) {
@@ -175,26 +150,17 @@ public class SimpleRetryPolicy implements RetryPolicy {
 		this.recoverableClassifier = new BinaryExceptionClassifier(map, true, true);
 	}
 
-	/**
-	 * Set a supplier for the number of attempts before retries are exhausted. Includes
-	 * the initial attempt before the retries begin so, generally, will be {@code >= 1}.
-	 * For example setting this property to 3 means 3 attempts total (initial + 2
-	 * retries). IMPORTANT: This policy cannot be serialized when a max attempts supplier
-	 * is provided. Serialization might be used by a distributed cache when using this
-	 * policy in a {@code CircuitBreaker} context.
-	 * @param maxAttemptsSupplier the maximum number of attempts including the initial
-	 * attempt.
-	 * @since 2.0
-	 */
-	public void maxAttemptsSupplier(Supplier<Integer> maxAttemptsSupplier) {
+    /**
+     * <code>maxAttemptsSupplier</code>
+     * <p>The max attempts supplier method.</p>
+     * @param maxAttemptsSupplier {@link java.util.function.Supplier} <p>The max attempts supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     */
+    public void maxAttemptsSupplier(Supplier<Integer> maxAttemptsSupplier) {
 		Assert.notNull(maxAttemptsSupplier, "'maxAttemptsSupplier' cannot be null");
 		this.maxAttemptsSupplier = maxAttemptsSupplier;
 	}
 
-	/**
-	 * The maximum number of attempts before failure.
-	 * @return the maximum number of attempts
-	 */
 	@Override
 	public int getMaxAttempts() {
 		if (this.maxAttemptsSupplier != null) {
@@ -203,13 +169,6 @@ public class SimpleRetryPolicy implements RetryPolicy {
 		return this.maxAttempts;
 	}
 
-	/**
-	 * Test for retryable operation based on the status.
-	 *
-	 * @see RetryPolicy#canRetry(RetryContext)
-	 * @return true if the last exception was retryable and the number of attempts so far
-	 * is less than the limit.
-	 */
 	@Override
 	public boolean canRetry(RetryContext context) {
 		Throwable t = context.getLastThrowable();
@@ -223,30 +182,16 @@ public class SimpleRetryPolicy implements RetryPolicy {
 		return can;
 	}
 
-	/**
-	 * @see RetryPolicy#close(RetryContext)
-	 */
 	@Override
 	public void close(RetryContext status) {
 	}
 
-	/**
-	 * Update the status with another attempted retry and the latest exception.
-	 *
-	 * @see RetryPolicy#registerThrowable(RetryContext, Throwable)
-	 */
 	@Override
 	public void registerThrowable(RetryContext context, Throwable throwable) {
 		SimpleRetryContext simpleContext = ((SimpleRetryContext) context);
 		simpleContext.registerThrowable(throwable);
 	}
 
-	/**
-	 * Get a status object that can be used to track the current operation according to
-	 * this policy. Has to be aware of the latest exception and the number of attempts.
-	 *
-	 * @see RetryPolicy#open(RetryContext)
-	 */
 	@Override
 	public RetryContext open(RetryContext parent) {
 		return new SimpleRetryContext(parent);
@@ -254,17 +199,18 @@ public class SimpleRetryPolicy implements RetryPolicy {
 
 	private static class SimpleRetryContext extends RetryContextSupport {
 
-		public SimpleRetryContext(RetryContext parent) {
+        /**
+         * <code>SimpleRetryContext</code>
+         * <p>Instantiates a new simple retry context.</p>
+         * @param parent {@link org.springframework.retry.RetryContext} <p>The parent parameter is <code>RetryContext</code> type.</p>
+         * @see  org.springframework.retry.RetryContext
+         */
+        public SimpleRetryContext(RetryContext parent) {
 			super(parent);
 		}
 
 	}
 
-	/**
-	 * Delegates to an exception classifier.
-	 * @param ex the exception to classify.
-	 * @return true if this exception or its ancestors have been registered as retryable.
-	 */
 	private boolean retryForException(Throwable ex) {
 		return this.retryableClassifier.classify(ex);
 	}

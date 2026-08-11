@@ -18,6 +18,13 @@ package org.springframework.retry;
 
 import org.springframework.retry.backoff.BackOffInterruptedException;
 
+/**
+ * <code>BackOffInterruptedExceptionTests</code>
+ * <p>The back off interrupted exception tests class.</p>
+ * @see  org.springframework.retry.AbstractExceptionTests
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class BackOffInterruptedExceptionTests extends AbstractExceptionTests {
 
 	public Exception getException(String msg) {
@@ -28,7 +35,11 @@ public class BackOffInterruptedExceptionTests extends AbstractExceptionTests {
 		return new BackOffInterruptedException(msg, t);
 	}
 
-	public void testNothing() {
+    /**
+     * <code>testNothing</code>
+     * <p>The test nothing method.</p>
+     */
+    public void testNothing() {
 		// fool coverage tools...
 	}
 

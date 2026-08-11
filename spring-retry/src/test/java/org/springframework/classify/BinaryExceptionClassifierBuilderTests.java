@@ -29,11 +29,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 /**
- * @author Aleksandr Shamukov
+ * <code>BinaryExceptionClassifierBuilderTests</code>
+ * <p>The binary exception classifier builder tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class BinaryExceptionClassifierBuilderTests {
 
-	@Test
+    /**
+     * <code>testWhiteList</code>
+     * <p>The test white list method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testWhiteList() {
 		RetryTemplate.builder().infiniteRetry().retryOn(IOException.class).uniformRandomBackoff(1000, 3000).build();
 
@@ -49,7 +57,12 @@ public class BinaryExceptionClassifierBuilderTests {
 		assertThat(classifier.classify(new OutOfMemoryError())).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testWhiteListWithTraverseCauses</code>
+     * <p>The test white list with traverse causes method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testWhiteListWithTraverseCauses() {
 		BinaryExceptionClassifier classifier = BinaryExceptionClassifier.builder()
 			.retryOn(IOException.class)
@@ -66,7 +79,12 @@ public class BinaryExceptionClassifierBuilderTests {
 		assertThat(classifier.classify(new RuntimeException())).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testBlackList</code>
+     * <p>The test black list method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testBlackList() {
 		BinaryExceptionClassifier classifier = BinaryExceptionClassifier.builder()
 			.notRetryOn(Error.class)
@@ -82,7 +100,12 @@ public class BinaryExceptionClassifierBuilderTests {
 		assertThat(classifier.classify(new RuntimeException(new InterruptedException()))).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testFailOnNotationMix</code>
+     * <p>The test fail on notation mix method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFailOnNotationMix() {
 		assertThatIllegalArgumentException().isThrownBy(() -> BinaryExceptionClassifier.builder()
 			.retryOn(IOException.class)

@@ -29,20 +29,23 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
 /**
- * MethodResolver implementation that finds a <em>single</em> Method on the given Class
- * that contains the specified annotation type.
- *
- * @author Mark Fisher
+ * <code>AnnotationMethodResolver</code>
+ * <p>The annotation method resolver class.</p>
+ * @see  org.springframework.classify.util.MethodResolver
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class AnnotationMethodResolver implements MethodResolver {
 
 	private final Class<? extends Annotation> annotationType;
 
-	/**
-	 * Create a MethodResolver for the specified Method-level annotation type
-	 * @param annotationType the type of the annotation
-	 */
-	public AnnotationMethodResolver(Class<? extends Annotation> annotationType) {
+    /**
+     * <code>AnnotationMethodResolver</code>
+     * <p>Instantiates a new annotation method resolver.</p>
+     * @param annotationType {@link java.lang.Class} <p>The annotation type parameter is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     */
+    public AnnotationMethodResolver(Class<? extends Annotation> annotationType) {
 		Assert.notNull(annotationType, "annotationType must not be null");
 		Assert.isTrue(
 				ObjectUtils.containsElement(annotationType.getAnnotation(Target.class).value(), ElementType.METHOD),
@@ -50,15 +53,6 @@ public class AnnotationMethodResolver implements MethodResolver {
 		this.annotationType = annotationType;
 	}
 
-	/**
-	 * Find a <em>single</em> Method on the Class of the given candidate object that
-	 * contains the annotation type for which this resolver is searching.
-	 * @param candidate the instance whose Class will be checked for the annotation
-	 * @return a single matching Method instance or <code>null</code> if the candidate's
-	 * Class contains no Methods with the specified annotation
-	 * @throws IllegalArgumentException if more than one Method has the specified
-	 * annotation
-	 */
 	public Method findMethod(Object candidate) {
 		Assert.notNull(candidate, "candidate object must not be null");
 		Class<?> targetClass = AopUtils.getTargetClass(candidate);
@@ -68,15 +62,6 @@ public class AnnotationMethodResolver implements MethodResolver {
 		return this.findMethod(targetClass);
 	}
 
-	/**
-	 * Find a <em>single</em> Method on the given Class that contains the annotation type
-	 * for which this resolver is searching.
-	 * @param clazz the Class instance to check for the annotation
-	 * @return a single matching Method instance or <code>null</code> if the Class
-	 * contains no Methods with the specified annotation
-	 * @throws IllegalArgumentException if more than one Method has the specified
-	 * annotation
-	 */
 	public Method findMethod(final Class<?> clazz) {
 		Assert.notNull(clazz, "class must not be null");
 		final AtomicReference<Method> annotatedMethod = new AtomicReference<>();

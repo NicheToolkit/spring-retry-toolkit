@@ -17,11 +17,12 @@
 package org.springframework.retry.backoff;
 
 /**
- * Simple {@link Sleeper} implementation that just blocks the current Thread with sleep
- * period.
- *
- * @author Artem Bilan
- * @since 1.1
+ * <code>ThreadWaitSleeper</code>
+ * <p>The thread wait sleeper class.</p>
+ * @see  org.springframework.retry.backoff.Sleeper
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class ThreadWaitSleeper implements Sleeper {

@@ -18,48 +18,41 @@ package org.springframework.retry.policy;
 import org.springframework.retry.RetryContext;
 
 /**
- * Map-based implementation of {@link RetryContextCache}. The map backing the cache of
- * contexts is synchronized.
- *
- * @author Dave Syer
+ * <code>MapRetryContextCache</code>
+ * <p>The map retry context cache class.</p>
+ * @see  org.springframework.retry.policy.AbstractMapRetryContextCache
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class MapRetryContextCache extends AbstractMapRetryContextCache<RetryContext> {
 
-	/**
-	 * Create an instance with {@link #DEFAULT_CAPACITY the default capacity}
-	 */
-	public MapRetryContextCache() {
+    /**
+     * <code>MapRetryContextCache</code>
+     * <p>Instantiates a new map retry context cache.</p>
+     */
+    public MapRetryContextCache() {
 		this(DEFAULT_CAPACITY);
 	}
 
-	/**
-	 * Create an instance with the given capacity, removing the eldest entries when the
-	 * cache is full
-	 * @param capacity the initial capacity of the cache
-	 */
-	public MapRetryContextCache(int capacity) {
+    /**
+     * <code>MapRetryContextCache</code>
+     * <p>Instantiates a new map retry context cache.</p>
+     * @param capacity int <p>The capacity parameter is <code>int</code> type.</p>
+     */
+    public MapRetryContextCache(int capacity) {
 		this(capacity, true);
 	}
 
-	/**
-	 * Create an instance with the given capacity and the policy to apply when the cache
-	 * is full.
-	 * @param capacity the size of the cache
-	 * @param removeEldestEntries whether to remove the eldest entries when the cache is
-	 * full
-	 * @since 1.3.5
-	 */
-	public MapRetryContextCache(int capacity, boolean removeEldestEntries) {
+    /**
+     * <code>MapRetryContextCache</code>
+     * <p>Instantiates a new map retry context cache.</p>
+     * @param capacity int <p>The capacity parameter is <code>int</code> type.</p>
+     * @param removeEldestEntries boolean <p>The remove eldest entries parameter is <code>boolean</code> type.</p>
+     */
+    public MapRetryContextCache(int capacity, boolean removeEldestEntries) {
 		super(capacity, removeEldestEntries);
 	}
 
-	/**
-	 * Update the capacity of this cache. Prevent the cache from growing unboundedly if
-	 * items that fail are misidentified and two references to an identical item actually
-	 * do not have the same key. This can happen when users implement equals and hashCode
-	 * based on mutable fields, for instance.
-	 * @param capacity the capacity to set
-	 */
 	@Override
 	public void setCapacity(int capacity) {
 		super.setCapacity(capacity);

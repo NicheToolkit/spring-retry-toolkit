@@ -19,21 +19,35 @@ package org.springframework.retry.backoff;
 import org.springframework.retry.RetryException;
 
 /**
- * Exception class signifying that an attempt to back off using a {@link BackOffPolicy}
- * was interrupted, most likely by an {@link InterruptedException} during a call to
- * {@link Thread#sleep(long)}.
- *
- * @author Rob Harrop
- * @since 2.1
+ * <code>BackOffInterruptedException</code>
+ * <p>The back off interrupted exception class.</p>
+ * @see  org.springframework.retry.RetryException
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class BackOffInterruptedException extends RetryException {
 
-	public BackOffInterruptedException(String msg) {
+    /**
+     * <code>BackOffInterruptedException</code>
+     * <p>Instantiates a new back off interrupted exception.</p>
+     * @param msg {@link java.lang.String} <p>The msg parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    public BackOffInterruptedException(String msg) {
 		super(msg);
 	}
 
-	public BackOffInterruptedException(String msg, Throwable cause) {
+    /**
+     * <code>BackOffInterruptedException</code>
+     * <p>Instantiates a new back off interrupted exception.</p>
+     * @param msg {@link java.lang.String} <p>The msg parameter is <code>String</code> type.</p>
+     * @param cause {@link java.lang.Throwable} <p>The cause parameter is <code>Throwable</code> type.</p>
+     * @see  java.lang.String
+     * @see  java.lang.Throwable
+     */
+    public BackOffInterruptedException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 

@@ -20,16 +20,30 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
 /**
- * @author Gary Russell
+ * <code>RetryTemplateNoThreadLocalTests</code>
+ * <p>The retry template no thread local tests class.</p>
+ * @see  org.springframework.retry.support.RetryTemplateTests
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RetryTemplateNoThreadLocalTests extends RetryTemplateTests {
 
-	@BeforeAll
+    /**
+     * <code>before</code>
+     * <p>The before method.</p>
+     * @see  org.junit.jupiter.api.BeforeAll
+     */
+    @BeforeAll
 	static void before() {
 		RetrySynchronizationManager.setUseThreadLocal(false);
 	}
 
-	@AfterAll
+    /**
+     * <code>after</code>
+     * <p>The after method.</p>
+     * @see  org.junit.jupiter.api.AfterAll
+     */
+    @AfterAll
 	static void after() {
 		RetrySynchronizationManager.setUseThreadLocal(true);
 	}

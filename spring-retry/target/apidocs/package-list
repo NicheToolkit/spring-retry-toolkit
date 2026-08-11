@@ -1,0 +1,12 @@
+org.springframework.classify
+org.springframework.classify.annotation
+org.springframework.classify.util
+org.springframework.retry
+org.springframework.retry.annotation
+org.springframework.retry.backoff
+org.springframework.retry.context
+org.springframework.retry.interceptor
+org.springframework.retry.listener
+org.springframework.retry.policy
+org.springframework.retry.stats
+org.springframework.retry.support

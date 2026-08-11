@@ -25,152 +25,153 @@ import java.lang.annotation.Target;
 import org.springframework.core.annotation.AliasFor;
 
 /**
- * Annotation for a method invocation that is retryable.
- *
- * @author Dave Syer
- * @author Artem Bilan
- * @author Gary Russell
- * @author Maksim Kita
- * @author Roman Akentev
- * @since 1.1
- *
+ * <code>Retryable</code>
+ * <p>The retryable interface.</p>
+ * @see  java.lang.annotation.Annotation
+ * @see  java.lang.annotation.Target
+ * @see  java.lang.annotation.Retention
+ * @see  java.lang.annotation.Documented
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Retryable {
 
-	/**
-	 * Name of method in this class to use for recover. Method had to be marked with
-	 * {@link Recover} annotation.
-	 * @return the name of recover method
-	 */
-	String recover() default "";
+    /**
+     * <code>recover</code>
+     * <p>The recover method.</p>
+     * @return  {@link java.lang.String} <p>The recover return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String recover() default "";
 
-	/**
-	 * Retry interceptor bean name to be applied for retryable method. Is mutually
-	 * exclusive with other attributes.
-	 * @return the retry interceptor bean name
-	 */
-	String interceptor() default "";
+    /**
+     * <code>interceptor</code>
+     * <p>The interceptor method.</p>
+     * @return  {@link java.lang.String} <p>The interceptor return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String interceptor() default "";
 
-	/**
-	 * Exception types that are retryable. Defaults to empty (and if exclude is also empty
-	 * all exceptions are retried).
-	 * @return exception types to retry
-	 * @deprecated in favor of {@link #retryFor()}
-	 */
-	@Deprecated
+    /**
+     * <code>value</code>
+     * <p>The value method.</p>
+     * @deprecated  <p>The value method has be deprecated.</p>
+     * @return  {@link java.lang.Class} <p>The value return object is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  java.lang.Deprecated
+     */
+    @Deprecated
 	Class<? extends Throwable>[] value() default {};
 
-	/**
-	 * Exception types that are retryable. Defaults to empty (and, if exclude is also
-	 * empty, all exceptions are retried).
-	 * @return exception types to retry
-	 * @deprecated in favor of {@link #retryFor()}.
-	 */
-	@AliasFor("retryFor")
+    /**
+     * <code>include</code>
+     * <p>The include method.</p>
+     * @deprecated  <p>The include method has be deprecated.</p>
+     * @return  {@link java.lang.Class} <p>The include return object is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  org.springframework.core.annotation.AliasFor
+     * @see  java.lang.Deprecated
+     */
+    @AliasFor("retryFor")
 	@Deprecated
 	Class<? extends Throwable>[] include() default {};
 
-	/**
-	 * Exception types that are retryable. Defaults to empty (and, if noRetryFor is also
-	 * empty, all exceptions are retried).
-	 * @return exception types to retry
-	 * @since 2.0
-	 */
-	@AliasFor("include")
+    /**
+     * <code>retryFor</code>
+     * <p>The retry for method.</p>
+     * @return  {@link java.lang.Class} <p>The retry for return object is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor("include")
 	Class<? extends Throwable>[] retryFor() default {};
 
-	/**
-	 * Exception types that are not retryable. Defaults to empty (and if include is also
-	 * empty all exceptions are retried). If includes is empty but exclude is not, all not
-	 * excluded exceptions are retried
-	 * @return exception types not to retry
-	 * @deprecated in favor of {@link #noRetryFor()}.
-	 */
-	@Deprecated
+    /**
+     * <code>exclude</code>
+     * <p>The exclude method.</p>
+     * @deprecated  <p>The exclude method has be deprecated.</p>
+     * @return  {@link java.lang.Class} <p>The exclude return object is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  java.lang.Deprecated
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @Deprecated
 	@AliasFor("noRetryFor")
 	Class<? extends Throwable>[] exclude() default {};
 
-	/**
-	 * Exception types that are not retryable. Defaults to empty (and, if retryFor is also
-	 * empty, all exceptions are retried). If retryFor is empty but noRetryFor is not, all
-	 * other exceptions are retried
-	 * @return exception types not to retry
-	 * @since 2.0
-	 */
-	@AliasFor("exclude")
+    /**
+     * <code>noRetryFor</code>
+     * <p>The no retry for method.</p>
+     * @return  {@link java.lang.Class} <p>The no retry for return object is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor("exclude")
 	Class<? extends Throwable>[] noRetryFor() default {};
 
-	/**
-	 * Exception types that are not recoverable; these exceptions are thrown to the caller
-	 * without calling any recoverer (immediately if also in {@link #noRetryFor()}).
-	 * Defaults to empty.
-	 * @return exception types not to retry
-	 * @since 2.0
-	 */
-	Class<? extends Throwable>[] notRecoverable() default {};
+    /**
+     * <code>notRecoverable</code>
+     * <p>The not recoverable method.</p>
+     * @return  {@link java.lang.Class} <p>The not recoverable return object is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     */
+    Class<? extends Throwable>[] notRecoverable() default {};
 
-	/**
-	 * A unique label for statistics reporting. If not provided the caller may choose to
-	 * ignore it, or provide a default.
-	 * @return the label for the statistics
-	 */
-	String label() default "";
+    /**
+     * <code>label</code>
+     * <p>The label method.</p>
+     * @return  {@link java.lang.String} <p>The label return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String label() default "";
 
-	/**
-	 * Flag to say that the retry is stateful: i.e. exceptions are re-thrown, but the
-	 * retry policy is applied with the same policy to subsequent invocations with the
-	 * same arguments. If false then retryable exceptions are not re-thrown.
-	 * @return true if retry is stateful, default false
-	 */
-	boolean stateful() default false;
+    /**
+     * <code>stateful</code>
+     * <p>The stateful method.</p>
+     * @return  boolean <p>The stateful return object is <code>boolean</code> type.</p>
+     */
+    boolean stateful() default false;
 
-	/**
-	 * @return the maximum number of attempts (including the first failure), defaults to 3
-	 */
-	int maxAttempts() default 3;
+    /**
+     * <code>maxAttempts</code>
+     * <p>The max attempts method.</p>
+     * @return  int <p>The max attempts return object is <code>int</code> type.</p>
+     */
+    int maxAttempts() default 3;
 
-	/**
-	 * @return an expression evaluated to the maximum number of attempts (including the
-	 * first failure), defaults to 3 Overrides {@link #maxAttempts()}. Use {@code #{...}}
-	 * for one-time evaluation during initialization, omit the delimiters for evaluation
-	 * at runtime.
-	 * @since 1.2
-	 */
-	String maxAttemptsExpression() default "";
+    /**
+     * <code>maxAttemptsExpression</code>
+     * <p>The max attempts expression method.</p>
+     * @return  {@link java.lang.String} <p>The max attempts expression return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String maxAttemptsExpression() default "";
 
-	/**
-	 * Specify the backoff properties for retrying this operation. The default is a simple
-	 * {@link Backoff} specification with no properties - see its documentation for
-	 * defaults.
-	 * @return a backoff specification
-	 */
-	Backoff backoff() default @Backoff();
+    /**
+     * <code>backoff</code>
+     * <p>The backoff method.</p>
+     * @return  {@link org.springframework.retry.annotation.Backoff} <p>The backoff return object is <code>Backoff</code> type.</p>
+     * @see  org.springframework.retry.annotation.Backoff
+     */
+    Backoff backoff() default @Backoff();
 
-	/**
-	 * Specify an expression to be evaluated after the
-	 * {@code SimpleRetryPolicy.canRetry()} returns true - can be used to conditionally
-	 * suppress the retry. Only invoked after an exception is thrown. The root object for
-	 * the evaluation is the last {@code Throwable}. Other beans in the context can be
-	 * referenced. For example: <pre class=code>
-	 *  {@code "message.contains('you can retry this')"}.
-	 * </pre> and <pre class=code>
-	 *  {@code "@someBean.shouldRetry(#root)"}.
-	 * </pre>
-	 * @return the expression.
-	 * @since 1.2
-	 */
-	String exceptionExpression() default "";
+    /**
+     * <code>exceptionExpression</code>
+     * <p>The exception expression method.</p>
+     * @return  {@link java.lang.String} <p>The exception expression return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String exceptionExpression() default "";
 
-	/**
-	 * Bean names of retry listeners to use instead of default ones defined in Spring
-	 * context. If this attribute is set to an empty string {@code ""}, it will
-	 * effectively exclude all retry listeners, including with the default listener beans,
-	 * from being used.
-	 * @return retry listeners bean names
-	 */
-	String[] listeners() default {};
+    /**
+     * <code>listeners</code>
+     * <p>The listeners method.</p>
+     * @return  {@link java.lang.String} <p>The listeners return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String[] listeners() default {};
 
 }

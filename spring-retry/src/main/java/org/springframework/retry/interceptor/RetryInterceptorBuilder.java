@@ -27,38 +27,42 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.util.Assert;
 
 /**
- * <p>
- * Simplified facade to make it easier and simpler to build a
- * {@link StatefulRetryOperationsInterceptor} or (stateless)
- * {@link RetryOperationsInterceptor} by providing a fluent interface to defining the
- * behavior on error.
- * <p>
- * Typical example:
- * </p>
- *
- * <pre class="code">
- * StatefulRetryOperationsInterceptor interceptor = RetryInterceptorBuilder.stateful()
- * 		.maxAttempts(5).backOffOptions(1, 2, 10) // initialInterval, multiplier,
- * 													// maxInterval
- * 		.build();
- * </pre>
- *
- * @author James Carr
- * @author Gary Russell
- * @author Artem Bilan
- * @since 1.1
- * @param <T> The type of {@link MethodInterceptor} returned by
- * the builder's {@link #build()} method.
+ * <code>RetryInterceptorBuilder</code>
+ * <p>The retry interceptor builder class.</p>
+ * @param <T>  {@link org.aopalliance.intercept.MethodInterceptor} <p>The generic parameter is <code>MethodInterceptor</code> type.</p>
+ * @see  org.aopalliance.intercept.MethodInterceptor
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public abstract class RetryInterceptorBuilder<T extends MethodInterceptor> {
 
-	protected final RetryTemplate retryTemplate = new RetryTemplate();
+    /**
+     * <code>retryTemplate</code>
+     * {@link org.springframework.retry.support.RetryTemplate} <p>The <code>retryTemplate</code> field.</p>
+     * @see  org.springframework.retry.support.RetryTemplate
+     */
+    protected final RetryTemplate retryTemplate = new RetryTemplate();
 
-	protected final SimpleRetryPolicy simpleRetryPolicy = new SimpleRetryPolicy();
+    /**
+     * <code>simpleRetryPolicy</code>
+     * {@link org.springframework.retry.policy.SimpleRetryPolicy} <p>The <code>simpleRetryPolicy</code> field.</p>
+     * @see  org.springframework.retry.policy.SimpleRetryPolicy
+     */
+    protected final SimpleRetryPolicy simpleRetryPolicy = new SimpleRetryPolicy();
 
-	protected RetryOperations retryOperations;
+    /**
+     * <code>retryOperations</code>
+     * {@link org.springframework.retry.RetryOperations} <p>The <code>retryOperations</code> field.</p>
+     * @see  org.springframework.retry.RetryOperations
+     */
+    protected RetryOperations retryOperations;
 
-	protected MethodInvocationRecoverer<?> recoverer;
+    /**
+     * <code>recoverer</code>
+     * {@link org.springframework.retry.interceptor.MethodInvocationRecoverer} <p>The <code>recoverer</code> field.</p>
+     * @see  org.springframework.retry.interceptor.MethodInvocationRecoverer
+     */
+    protected MethodInvocationRecoverer<?> recoverer;
 
 	private boolean templateAltered;
 
@@ -68,51 +72,63 @@ public abstract class RetryInterceptorBuilder<T extends MethodInterceptor> {
 
 	private boolean backOffOptionsSet;
 
-	protected String label;
+    /**
+     * <code>label</code>
+     * {@link java.lang.String} <p>The <code>label</code> field.</p>
+     * @see  java.lang.String
+     */
+    protected String label;
 
-	/**
-	 * Create a builder for a stateful retry interceptor.
-	 * @return The interceptor builder.
-	 */
-	public static StatefulRetryInterceptorBuilder stateful() {
+    /**
+     * <code>stateful</code>
+     * <p>The stateful method.</p>
+     * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder.StatefulRetryInterceptorBuilder} <p>The stateful return object is <code>StatefulRetryInterceptorBuilder</code> type.</p>
+     * @see  org.springframework.retry.interceptor.RetryInterceptorBuilder.StatefulRetryInterceptorBuilder
+     */
+    public static StatefulRetryInterceptorBuilder stateful() {
 		return new StatefulRetryInterceptorBuilder();
 	}
 
-	/**
-	 * Create a builder for a circuit breaker retry interceptor.
-	 * @return The interceptor builder.
-	 */
-	public static CircuitBreakerInterceptorBuilder circuitBreaker() {
+    /**
+     * <code>circuitBreaker</code>
+     * <p>The circuit breaker method.</p>
+     * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder.CircuitBreakerInterceptorBuilder} <p>The circuit breaker return object is <code>CircuitBreakerInterceptorBuilder</code> type.</p>
+     * @see  org.springframework.retry.interceptor.RetryInterceptorBuilder.CircuitBreakerInterceptorBuilder
+     */
+    public static CircuitBreakerInterceptorBuilder circuitBreaker() {
 		return new CircuitBreakerInterceptorBuilder();
 	}
 
-	/**
-	 * Create a builder for a stateless retry interceptor.
-	 * @return The interceptor builder.
-	 */
-	public static StatelessRetryInterceptorBuilder stateless() {
+    /**
+     * <code>stateless</code>
+     * <p>The stateless method.</p>
+     * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder.StatelessRetryInterceptorBuilder} <p>The stateless return object is <code>StatelessRetryInterceptorBuilder</code> type.</p>
+     * @see  org.springframework.retry.interceptor.RetryInterceptorBuilder.StatelessRetryInterceptorBuilder
+     */
+    public static StatelessRetryInterceptorBuilder stateless() {
 		return new StatelessRetryInterceptorBuilder();
 	}
 
-	/**
-	 * Apply the retry operations - once this is set, other properties can no longer be
-	 * set; can't be set if other properties have been applied.
-	 * @param retryOperations The retry operations.
-	 * @return this.
-	 */
-	public RetryInterceptorBuilder<T> retryOperations(RetryOperations retryOperations) {
+    /**
+     * <code>retryOperations</code>
+     * <p>The retry operations method.</p>
+     * @param retryOperations {@link org.springframework.retry.RetryOperations} <p>The retry operations parameter is <code>RetryOperations</code> type.</p>
+     * @see  org.springframework.retry.RetryOperations
+     * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder} <p>The retry operations return object is <code>RetryInterceptorBuilder</code> type.</p>
+     */
+    public RetryInterceptorBuilder<T> retryOperations(RetryOperations retryOperations) {
 		Assert.isTrue(!this.templateAltered, "Cannot set retryOperations when the default has been modified");
 		this.retryOperations = retryOperations;
 		return this;
 	}
 
-	/**
-	 * Apply the max attempts - a SimpleRetryPolicy will be used. Cannot be used if a
-	 * custom retry operations or retry policy has been set.
-	 * @param maxAttempts the max attempts (including the initial attempt).
-	 * @return this.
-	 */
-	public RetryInterceptorBuilder<T> maxAttempts(int maxAttempts) {
+    /**
+     * <code>maxAttempts</code>
+     * <p>The max attempts method.</p>
+     * @param maxAttempts int <p>The max attempts parameter is <code>int</code> type.</p>
+     * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder} <p>The max attempts return object is <code>RetryInterceptorBuilder</code> type.</p>
+     */
+    public RetryInterceptorBuilder<T> maxAttempts(int maxAttempts) {
 		Assert.isNull(this.retryOperations, "cannot alter the retry policy when a custom retryOperations has been set");
 		Assert.isTrue(!this.retryPolicySet, "cannot alter the retry policy when a custom retryPolicy has been set");
 		this.simpleRetryPolicy.setMaxAttempts(maxAttempts);
@@ -121,15 +137,15 @@ public abstract class RetryInterceptorBuilder<T extends MethodInterceptor> {
 		return this;
 	}
 
-	/**
-	 * Apply the backoff options. Cannot be used if a custom retry operations, or back off
-	 * policy has been set.
-	 * @param initialInterval The initial interval.
-	 * @param multiplier The multiplier.
-	 * @param maxInterval The max interval.
-	 * @return this.
-	 */
-	public RetryInterceptorBuilder<T> backOffOptions(long initialInterval, double multiplier, long maxInterval) {
+    /**
+     * <code>backOffOptions</code>
+     * <p>The back off options method.</p>
+     * @param initialInterval long <p>The initial interval parameter is <code>long</code> type.</p>
+     * @param multiplier double <p>The multiplier parameter is <code>double</code> type.</p>
+     * @param maxInterval long <p>The max interval parameter is <code>long</code> type.</p>
+     * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder} <p>The back off options return object is <code>RetryInterceptorBuilder</code> type.</p>
+     */
+    public RetryInterceptorBuilder<T> backOffOptions(long initialInterval, double multiplier, long maxInterval) {
 		Assert.isNull(this.retryOperations,
 				"cannot set the back off policy when a custom retryOperations has been set");
 		Assert.isTrue(!this.backOffPolicySet, "cannot set the back off options when a back off policy has been set");
@@ -143,13 +159,14 @@ public abstract class RetryInterceptorBuilder<T extends MethodInterceptor> {
 		return this;
 	}
 
-	/**
-	 * Apply the retry policy - cannot be used if a custom retry template has been
-	 * provided, or the max attempts or back off options or policy have been applied.
-	 * @param policy The policy.
-	 * @return this.
-	 */
-	public RetryInterceptorBuilder<T> retryPolicy(RetryPolicy policy) {
+    /**
+     * <code>retryPolicy</code>
+     * <p>The retry policy method.</p>
+     * @param policy {@link org.springframework.retry.RetryPolicy} <p>The policy parameter is <code>RetryPolicy</code> type.</p>
+     * @see  org.springframework.retry.RetryPolicy
+     * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder} <p>The retry policy return object is <code>RetryInterceptorBuilder</code> type.</p>
+     */
+    public RetryInterceptorBuilder<T> retryPolicy(RetryPolicy policy) {
 		Assert.isNull(this.retryOperations, "cannot set the retry policy when a custom retryOperations has been set");
 		Assert.isTrue(!this.templateAltered,
 				"cannot set the retry policy if max attempts or back off policy or options changed");
@@ -159,13 +176,14 @@ public abstract class RetryInterceptorBuilder<T extends MethodInterceptor> {
 		return this;
 	}
 
-	/**
-	 * Apply the back off policy. Cannot be used if a custom retry operations, or back off
-	 * policy has been applied.
-	 * @param policy The policy.
-	 * @return this.
-	 */
-	public RetryInterceptorBuilder<T> backOffPolicy(BackOffPolicy policy) {
+    /**
+     * <code>backOffPolicy</code>
+     * <p>The back off policy method.</p>
+     * @param policy {@link org.springframework.retry.backoff.BackOffPolicy} <p>The policy parameter is <code>BackOffPolicy</code> type.</p>
+     * @see  org.springframework.retry.backoff.BackOffPolicy
+     * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder} <p>The back off policy return object is <code>RetryInterceptorBuilder</code> type.</p>
+     */
+    public RetryInterceptorBuilder<T> backOffPolicy(BackOffPolicy policy) {
 		Assert.isNull(this.retryOperations,
 				"cannot set the back off policy when a custom retryOperations has been set");
 		Assert.isTrue(!this.backOffOptionsSet,
@@ -176,27 +194,47 @@ public abstract class RetryInterceptorBuilder<T extends MethodInterceptor> {
 		return this;
 	}
 
-	/**
-	 * Apply a {@link MethodInvocationRecoverer} for the Retry interceptor.
-	 * @param recoverer The recoverer.
-	 * @return this.
-	 */
-	public RetryInterceptorBuilder<T> recoverer(MethodInvocationRecoverer<?> recoverer) {
+    /**
+     * <code>recoverer</code>
+     * <p>The recoverer method.</p>
+     * @param recoverer {@link org.springframework.retry.interceptor.MethodInvocationRecoverer} <p>The recoverer parameter is <code>MethodInvocationRecoverer</code> type.</p>
+     * @see  org.springframework.retry.interceptor.MethodInvocationRecoverer
+     * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder} <p>The recoverer return object is <code>RetryInterceptorBuilder</code> type.</p>
+     */
+    public RetryInterceptorBuilder<T> recoverer(MethodInvocationRecoverer<?> recoverer) {
 		this.recoverer = recoverer;
 		return this;
 	}
 
-	public RetryInterceptorBuilder<T> label(String label) {
+    /**
+     * <code>label</code>
+     * <p>The label method.</p>
+     * @param label {@link java.lang.String} <p>The label parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder} <p>The label return object is <code>RetryInterceptorBuilder</code> type.</p>
+     */
+    public RetryInterceptorBuilder<T> label(String label) {
 		this.label = label;
 		return this;
 	}
 
-	public abstract T build();
+    /**
+     * <code>build</code>
+     * <p>The build method.</p>
+     * @return  T <p>The build return object is <code>T</code> type.</p>
+     */
+    public abstract T build();
 
 	private RetryInterceptorBuilder() {
 	}
 
-	public static class StatefulRetryInterceptorBuilder
+    /**
+     * <code>StatefulRetryInterceptorBuilder</code>
+     * <p>The stateful retry interceptor builder class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public static class StatefulRetryInterceptorBuilder
 			extends RetryInterceptorBuilder<StatefulRetryOperationsInterceptor> {
 
 		private final StatefulRetryOperationsInterceptor interceptor = new StatefulRetryOperationsInterceptor();
@@ -207,35 +245,39 @@ public abstract class RetryInterceptorBuilder<T extends MethodInterceptor> {
 
 		private Classifier<? super Throwable, Boolean> rollbackClassifier;
 
-		/**
-		 * Stateful retry requires items to be identifiable.
-		 * @param keyGenerator The key generator.
-		 * @return this.
-		 */
-		public StatefulRetryInterceptorBuilder keyGenerator(MethodArgumentsKeyGenerator keyGenerator) {
+        /**
+         * <code>keyGenerator</code>
+         * <p>The key generator method.</p>
+         * @param keyGenerator {@link org.springframework.retry.interceptor.MethodArgumentsKeyGenerator} <p>The key generator parameter is <code>MethodArgumentsKeyGenerator</code> type.</p>
+         * @see  org.springframework.retry.interceptor.MethodArgumentsKeyGenerator
+         * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder.StatefulRetryInterceptorBuilder} <p>The key generator return object is <code>StatefulRetryInterceptorBuilder</code> type.</p>
+         */
+        public StatefulRetryInterceptorBuilder keyGenerator(MethodArgumentsKeyGenerator keyGenerator) {
 			this.keyGenerator = keyGenerator;
 			return this;
 		}
 
-		/**
-		 * Apply a custom new item identifier.
-		 * @param newMethodArgumentsIdentifier The new item identifier.
-		 * @return this.
-		 */
-		public StatefulRetryInterceptorBuilder newMethodArgumentsIdentifier(
+        /**
+         * <code>newMethodArgumentsIdentifier</code>
+         * <p>The new method arguments identifier method.</p>
+         * @param newMethodArgumentsIdentifier {@link org.springframework.retry.interceptor.NewMethodArgumentsIdentifier} <p>The new method arguments identifier parameter is <code>NewMethodArgumentsIdentifier</code> type.</p>
+         * @see  org.springframework.retry.interceptor.NewMethodArgumentsIdentifier
+         * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder.StatefulRetryInterceptorBuilder} <p>The new method arguments identifier return object is <code>StatefulRetryInterceptorBuilder</code> type.</p>
+         */
+        public StatefulRetryInterceptorBuilder newMethodArgumentsIdentifier(
 				NewMethodArgumentsIdentifier newMethodArgumentsIdentifier) {
 			this.newMethodArgumentsIdentifier = newMethodArgumentsIdentifier;
 			return this;
 		}
 
-		/**
-		 * Control the rollback of an ongoing transaction. In a stateful retry, normally
-		 * all exceptions cause a rollback (i.e. re-throw).
-		 * @param rollbackClassifier The rollback classifier (return true for exceptions
-		 * that should be re-thrown).
-		 * @return this.
-		 */
-		public StatefulRetryInterceptorBuilder rollbackFor(Classifier<? super Throwable, Boolean> rollbackClassifier) {
+        /**
+         * <code>rollbackFor</code>
+         * <p>The rollback for method.</p>
+         * @param rollbackClassifier {@link org.springframework.classify.Classifier} <p>The rollback classifier parameter is <code>Classifier</code> type.</p>
+         * @see  org.springframework.classify.Classifier
+         * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder.StatefulRetryInterceptorBuilder} <p>The rollback for return object is <code>StatefulRetryInterceptorBuilder</code> type.</p>
+         */
+        public StatefulRetryInterceptorBuilder rollbackFor(Classifier<? super Throwable, Boolean> rollbackClassifier) {
 			this.rollbackClassifier = rollbackClassifier;
 			return this;
 		}
@@ -308,7 +350,13 @@ public abstract class RetryInterceptorBuilder<T extends MethodInterceptor> {
 
 	}
 
-	public static class CircuitBreakerInterceptorBuilder
+    /**
+     * <code>CircuitBreakerInterceptorBuilder</code>
+     * <p>The circuit breaker interceptor builder class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public static class CircuitBreakerInterceptorBuilder
 			extends RetryInterceptorBuilder<StatefulRetryOperationsInterceptor> {
 
 		private final StatefulRetryOperationsInterceptor interceptor = new StatefulRetryOperationsInterceptor();
@@ -333,7 +381,14 @@ public abstract class RetryInterceptorBuilder<T extends MethodInterceptor> {
 			return this;
 		}
 
-		public CircuitBreakerInterceptorBuilder keyGenerator(MethodArgumentsKeyGenerator keyGenerator) {
+        /**
+         * <code>keyGenerator</code>
+         * <p>The key generator method.</p>
+         * @param keyGenerator {@link org.springframework.retry.interceptor.MethodArgumentsKeyGenerator} <p>The key generator parameter is <code>MethodArgumentsKeyGenerator</code> type.</p>
+         * @see  org.springframework.retry.interceptor.MethodArgumentsKeyGenerator
+         * @return  {@link org.springframework.retry.interceptor.RetryInterceptorBuilder.CircuitBreakerInterceptorBuilder} <p>The key generator return object is <code>CircuitBreakerInterceptorBuilder</code> type.</p>
+         */
+        public CircuitBreakerInterceptorBuilder keyGenerator(MethodArgumentsKeyGenerator keyGenerator) {
 			this.keyGenerator = keyGenerator;
 			return this;
 		}
@@ -370,7 +425,13 @@ public abstract class RetryInterceptorBuilder<T extends MethodInterceptor> {
 
 	}
 
-	public static class StatelessRetryInterceptorBuilder extends RetryInterceptorBuilder<RetryOperationsInterceptor> {
+    /**
+     * <code>StatelessRetryInterceptorBuilder</code>
+     * <p>The stateless retry interceptor builder class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public static class StatelessRetryInterceptorBuilder extends RetryInterceptorBuilder<RetryOperationsInterceptor> {
 
 		private final RetryOperationsInterceptor interceptor = new RetryOperationsInterceptor();
 

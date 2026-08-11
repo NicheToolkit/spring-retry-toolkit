@@ -17,12 +17,10 @@
 package org.springframework.retry.interceptor;
 
 /**
- * Marker interface for proxies that are providing retryable behaviour. Can be added by
- * proxy creators that use the {@link RetryOperationsInterceptor} and
- * {@link StatefulRetryOperationsInterceptor}.
- *
- * @author Dave Syer
- * @since 1.1
+ * <code>Retryable</code>
+ * <p>The retryable interface.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface Retryable {
 

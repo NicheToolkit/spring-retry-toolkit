@@ -16,6 +16,13 @@
 
 package org.springframework.retry.policy;
 
+/**
+ * <code>SoftReferenceMapRetryContextCacheTests</code>
+ * <p>The soft reference map retry context cache tests class.</p>
+ * @see  org.springframework.retry.policy.AbstractMapRetryContextCacheTests
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class SoftReferenceMapRetryContextCacheTests extends AbstractMapRetryContextCacheTests {
 
 	@Override

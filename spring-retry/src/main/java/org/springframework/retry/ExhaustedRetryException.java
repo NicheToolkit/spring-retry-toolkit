@@ -16,14 +16,36 @@
 
 package org.springframework.retry;
 
+/**
+ * <code>ExhaustedRetryException</code>
+ * <p>The exhausted retry exception class.</p>
+ * @see  org.springframework.retry.RetryException
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 @SuppressWarnings("serial")
 public class ExhaustedRetryException extends RetryException {
 
-	public ExhaustedRetryException(String msg, Throwable cause) {
+    /**
+     * <code>ExhaustedRetryException</code>
+     * <p>Instantiates a new exhausted retry exception.</p>
+     * @param msg {@link java.lang.String} <p>The msg parameter is <code>String</code> type.</p>
+     * @param cause {@link java.lang.Throwable} <p>The cause parameter is <code>Throwable</code> type.</p>
+     * @see  java.lang.String
+     * @see  java.lang.Throwable
+     */
+    public ExhaustedRetryException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 
-	public ExhaustedRetryException(String msg) {
+    /**
+     * <code>ExhaustedRetryException</code>
+     * <p>Instantiates a new exhausted retry exception.</p>
+     * @param msg {@link java.lang.String} <p>The msg parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    public ExhaustedRetryException(String msg) {
 		super(msg);
 	}
 

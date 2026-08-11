@@ -32,14 +32,13 @@ import org.springframework.retry.RetryContext;
 import org.springframework.util.Assert;
 
 /**
- * Subclass of {@link SimpleRetryPolicy} that delegates to super.canRetry() and, if true,
- * further evaluates an expression against the last thrown exception.
- *
- * @author Gary Russell
- * @author Aldo Sinanaj
- * @author Artem Bilan
- * @since 1.2
- *
+ * <code>ExpressionRetryPolicy</code>
+ * <p>The expression retry policy class.</p>
+ * @see  org.springframework.retry.policy.SimpleRetryPolicy
+ * @see  org.springframework.beans.factory.BeanFactoryAware
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class ExpressionRetryPolicy extends SimpleRetryPolicy implements BeanFactoryAware {
@@ -52,47 +51,57 @@ public class ExpressionRetryPolicy extends SimpleRetryPolicy implements BeanFact
 
 	private final StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
 
-	/**
-	 * Construct an instance with the provided {@link Expression}.
-	 * @param expression the expression
-	 */
-	public ExpressionRetryPolicy(Expression expression) {
+    /**
+     * <code>ExpressionRetryPolicy</code>
+     * <p>Instantiates a new expression retry policy.</p>
+     * @param expression {@link org.springframework.expression.Expression} <p>The expression parameter is <code>Expression</code> type.</p>
+     * @see  org.springframework.expression.Expression
+     */
+    public ExpressionRetryPolicy(Expression expression) {
 		Assert.notNull(expression, "'expression' cannot be null");
 		this.expression = expression;
 	}
 
-	/**
-	 * Construct an instance with the provided expression.
-	 * @param expressionString the expression.
-	 */
-	public ExpressionRetryPolicy(String expressionString) {
+    /**
+     * <code>ExpressionRetryPolicy</code>
+     * <p>Instantiates a new expression retry policy.</p>
+     * @param expressionString {@link java.lang.String} <p>The expression string parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    public ExpressionRetryPolicy(String expressionString) {
 		Assert.notNull(expressionString, "'expressionString' cannot be null");
 		this.expression = getExpression(expressionString);
 	}
 
-	/**
-	 * Construct an instance with the provided {@link Expression}.
-	 * @param maxAttempts the max attempts
-	 * @param retryableExceptions the exceptions
-	 * @param traverseCauses true to examine causes
-	 * @param expression the expression
-	 */
-	public ExpressionRetryPolicy(int maxAttempts, Map<Class<? extends Throwable>, Boolean> retryableExceptions,
+    /**
+     * <code>ExpressionRetryPolicy</code>
+     * <p>Instantiates a new expression retry policy.</p>
+     * @param maxAttempts int <p>The max attempts parameter is <code>int</code> type.</p>
+     * @param retryableExceptions {@link java.util.Map} <p>The retryable exceptions parameter is <code>Map</code> type.</p>
+     * @param traverseCauses boolean <p>The traverse causes parameter is <code>boolean</code> type.</p>
+     * @param expression {@link org.springframework.expression.Expression} <p>The expression parameter is <code>Expression</code> type.</p>
+     * @see  java.util.Map
+     * @see  org.springframework.expression.Expression
+     */
+    public ExpressionRetryPolicy(int maxAttempts, Map<Class<? extends Throwable>, Boolean> retryableExceptions,
 			boolean traverseCauses, Expression expression) {
 		super(maxAttempts, retryableExceptions, traverseCauses);
 		Assert.notNull(expression, "'expression' cannot be null");
 		this.expression = expression;
 	}
 
-	/**
-	 * Construct an instance with the provided expression.
-	 * @param maxAttempts the max attempts
-	 * @param retryableExceptions the exceptions
-	 * @param traverseCauses true to examine causes
-	 * @param expressionString the expression.
-	 * @param defaultValue the default action
-	 */
-	public ExpressionRetryPolicy(int maxAttempts, Map<Class<? extends Throwable>, Boolean> retryableExceptions,
+    /**
+     * <code>ExpressionRetryPolicy</code>
+     * <p>Instantiates a new expression retry policy.</p>
+     * @param maxAttempts int <p>The max attempts parameter is <code>int</code> type.</p>
+     * @param retryableExceptions {@link java.util.Map} <p>The retryable exceptions parameter is <code>Map</code> type.</p>
+     * @param traverseCauses boolean <p>The traverse causes parameter is <code>boolean</code> type.</p>
+     * @param expressionString {@link java.lang.String} <p>The expression string parameter is <code>String</code> type.</p>
+     * @param defaultValue boolean <p>The default value parameter is <code>boolean</code> type.</p>
+     * @see  java.util.Map
+     * @see  java.lang.String
+     */
+    public ExpressionRetryPolicy(int maxAttempts, Map<Class<? extends Throwable>, Boolean> retryableExceptions,
 			boolean traverseCauses, String expressionString, boolean defaultValue) {
 		super(maxAttempts, retryableExceptions, traverseCauses, defaultValue);
 		Assert.notNull(expressionString, "'expressionString' cannot be null");
@@ -104,7 +113,14 @@ public class ExpressionRetryPolicy extends SimpleRetryPolicy implements BeanFact
 		this.evaluationContext.setBeanResolver(new BeanFactoryResolver(beanFactory));
 	}
 
-	public ExpressionRetryPolicy withBeanFactory(BeanFactory beanFactory) {
+    /**
+     * <code>withBeanFactory</code>
+     * <p>The with bean factory method.</p>
+     * @param beanFactory {@link org.springframework.beans.factory.BeanFactory} <p>The bean factory parameter is <code>BeanFactory</code> type.</p>
+     * @see  org.springframework.beans.factory.BeanFactory
+     * @return  {@link org.springframework.retry.policy.ExpressionRetryPolicy} <p>The with bean factory return object is <code>ExpressionRetryPolicy</code> type.</p>
+     */
+    public ExpressionRetryPolicy withBeanFactory(BeanFactory beanFactory) {
 		setBeanFactory(beanFactory);
 		return this;
 	}
@@ -121,12 +137,6 @@ public class ExpressionRetryPolicy extends SimpleRetryPolicy implements BeanFact
 		}
 	}
 
-	/**
-	 * Get expression based on the expression string. At the moment supports both literal
-	 * and template expressions. Template expressions are deprecated.
-	 * @param expression the expression string
-	 * @return literal expression or template expression
-	 */
 	private static Expression getExpression(String expression) {
 		if (isTemplate(expression)) {
 			logger.warn("#{...} syntax is not required for run-time expression in this policy "
@@ -137,12 +147,14 @@ public class ExpressionRetryPolicy extends SimpleRetryPolicy implements BeanFact
 		return new SpelExpressionParser().parseExpression(expression);
 	}
 
-	/**
-	 * Check if the expression is a template
-	 * @param expression the expression string
-	 * @return true if the expression string is a template
-	 */
-	public static boolean isTemplate(String expression) {
+    /**
+     * <code>isTemplate</code>
+     * <p>The is template method.</p>
+     * @param expression {@link java.lang.String} <p>The expression parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     * @return  boolean <p>The is template return object is <code>boolean</code> type.</p>
+     */
+    public static boolean isTemplate(String expression) {
 		return expression.contains(PARSER_CONTEXT.getExpressionPrefix())
 				&& expression.contains(PARSER_CONTEXT.getExpressionSuffix());
 	}

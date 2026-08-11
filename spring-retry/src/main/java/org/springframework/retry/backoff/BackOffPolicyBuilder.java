@@ -19,57 +19,10 @@ package org.springframework.retry.backoff;
 import java.util.function.Supplier;
 
 /**
- * Fluent API for creating a {@link BackOffPolicy} based on given attributes. The delay
- * values are expressed in milliseconds. If any provided value is less than one, the
- * resulting policy will set it to one. The default policy is a {@link FixedBackOffPolicy}
- * with a delay of 1000ms.
- *
- * <p>
- * Examples: <pre>
- *
- * // Default {@link FixedBackOffPolicy} with 1000ms delay
- * BackOffPolicyBuilder
- * 		.newDefaultPolicy();
- *
- * // {@link FixedBackOffPolicy}
- * BackOffPolicyBuilder
- * 		.newBuilder()
- * 		.delay(2000)
- * 		.build();
- *
- * // {@link UniformRandomBackOffPolicy}
- * BackOffPolicyBuilder
- * 		.newBuilder()
- * 		.delay(500)
- * 		.maxDelay(1000)
- * 		.build();
- *
- * // {@link ExponentialBackOffPolicy}
- * BackOffPolicyBuilder
- * 		.newBuilder()
- * 		.delay(1000)
- * 		.maxDelay(5000)
- * 		.multiplier(2)
- * 		.build();
- *
- * // {@link ExponentialRandomBackOffPolicy} with provided {@link Sleeper}
- * BackOffPolicyBuilder
- * 		.newBuilder()
- * 		.delay(3000)
- * 		.maxDelay(5000)
- * 		.multiplier(1.5)
- * 		.random(true)
- * 		.sleeper(mySleeper)
- * 		.build();
- * </pre>
- * <p>
- * Not thread safe. Building should be performed in a single thread. The resulting
- * {@link BackOffPolicy} however is expected to be thread-safe and designed for moderate
- * load concurrent access.
- *
- * @author Tomaz Fernandes
- * @author Aftab Shaikh
- * @since 1.3.3
+ * <code>BackOffPolicyBuilder</code>
+ * <p>The back off policy builder class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class BackOffPolicyBuilder {
 
@@ -96,126 +49,134 @@ public class BackOffPolicyBuilder {
 	private BackOffPolicyBuilder() {
 	}
 
-	/**
-	 * Creates a new {@link BackOffPolicyBuilder} instance.
-	 * @return the builder instance
-	 */
-	public static BackOffPolicyBuilder newBuilder() {
+    /**
+     * <code>newBuilder</code>
+     * <p>The new builder method.</p>
+     * @return  {@link org.springframework.retry.backoff.BackOffPolicyBuilder} <p>The new builder return object is <code>BackOffPolicyBuilder</code> type.</p>
+     */
+    public static BackOffPolicyBuilder newBuilder() {
 		return new BackOffPolicyBuilder();
 	}
 
-	/**
-	 * Creates a new {@link FixedBackOffPolicy} instance with a delay of 1000ms.
-	 * @return the back off policy instance
-	 */
-	public static BackOffPolicy newDefaultPolicy() {
+    /**
+     * <code>newDefaultPolicy</code>
+     * <p>The new default policy method.</p>
+     * @return  {@link org.springframework.retry.backoff.BackOffPolicy} <p>The new default policy return object is <code>BackOffPolicy</code> type.</p>
+     */
+    public static BackOffPolicy newDefaultPolicy() {
 		return new BackOffPolicyBuilder().build();
 	}
 
-	/**
-	 * A canonical backoff period. Used as an initial value in the exponential case, and
-	 * as a minimum value in the uniform case.
-	 * @param delay the initial or canonical backoff period in milliseconds
-	 * @return this
-	 */
-	public BackOffPolicyBuilder delay(long delay) {
+    /**
+     * <code>delay</code>
+     * <p>The delay method.</p>
+     * @param delay long <p>The delay parameter is <code>long</code> type.</p>
+     * @return  {@link org.springframework.retry.backoff.BackOffPolicyBuilder} <p>The delay return object is <code>BackOffPolicyBuilder</code> type.</p>
+     */
+    public BackOffPolicyBuilder delay(long delay) {
 		this.delay = delay;
 		return this;
 	}
 
-	/**
-	 * The maximum wait in milliseconds between retries. If less than {@link #delay(long)}
-	 * then a default value is applied depending on the resulting policy.
-	 * @param maxDelay the maximum wait between retries in milliseconds
-	 * @return this
-	 */
-	public BackOffPolicyBuilder maxDelay(long maxDelay) {
+    /**
+     * <code>maxDelay</code>
+     * <p>The max delay method.</p>
+     * @param maxDelay long <p>The max delay parameter is <code>long</code> type.</p>
+     * @return  {@link org.springframework.retry.backoff.BackOffPolicyBuilder} <p>The max delay return object is <code>BackOffPolicyBuilder</code> type.</p>
+     */
+    public BackOffPolicyBuilder maxDelay(long maxDelay) {
 		this.maxDelay = maxDelay;
 		return this;
 	}
 
-	/**
-	 * If positive, then used as a multiplier for generating the next delay for backoff.
-	 * @param multiplier a multiplier to use to calculate the next backoff delay
-	 * @return this
-	 */
-	public BackOffPolicyBuilder multiplier(double multiplier) {
+    /**
+     * <code>multiplier</code>
+     * <p>The multiplier method.</p>
+     * @param multiplier double <p>The multiplier parameter is <code>double</code> type.</p>
+     * @return  {@link org.springframework.retry.backoff.BackOffPolicyBuilder} <p>The multiplier return object is <code>BackOffPolicyBuilder</code> type.</p>
+     */
+    public BackOffPolicyBuilder multiplier(double multiplier) {
 		this.multiplier = multiplier;
 		return this;
 	}
 
-	/**
-	 * In the exponential case ({@link #multiplier} &gt; 0) set this to true to have the
-	 * backoff delays randomized, so that the maximum delay is multiplier times the
-	 * previous delay and the distribution is uniform between the two values.
-	 * @param random the flag to signal randomization is required
-	 * @return this
-	 */
-	public BackOffPolicyBuilder random(boolean random) {
+    /**
+     * <code>random</code>
+     * <p>The random method.</p>
+     * @param random boolean <p>The random parameter is <code>boolean</code> type.</p>
+     * @return  {@link org.springframework.retry.backoff.BackOffPolicyBuilder} <p>The random return object is <code>BackOffPolicyBuilder</code> type.</p>
+     */
+    public BackOffPolicyBuilder random(boolean random) {
 		this.random = random;
 		return this;
 	}
 
-	/**
-	 * The {@link Sleeper} instance to be used to back off. Policies default to
-	 * {@link ThreadWaitSleeper}.
-	 * @param sleeper the {@link Sleeper} instance
-	 * @return this
-	 */
-	public BackOffPolicyBuilder sleeper(Sleeper sleeper) {
+    /**
+     * <code>sleeper</code>
+     * <p>The sleeper method.</p>
+     * @param sleeper {@link org.springframework.retry.backoff.Sleeper} <p>The sleeper parameter is <code>Sleeper</code> type.</p>
+     * @see  org.springframework.retry.backoff.Sleeper
+     * @return  {@link org.springframework.retry.backoff.BackOffPolicyBuilder} <p>The sleeper return object is <code>BackOffPolicyBuilder</code> type.</p>
+     */
+    public BackOffPolicyBuilder sleeper(Sleeper sleeper) {
 		this.sleeper = sleeper;
 		return this;
 	}
 
-	/**
-	 * Set a supplier for the delay.
-	 * @param delaySupplier the supplier.
-	 * @return this
-	 * @since 2.0
-	 */
-	public BackOffPolicyBuilder delaySupplier(Supplier<Long> delaySupplier) {
+    /**
+     * <code>delaySupplier</code>
+     * <p>The delay supplier method.</p>
+     * @param delaySupplier {@link java.util.function.Supplier} <p>The delay supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     * @return  {@link org.springframework.retry.backoff.BackOffPolicyBuilder} <p>The delay supplier return object is <code>BackOffPolicyBuilder</code> type.</p>
+     */
+    public BackOffPolicyBuilder delaySupplier(Supplier<Long> delaySupplier) {
 		this.delaySupplier = delaySupplier;
 		return this;
 	}
 
-	/**
-	 * Set a supplier for the max delay.
-	 * @param maxDelaySupplier the supplier.
-	 * @return this
-	 * @since 2.0
-	 */
-	public BackOffPolicyBuilder maxDelaySupplier(Supplier<Long> maxDelaySupplier) {
+    /**
+     * <code>maxDelaySupplier</code>
+     * <p>The max delay supplier method.</p>
+     * @param maxDelaySupplier {@link java.util.function.Supplier} <p>The max delay supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     * @return  {@link org.springframework.retry.backoff.BackOffPolicyBuilder} <p>The max delay supplier return object is <code>BackOffPolicyBuilder</code> type.</p>
+     */
+    public BackOffPolicyBuilder maxDelaySupplier(Supplier<Long> maxDelaySupplier) {
 		this.maxDelaySupplier = maxDelaySupplier;
 		return this;
 	}
 
-	/**
-	 * Set a supplier for the multiplier.
-	 * @param multiplierSupplier the supplier.
-	 * @return this
-	 * @since 2.0
-	 */
-	public BackOffPolicyBuilder multiplierSupplier(Supplier<Double> multiplierSupplier) {
+    /**
+     * <code>multiplierSupplier</code>
+     * <p>The multiplier supplier method.</p>
+     * @param multiplierSupplier {@link java.util.function.Supplier} <p>The multiplier supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     * @return  {@link org.springframework.retry.backoff.BackOffPolicyBuilder} <p>The multiplier supplier return object is <code>BackOffPolicyBuilder</code> type.</p>
+     */
+    public BackOffPolicyBuilder multiplierSupplier(Supplier<Double> multiplierSupplier) {
 		this.multiplierSupplier = multiplierSupplier;
 		return this;
 	}
 
-	/**
-	 * Set a supplier for the random.
-	 * @param randomSupplier the supplier.
-	 * @return this
-	 * @since 2.0
-	 */
-	public BackOffPolicyBuilder randomSupplier(Supplier<Boolean> randomSupplier) {
+    /**
+     * <code>randomSupplier</code>
+     * <p>The random supplier method.</p>
+     * @param randomSupplier {@link java.util.function.Supplier} <p>The random supplier parameter is <code>Supplier</code> type.</p>
+     * @see  java.util.function.Supplier
+     * @return  {@link org.springframework.retry.backoff.BackOffPolicyBuilder} <p>The random supplier return object is <code>BackOffPolicyBuilder</code> type.</p>
+     */
+    public BackOffPolicyBuilder randomSupplier(Supplier<Boolean> randomSupplier) {
 		this.randomSupplier = randomSupplier;
 		return this;
 	}
 
-	/**
-	 * Builds the {@link BackOffPolicy} with the given parameters.
-	 * @return the {@link BackOffPolicy} instance
-	 */
-	public BackOffPolicy build() {
+    /**
+     * <code>build</code>
+     * <p>The build method.</p>
+     * @return  {@link org.springframework.retry.backoff.BackOffPolicy} <p>The build return object is <code>BackOffPolicy</code> type.</p>
+     */
+    public BackOffPolicy build() {
 		if (this.multiplier != null && this.multiplier > 0 || this.multiplierSupplier != null) {
 			ExponentialBackOffPolicy policy;
 			if (isRandom()) {

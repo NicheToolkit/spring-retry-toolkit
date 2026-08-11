@@ -19,25 +19,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Simple {@link Sleeper} implementation that just waits on a local Object.
- *
- * @author Dave Syer
- *
+ * <code>DummySleeper</code>
+ * <p>The dummy sleeper class.</p>
+ * @see  org.springframework.retry.backoff.Sleeper
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class DummySleeper implements Sleeper {
 
 	private final List<Long> backOffs = new ArrayList<>();
 
-	/**
-	 * Public getter for the long.
-	 * @return the lastBackOff
-	 */
-	public long getLastBackOff() {
+    /**
+     * <code>getLastBackOff</code>
+     * <p>The get last back off getter method.</p>
+     * @return  long <p>The get last back off return object is <code>long</code> type.</p>
+     */
+    public long getLastBackOff() {
 		return backOffs.get(backOffs.size() - 1);
 	}
 
-	public long[] getBackOffs() {
+    /**
+     * <code>getBackOffs</code>
+     * <p>The get back offs method.</p>
+     * @return  long <p>The get back offs return object is <code>long</code> type.</p>
+     */
+    public long[] getBackOffs() {
 		long[] result = new long[backOffs.size()];
 		int i = 0;
 		for (Long value : backOffs) {

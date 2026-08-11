@@ -24,8 +24,10 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Dave Syer
- *
+ * <code>PatternMatchingClassifierTests</code>
+ * <p>The pattern matching classifier tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class PatternMatchingClassifierTests {
 
@@ -33,21 +35,36 @@ public class PatternMatchingClassifierTests {
 
 	private Map<String, String> map;
 
-	@BeforeEach
+    /**
+     * <code>createMap</code>
+     * <p>The create map method.</p>
+     * @see  org.junit.jupiter.api.BeforeEach
+     */
+    @BeforeEach
 	public void createMap() {
 		map = new HashMap<>();
 		map.put("foo", "bar");
 		map.put("*", "spam");
 	}
 
-	@Test
+    /**
+     * <code>testSetPatternMap</code>
+     * <p>The test set pattern map method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSetPatternMap() {
 		classifier.setPatternMap(map);
 		assertThat(classifier.classify("foo")).isEqualTo("bar");
 		assertThat(classifier.classify("bucket")).isEqualTo("spam");
 	}
 
-	@Test
+    /**
+     * <code>testCreateFromMap</code>
+     * <p>The test create from map method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCreateFromMap() {
 		classifier = new PatternMatchingClassifier<>(map);
 		assertThat(classifier.classify("foo")).isEqualTo("bar");

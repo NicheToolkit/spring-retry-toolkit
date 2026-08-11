@@ -27,53 +27,105 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * <code>SubclassExceptionClassifierTests</code>
+ * <p>The subclass exception classifier tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class SubclassExceptionClassifierTests {
 
-	SubclassClassifier<Throwable, String> classifier = new SubclassClassifier<>();
+    /**
+     * <code>classifier</code>
+     * {@link org.springframework.classify.SubclassClassifier} <p>The <code>classifier</code> field.</p>
+     * @see  org.springframework.classify.SubclassClassifier
+     */
+    SubclassClassifier<Throwable, String> classifier = new SubclassClassifier<>();
 
-	@Test
+    /**
+     * <code>testClassifyNullIsDefault</code>
+     * <p>The test classify null is default method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyNullIsDefault() {
 		assertThat(this.classifier.getDefault()).isEqualTo(this.classifier.classify(null));
 	}
 
-	@Test
+    /**
+     * <code>testClassifyNull</code>
+     * <p>The test classify null method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyNull() {
 		assertThat(this.classifier.classify(null)).isNull();
 	}
 
-	@Test
+    /**
+     * <code>testClassifyNullNonDefault</code>
+     * <p>The test classify null non default method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyNullNonDefault() {
 		this.classifier = new SubclassClassifier<>("foo");
 		assertThat(this.classifier.classify(null)).isEqualTo("foo");
 	}
 
-	@Test
+    /**
+     * <code>testClassifyRandomException</code>
+     * <p>The test classify random exception method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyRandomException() {
 		assertThat(this.classifier.classify(new IllegalStateException("Foo"))).isNull();
 	}
 
-	@Test
+    /**
+     * <code>testClassifyExactMatch</code>
+     * <p>The test classify exact match method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyExactMatch() {
 		this.classifier.setTypeMap(
 				Collections.<Class<? extends Throwable>, String>singletonMap(IllegalStateException.class, "foo"));
 		assertThat(this.classifier.classify(new IllegalStateException("Foo"))).isEqualTo("foo");
 	}
 
-	@Test
+    /**
+     * <code>testClassifySubclassMatch</code>
+     * <p>The test classify subclass match method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifySubclassMatch() {
 		this.classifier
 			.setTypeMap(Collections.<Class<? extends Throwable>, String>singletonMap(RuntimeException.class, "foo"));
 		assertThat(this.classifier.classify(new IllegalStateException("Foo"))).isEqualTo("foo");
 	}
 
-	@Test
+    /**
+     * <code>testClassifySuperclassDoesNotMatch</code>
+     * <p>The test classify superclass does not match method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifySuperclassDoesNotMatch() {
 		this.classifier.setTypeMap(
 				Collections.<Class<? extends Throwable>, String>singletonMap(IllegalStateException.class, "foo"));
 		assertThat(this.classifier.classify(new RuntimeException("Foo"))).isEqualTo(this.classifier.getDefault());
 	}
 
-	@SuppressWarnings("serial")
+    /**
+     * <code>testClassifyAncestorMatch</code>
+     * <p>The test classify ancestor match method.</p>
+     * @see  java.lang.SuppressWarnings
+     * @see  org.junit.jupiter.api.Test
+     */
+    @SuppressWarnings("serial")
 	@Test
 	public void testClassifyAncestorMatch() {
 		this.classifier.setTypeMap(new HashMap<Class<? extends Throwable>, String>() {
@@ -86,7 +138,13 @@ public class SubclassExceptionClassifierTests {
 		assertThat(this.classifier.classify(new IllegalStateException("Foo"))).isEqualTo("spam");
 	}
 
-	@SuppressWarnings("serial")
+    /**
+     * <code>testClassifyAncestorMatch2</code>
+     * <p>The test classify ancestor match 2 method.</p>
+     * @see  java.lang.SuppressWarnings
+     * @see  org.junit.jupiter.api.Test
+     */
+    @SuppressWarnings("serial")
 	@Test
 	public void testClassifyAncestorMatch2() {
 		this.classifier = new SubclassClassifier<>();
@@ -104,7 +162,14 @@ public class SubclassExceptionClassifierTests {
 		assertThat(this.classifier.classify(new SubConnectException())).isEqualTo("2");
 	}
 
-	public static class SubConnectException extends ConnectException {
+    /**
+     * <code>SubConnectException</code>
+     * <p>The sub connect exception class.</p>
+     * @see  java.net.ConnectException
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public static class SubConnectException extends ConnectException {
 
 	}
 

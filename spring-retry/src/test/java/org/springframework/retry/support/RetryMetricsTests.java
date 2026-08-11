@@ -40,35 +40,69 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
 /**
- * @author Artem Bilan
- * @since 2.0.8
+ * <code>RetryMetricsTests</code>
+ * <p>The retry metrics tests class.</p>
+ * @see  org.springframework.test.context.junit.jupiter.SpringJUnitConfig
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SpringJUnitConfig
 public class RetryMetricsTests {
 
+	/**
+	 * <code>meterRegistry</code>
+	 * {@link io.micrometer.core.instrument.MeterRegistry} <p>The <code>meterRegistry</code> field.</p>
+	 * @see  io.micrometer.core.instrument.MeterRegistry
+	 * @see  org.springframework.beans.factory.annotation.Autowired
+	 */
 	@Autowired
 	MeterRegistry meterRegistry;
 
+	/**
+	 * <code>service</code>
+	 * {@link org.springframework.retry.support.RetryMetricsTests.Service} <p>The <code>service</code> field.</p>
+	 * @see  org.springframework.retry.support.RetryMetricsTests.Service
+	 * @see  org.springframework.beans.factory.annotation.Autowired
+	 */
 	@Autowired
 	Service service;
 
+	/**
+	 * <code>metricsRetryListener</code>
+	 * {@link org.springframework.retry.support.MetricsRetryListener} <p>The <code>metricsRetryListener</code> field.</p>
+	 * @see  org.springframework.retry.support.MetricsRetryListener
+	 * @see  org.springframework.beans.factory.annotation.Autowired
+	 */
 	@Autowired
 	MetricsRetryListener metricsRetryListener;
 
+	/**
+	 * <code>metricsAreCollectedForRetryable</code>
+	 * <p>The metrics are collected for retryable method.</p>
+	 * @see  org.junit.jupiter.api.Test
+	 */
 	@Test
 	void metricsAreCollectedForRetryable() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(4);
 		executor.afterPropertiesSet();
 
-		CompletableFuture<?> future1 = executor
-			.submitCompletable(() -> assertThatNoException().isThrownBy(this.service::service1));
-		CompletableFuture<?> future2 = executor
-			.submitCompletable(() -> assertThatNoException().isThrownBy(this.service::service1));
-		CompletableFuture<?> future3 = executor
-			.submitCompletable(() -> assertThatNoException().isThrownBy(this.service::service2));
-		CompletableFuture<?> future4 = executor.submitCompletable(
-				() -> assertThatExceptionOfType(RetryException.class).isThrownBy(this.service::service3));
+		CompletableFuture<?> future1 = CompletableFuture.runAsync(
+				() -> assertThatNoException().isThrownBy(this.service::service1),
+				executor
+		);
+		CompletableFuture<?> future2 = CompletableFuture.runAsync(
+				() -> assertThatNoException().isThrownBy(this.service::service1),
+				executor
+		);
+		CompletableFuture<?> future3 = CompletableFuture.runAsync(
+				() -> assertThatNoException().isThrownBy(this.service::service2),
+				executor
+		);
+		CompletableFuture<?> future4 = CompletableFuture.runAsync(
+				() -> assertThatExceptionOfType(RetryException.class).isThrownBy(this.service::service3),
+				executor
+		);
 
 		CompletableFuture.allOf(future1, future2, future3, future4).join();
 
@@ -93,6 +127,11 @@ public class RetryMetricsTests {
 		executor.destroy();
 	}
 
+	/**
+	 * <code>labelFallbackToClassName</code>
+	 * <p>The label fallback to class name method.</p>
+	 * @see  org.junit.jupiter.api.Test
+	 */
 	@Test
 	void labelFallbackToClassName() {
 		SimpleRetryPolicy simpleRetryPolicy = new SimpleRetryPolicy();
@@ -108,20 +147,51 @@ public class RetryMetricsTests {
 
 	}
 
+	/**
+	 * <code>TestConfiguration</code>
+	 * <p>The test configuration class.</p>
+	 * @see  org.springframework.context.annotation.Configuration
+	 * @see  org.springframework.retry.annotation.EnableRetry
+	 * @author  Cyan (snow22314@outlook.com)
+	 * @since Jdk1.8
+	 */
 	@Configuration(proxyBeanMethods = false)
 	@EnableRetry
 	public static class TestConfiguration {
 
+		/**
+		 * <code>meterRegistry</code>
+		 * <p>The meter registry method.</p>
+		 * @return  {@link io.micrometer.core.instrument.MeterRegistry} <p>The meter registry return object is <code>MeterRegistry</code> type.</p>
+		 * @see  io.micrometer.core.instrument.MeterRegistry
+		 * @see  org.springframework.context.annotation.Bean
+		 */
 		@Bean
 		MeterRegistry meterRegistry() {
 			return new SimpleMeterRegistry();
 		}
 
+		/**
+		 * <code>metricsRetryListener</code>
+		 * <p>The metrics retry listener method.</p>
+		 * @param meterRegistry {@link io.micrometer.core.instrument.MeterRegistry} <p>The meter registry parameter is <code>MeterRegistry</code> type.</p>
+		 * @see  io.micrometer.core.instrument.MeterRegistry
+		 * @see  org.springframework.retry.support.MetricsRetryListener
+		 * @see  org.springframework.context.annotation.Bean
+		 * @return  {@link org.springframework.retry.support.MetricsRetryListener} <p>The metrics retry listener return object is <code>MetricsRetryListener</code> type.</p>
+		 */
 		@Bean
 		MetricsRetryListener metricsRetryListener(MeterRegistry meterRegistry) {
 			return new MetricsRetryListener(meterRegistry);
 		}
 
+		/**
+		 * <code>service</code>
+		 * <p>The service method.</p>
+		 * @return  {@link org.springframework.retry.support.RetryMetricsTests.Service} <p>The service return object is <code>Service</code> type.</p>
+		 * @see  org.springframework.retry.support.RetryMetricsTests.Service
+		 * @see  org.springframework.context.annotation.Bean
+		 */
 		@Bean
 		Service service() {
 			return new Service();
@@ -129,15 +199,31 @@ public class RetryMetricsTests {
 
 	}
 
+	/**
+	 * <code>Service</code>
+	 * <p>The service class.</p>
+	 * @author  Cyan (snow22314@outlook.com)
+	 * @since Jdk1.8
+	 */
 	protected static class Service {
 
 		private int count = 0;
 
+		/**
+		 * <code>service1</code>
+		 * <p>The service 1 method.</p>
+		 * @see  org.springframework.retry.annotation.Retryable
+		 */
 		@Retryable
 		public void service1() {
 
 		}
 
+		/**
+		 * <code>service2</code>
+		 * <p>The service 2 method.</p>
+		 * @see  org.springframework.retry.annotation.Retryable
+		 */
 		@Retryable
 		public void service2() {
 			if (count++ < 2) {
@@ -145,6 +231,11 @@ public class RetryMetricsTests {
 			}
 		}
 
+		/**
+		 * <code>service3</code>
+		 * <p>The service 3 method.</p>
+		 * @see  org.springframework.retry.annotation.Retryable
+		 */
 		@Retryable
 		public void service3() {
 			throw new RetryException("Planned");

@@ -32,9 +32,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
+/**
+ * <code>FatalExceptionRetryPolicyTests</code>
+ * <p>The fatal exception retry policy tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class FatalExceptionRetryPolicyTests {
 
-	@Test
+    /**
+     * <code>testFatalExceptionWithoutState</code>
+     * <p>The test fatal exception without state method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testFatalExceptionWithoutState() throws Throwable {
 		MockRetryCallback callback = new MockRetryCallback();
 		callback.setExceptionToThrow(new IllegalArgumentException());
@@ -58,7 +71,14 @@ public class FatalExceptionRetryPolicyTests {
 		assertThat(result.get()).isEqualTo("bar");
 	}
 
-	@Test
+    /**
+     * <code>testFatalExceptionWithState</code>
+     * <p>The test fatal exception with state method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testFatalExceptionWithState() throws Throwable {
 		MockRetryCallback callback = new MockRetryCallback();
 		callback.setExceptionToThrow(new IllegalArgumentException());
@@ -95,7 +115,13 @@ public class FatalExceptionRetryPolicyTests {
 			throw this.exceptionToThrow;
 		}
 
-		public void setExceptionToThrow(Exception exceptionToThrow) {
+        /**
+         * <code>setExceptionToThrow</code>
+         * <p>The set exception to throw setter method.</p>
+         * @param exceptionToThrow {@link java.lang.Exception} <p>The exception to throw parameter is <code>Exception</code> type.</p>
+         * @see  java.lang.Exception
+         */
+        public void setExceptionToThrow(Exception exceptionToThrow) {
 			this.exceptionToThrow = exceptionToThrow;
 		}
 

@@ -27,39 +27,79 @@ import org.springframework.beans.DirectFieldAccessor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * <code>BinaryExceptionClassifierTests</code>
+ * <p>The binary exception classifier tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class BinaryExceptionClassifierTests {
 
-	BinaryExceptionClassifier classifier = new BinaryExceptionClassifier(false);
+    /**
+     * <code>classifier</code>
+     * {@link org.springframework.classify.BinaryExceptionClassifier} <p>The <code>classifier</code> field.</p>
+     */
+    BinaryExceptionClassifier classifier = new BinaryExceptionClassifier(false);
 
-	@Test
+    /**
+     * <code>testClassifyNullIsDefault</code>
+     * <p>The test classify null is default method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyNullIsDefault() {
 		assertThat(classifier.classify(null)).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testFalseIsDefault</code>
+     * <p>The test false is default method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFalseIsDefault() {
 		assertThat(classifier.getDefault()).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testDefaultProvided</code>
+     * <p>The test default provided method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testDefaultProvided() {
 		classifier = new BinaryExceptionClassifier(true);
 		assertThat(classifier.getDefault()).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testClassifyRandomException</code>
+     * <p>The test classify random exception method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyRandomException() {
 		assertThat(classifier.classify(new IllegalStateException("foo"))).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testClassifyExactMatch</code>
+     * <p>The test classify exact match method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyExactMatch() {
 		Collection<Class<? extends Throwable>> set = Collections
 			.<Class<? extends Throwable>>singleton(IllegalStateException.class);
 		assertThat(new BinaryExceptionClassifier(set).classify(new IllegalStateException("Foo"))).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testClassifyExactMatchInCause</code>
+     * <p>The test classify exact match in cause method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifyExactMatchInCause() {
 		Collection<Class<? extends Throwable>> set = Collections
 			.<Class<? extends Throwable>>singleton(IllegalStateException.class);
@@ -68,7 +108,12 @@ public class BinaryExceptionClassifierTests {
 		assertThat(binaryExceptionClassifier.classify(new RuntimeException(new IllegalStateException("Foo")))).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testClassifySubclassMatchInCause</code>
+     * <p>The test classify subclass match in cause method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifySubclassMatchInCause() {
 		Collection<Class<? extends Throwable>> set = Collections
 			.<Class<? extends Throwable>>singleton(IllegalStateException.class);
@@ -77,7 +122,12 @@ public class BinaryExceptionClassifierTests {
 		assertThat(binaryExceptionClassifier.classify(new RuntimeException(new FooException("Foo")))).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testClassifySubclassMatchInCauseFalse</code>
+     * <p>The test classify subclass match in cause false method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClassifySubclassMatchInCauseFalse() {
 		Map<Class<? extends Throwable>, Boolean> map = new HashMap<>();
 		map.put(IllegalStateException.class, true);
@@ -91,21 +141,36 @@ public class BinaryExceptionClassifierTests {
 			.containsKey(FooException.class)).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testTypesProvidedInConstructor</code>
+     * <p>The test types provided in constructor method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testTypesProvidedInConstructor() {
 		classifier = new BinaryExceptionClassifier(
 				Collections.<Class<? extends Throwable>>singleton(IllegalStateException.class));
 		assertThat(classifier.classify(new IllegalStateException("Foo"))).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testTypesProvidedInConstructorWithNonDefault</code>
+     * <p>The test types provided in constructor with non default method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testTypesProvidedInConstructorWithNonDefault() {
 		classifier = new BinaryExceptionClassifier(
 				Collections.<Class<? extends Throwable>>singleton(IllegalStateException.class), false);
 		assertThat(classifier.classify(new IllegalStateException("Foo"))).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testTypesProvidedInConstructorWithNonDefaultInCause</code>
+     * <p>The test types provided in constructor with non default in cause method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testTypesProvidedInConstructorWithNonDefaultInCause() {
 		classifier = new BinaryExceptionClassifier(
 				Collections.<Class<? extends Throwable>>singleton(IllegalStateException.class), false);

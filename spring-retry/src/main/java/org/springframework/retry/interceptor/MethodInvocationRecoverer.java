@@ -17,21 +17,23 @@
 package org.springframework.retry.interceptor;
 
 /**
- * Strategy interface for recovery action when processing of an item fails.
- *
- * @author Dave Syer
- * @param <T> the return type
+ * <code>MethodInvocationRecoverer</code>
+ * <p>The method invocation recoverer interface.</p>
+ * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface MethodInvocationRecoverer<T> {
 
-	/**
-	 * Recover gracefully from an error. Clients can call this if processing of the item
-	 * throws an unexpected exception. Caller can use the return value to decide whether
-	 * to try more corrective action or perhaps throw an exception.
-	 * @param args the arguments for the method invocation that failed.
-	 * @param cause the cause of the failure that led to this recovery.
-	 * @return the value to be returned to the caller
-	 */
-	T recover(Object[] args, Throwable cause);
+    /**
+     * <code>recover</code>
+     * <p>The recover method.</p>
+     * @param args {@link java.lang.Object} <p>The args parameter is <code>Object</code> type.</p>
+     * @param cause {@link java.lang.Throwable} <p>The cause parameter is <code>Throwable</code> type.</p>
+     * @see  java.lang.Object
+     * @see  java.lang.Throwable
+     * @return  T <p>The recover return object is <code>T</code> type.</p>
+     */
+    T recover(Object[] args, Throwable cause);
 
 }

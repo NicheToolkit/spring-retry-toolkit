@@ -21,11 +21,13 @@ import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryListener;
 
 /**
- * Empty method implementation of {@link RetryListener}.
- *
- * @author Dave Syer
- * @author Henning Pöttker
- * @deprecated in favor of the default implementations in {@link RetryListener}
+ * <code>RetryListenerSupport</code>
+ * <p>The retry listener support class.</p>
+ * @deprecated  <p>The retry listener support class has be deprecated.</p>
+ * @see  org.springframework.retry.RetryListener
+ * @see  java.lang.Deprecated
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @Deprecated
 public class RetryListenerSupport implements RetryListener {

@@ -31,13 +31,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
- * @author Dave Syer
- * @author Gary Russell
- *
+ * <code>StatefulRetryIntegrationTests</code>
+ * <p>The stateful retry integration tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class StatefulRetryIntegrationTests {
 
-	@Test
+    /**
+     * <code>testExternalRetryWithFailAndNoRetry</code>
+     * <p>The test external retry with fail and no retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testExternalRetryWithFailAndNoRetry() throws Throwable {
 		MockRetryCallback callback = new MockRetryCallback();
 
@@ -65,7 +73,14 @@ public class StatefulRetryIntegrationTests {
 		assertThat(callback.attempts).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>testExternalRetryWithSuccessOnRetry</code>
+     * <p>The test external retry with success on retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testExternalRetryWithSuccessOnRetry() throws Throwable {
 		MockRetryCallback callback = new MockRetryCallback();
 
@@ -93,7 +108,14 @@ public class StatefulRetryIntegrationTests {
 		assertThat(result).isEqualTo("bar");
 	}
 
-	@Test
+    /**
+     * <code>testExternalRetryWithSuccessOnRetryAndSerializedContext</code>
+     * <p>The test external retry with success on retry and serialized context method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testExternalRetryWithSuccessOnRetryAndSerializedContext() throws Throwable {
 		MockRetryCallback callback = new MockRetryCallback();
 
@@ -121,7 +143,12 @@ public class StatefulRetryIntegrationTests {
 		assertThat(result).isEqualTo("bar");
 	}
 
-	@Test
+    /**
+     * <code>testExponentialBackOffIsExponential</code>
+     * <p>The test exponential back off is exponential method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testExponentialBackOffIsExponential() {
 		ExponentialBackOffPolicy policy = new ExponentialBackOffPolicy();
 		policy.setInitialInterval(100);
@@ -146,7 +173,14 @@ public class StatefulRetryIntegrationTests {
 		assertThat(times.get(2) - times.get(1) >= 150).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testExternalRetryWithFailAndNoRetryWhenKeyIsNull</code>
+     * <p>The test external retry with fail and no retry when key is null method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testExternalRetryWithFailAndNoRetryWhenKeyIsNull() throws Throwable {
 		MockRetryCallback callback = new MockRetryCallback();
 
@@ -168,15 +202,20 @@ public class StatefulRetryIntegrationTests {
 		assertThat(callback.attempts).isEqualTo(2);
 	}
 
-	/**
-	 * @author Dave Syer
-	 *
-	 */
 	private static final class MockRetryCallback implements RetryCallback<String, Exception> {
 
-		int attempts = 0;
+        /**
+         * <code>attempts</code>
+         * <p>The <code>attempts</code> field.</p>
+         */
+        int attempts = 0;
 
-		RetryContext context;
+        /**
+         * <code>context</code>
+         * {@link org.springframework.retry.RetryContext} <p>The <code>context</code> field.</p>
+         * @see  org.springframework.retry.RetryContext
+         */
+        RetryContext context;
 
 		public String doWithRetry(RetryContext context) {
 			attempts++;
@@ -189,9 +228,20 @@ public class StatefulRetryIntegrationTests {
 
 	}
 
-	static class SerializedMapRetryContextCache extends AbstractMapRetryContextCache<byte[]> {
+    /**
+     * <code>SerializedMapRetryContextCache</code>
+     * <p>The serialized map retry context cache class.</p>
+     * @see  org.springframework.retry.policy.AbstractMapRetryContextCache
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    static class SerializedMapRetryContextCache extends AbstractMapRetryContextCache<byte[]> {
 
-		public SerializedMapRetryContextCache() {
+        /**
+         * <code>SerializedMapRetryContextCache</code>
+         * <p>Instantiates a new serialized map retry context cache.</p>
+         */
+        public SerializedMapRetryContextCache() {
 			super(DEFAULT_CAPACITY, true);
 		}
 

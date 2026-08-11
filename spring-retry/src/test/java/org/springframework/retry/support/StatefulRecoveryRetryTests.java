@@ -38,6 +38,12 @@ import org.springframework.retry.policy.SimpleRetryPolicy;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+/**
+ * <code>StatefulRecoveryRetryTests</code>
+ * <p>The stateful recovery retry tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class StatefulRecoveryRetryTests {
 
 	private final RetryTemplate retryTemplate = new RetryTemplate();
@@ -46,7 +52,12 @@ public class StatefulRecoveryRetryTests {
 
 	private final List<String> list = new ArrayList<>();
 
-	@Test
+    /**
+     * <code>testOpenSunnyDay</code>
+     * <p>The test open sunny day method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOpenSunnyDay() {
 		RetryContext context = this.retryTemplate.open(new NeverRetryPolicy(), new DefaultRetryState("foo"));
 		assertThat(context).isNotNull();
@@ -54,7 +65,12 @@ public class StatefulRecoveryRetryTests {
 		assertThat(this.count).isEqualTo(0);
 	}
 
-	@Test
+    /**
+     * <code>testRegisterThrowable</code>
+     * <p>The test register throwable method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRegisterThrowable() {
 		NeverRetryPolicy retryPolicy = new NeverRetryPolicy();
 		RetryState state = new DefaultRetryState("foo");
@@ -64,7 +80,12 @@ public class StatefulRecoveryRetryTests {
 		assertThat(retryPolicy.canRetry(context)).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testClose</code>
+     * <p>The test close method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClose() {
 		NeverRetryPolicy retryPolicy = new NeverRetryPolicy();
 		RetryState state = new DefaultRetryState("foo");
@@ -78,7 +99,14 @@ public class StatefulRecoveryRetryTests {
 		assertThat(retryPolicy.canRetry(context)).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testRecover</code>
+     * <p>The test recover method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testRecover() throws Throwable {
 		this.retryTemplate.setRetryPolicy(new SimpleRetryPolicy(1));
 		final String input = "foo";
@@ -101,7 +129,14 @@ public class StatefulRecoveryRetryTests {
 		assertThat(this.list.get(0)).isEqualTo(input);
 	}
 
-	@Test
+    /**
+     * <code>testSwitchToStatelessForNoRollback</code>
+     * <p>The test switch to stateless for no rollback method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testSwitchToStatelessForNoRollback() throws Throwable {
 		this.retryTemplate.setRetryPolicy(new SimpleRetryPolicy(1));
 		// Roll back for these:
@@ -127,7 +162,14 @@ public class StatefulRecoveryRetryTests {
 		assertThat(this.list.get(0)).isEqualTo(input);
 	}
 
-	@Test
+    /**
+     * <code>testExhaustedClearsHistoryAfterLastAttempt</code>
+     * <p>The test exhausted clears history after last attempt method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testExhaustedClearsHistoryAfterLastAttempt() throws Throwable {
 		RetryPolicy retryPolicy = new SimpleRetryPolicy(1);
 		this.retryTemplate.setRetryPolicy(retryPolicy);
@@ -148,7 +190,14 @@ public class StatefulRecoveryRetryTests {
 		assertThat(retryPolicy.canRetry(context)).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testKeyGeneratorNotConsistentAfterFailure</code>
+     * <p>The test key generator not consistent after failure method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testKeyGeneratorNotConsistentAfterFailure() throws Throwable {
 
 		RetryPolicy retryPolicy = new SimpleRetryPolicy(3);
@@ -178,7 +227,14 @@ public class StatefulRecoveryRetryTests {
 
 	}
 
-	@Test
+    /**
+     * <code>testCacheCapacity</code>
+     * <p>The test cache capacity method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testCacheCapacity() throws Throwable {
 
 		MapRetryContextCache cache = new MapRetryContextCache(1);
@@ -202,7 +258,14 @@ public class StatefulRecoveryRetryTests {
 		assertThat(cache.containsKey("foo")).isFalse();
 	}
 
-	@Test
+    /**
+     * <code>testCacheCapacityNotReachedIfRecovered</code>
+     * <p>The test cache capacity not reached if recovered method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Throwable
+     * @throws Throwable {@link java.lang.Throwable} <p>The throwable is <code>Throwable</code> type.</p>
+     */
+    @Test
 	public void testCacheCapacityNotReachedIfRecovered() throws Throwable {
 
 		SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(1);
@@ -232,7 +295,13 @@ public class StatefulRecoveryRetryTests {
 
 		private String string;
 
-		public StringHolder(String string) {
+        /**
+         * <code>StringHolder</code>
+         * <p>Instantiates a new string holder.</p>
+         * @param string {@link java.lang.String} <p>The string parameter is <code>String</code> type.</p>
+         * @see  java.lang.String
+         */
+        public StringHolder(String string) {
 			this.string = string;
 		}
 

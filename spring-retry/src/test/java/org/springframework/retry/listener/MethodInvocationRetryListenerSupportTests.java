@@ -28,15 +28,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.mockito.Mockito.mock;
 
+/**
+ * <code>MethodInvocationRetryListenerSupportTests</code>
+ * <p>The method invocation retry listener support tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class MethodInvocationRetryListenerSupportTests {
 
-	@Test
+    /**
+     * <code>testClose</code>
+     * <p>The test close method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClose() {
 		MethodInvocationRetryListenerSupport support = new MethodInvocationRetryListenerSupport();
 		assertThatNoException().isThrownBy(() -> support.close(null, null, null));
 	}
 
-	@Test
+    /**
+     * <code>testCloseWithMethodInvocationRetryCallbackShouldCallDoCloseMethod</code>
+     * <p>The test close with method invocation retry callback should call do close method method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCloseWithMethodInvocationRetryCallbackShouldCallDoCloseMethod() {
 		final AtomicInteger callsOnDoCloseMethod = new AtomicInteger(0);
 		MethodInvocationRetryListenerSupport support = new MethodInvocationRetryListenerSupport() {
@@ -52,7 +68,12 @@ public class MethodInvocationRetryListenerSupportTests {
 		assertThat(callsOnDoCloseMethod.get()).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>testCloseWithRetryCallbackShouldntCallDoCloseMethod</code>
+     * <p>The test close with retry callback shouldnt call do close method method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCloseWithRetryCallbackShouldntCallDoCloseMethod() {
 		final AtomicInteger callsOnDoCloseMethod = new AtomicInteger(0);
 		MethodInvocationRetryListenerSupport support = new MethodInvocationRetryListenerSupport() {
@@ -69,13 +90,23 @@ public class MethodInvocationRetryListenerSupportTests {
 		assertThat(callsOnDoCloseMethod.get()).isEqualTo(0);
 	}
 
-	@Test
+    /**
+     * <code>testOnError</code>
+     * <p>The test on error method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOnError() {
 		MethodInvocationRetryListenerSupport support = new MethodInvocationRetryListenerSupport();
 		assertThatNoException().isThrownBy(() -> support.onError(null, null, null));
 	}
 
-	@Test
+    /**
+     * <code>testOnErrorWithMethodInvocationRetryCallbackShouldCallDoOnErrorMethod</code>
+     * <p>The test on error with method invocation retry callback should call do on error method method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOnErrorWithMethodInvocationRetryCallbackShouldCallDoOnErrorMethod() {
 		final AtomicInteger callsOnDoOnErrorMethod = new AtomicInteger(0);
 		MethodInvocationRetryListenerSupport support = new MethodInvocationRetryListenerSupport() {
@@ -91,13 +122,23 @@ public class MethodInvocationRetryListenerSupportTests {
 		assertThat(callsOnDoOnErrorMethod.get()).isEqualTo(1);
 	}
 
-	@Test
+    /**
+     * <code>testOpen</code>
+     * <p>The test open method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOpen() {
 		MethodInvocationRetryListenerSupport support = new MethodInvocationRetryListenerSupport();
 		assertThat(support.open(null, null)).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testOpenWithMethodInvocationRetryCallbackShouldCallDoCloseMethod</code>
+     * <p>The test open with method invocation retry callback should call do close method method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testOpenWithMethodInvocationRetryCallbackShouldCallDoCloseMethod() {
 		final AtomicInteger callsOnDoOpenMethod = new AtomicInteger(0);
 		MethodInvocationRetryListenerSupport support = new MethodInvocationRetryListenerSupport() {

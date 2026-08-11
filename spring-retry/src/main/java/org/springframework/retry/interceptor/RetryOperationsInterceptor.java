@@ -31,42 +31,27 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.util.Assert;
 
 /**
- * A {@link MethodInterceptor} that can be used to automatically retry calls to a method
- * on a service if it fails. The injected {@link RetryOperations} is used to control the
- * number of retries. By default, it will retry a fixed number of times, according to the
- * defaults in {@link RetryTemplate}.
- * <p>
- * Hint about transaction boundaries. If you want to retry a failed transaction you need
- * to make sure that the transaction boundary is inside the retry, otherwise the
- * successful attempt will roll back with the whole transaction. If the method being
- * intercepted is also transactional, then use the ordering hints in the advice
- * declarations to ensure that this one is before the transaction interceptor in the
- * advice chain.
- * <p>
- * An internal {@link MethodInvocationRetryCallback} implementation exposes a
- * {@value RetryOperationsInterceptor#METHOD} attribute into the provided
- * {@link RetryContext} with a value from {@link MethodInvocation#getMethod()}. In
- * addition, the arguments of this method are exposed into a
- * {@value RetryOperationsInterceptor#METHOD_ARGS} attribute as an {@link Args} instance
- * wrapper.
- *
- * @author Rob Harrop
- * @author Dave Syer
- * @author Artem Bilan
+ * <code>RetryOperationsInterceptor</code>
+ * <p>The retry operations interceptor class.</p>
+ * @see  org.aopalliance.intercept.MethodInterceptor
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RetryOperationsInterceptor implements MethodInterceptor {
 
-	/**
-	 * The {@link RetryContext} attribute name for the
-	 * {@link MethodInvocation#getMethod()}.
-	 */
-	public static final String METHOD = "method";
+    /**
+     * <code>METHOD</code>
+     * {@link java.lang.String} <p>The constant <code>METHOD</code> field.</p>
+     * @see  java.lang.String
+     */
+    public static final String METHOD = "method";
 
-	/**
-	 * The {@link RetryContext} attribute name for the
-	 * {@code new Args(invocation.getArguments())}.
-	 */
-	public static final String METHOD_ARGS = "methodArgs";
+    /**
+     * <code>METHOD_ARGS</code>
+     * {@link java.lang.String} <p>The constant <code>METHOD_ARGS</code> field.</p>
+     * @see  java.lang.String
+     */
+    public static final String METHOD_ARGS = "methodArgs";
 
 	private RetryOperations retryOperations = new RetryTemplate();
 
@@ -75,16 +60,34 @@ public class RetryOperationsInterceptor implements MethodInterceptor {
 
 	private String label;
 
-	public void setLabel(String label) {
+    /**
+     * <code>setLabel</code>
+     * <p>The set label setter method.</p>
+     * @param label {@link java.lang.String} <p>The label parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    public void setLabel(String label) {
 		this.label = label;
 	}
 
-	public void setRetryOperations(RetryOperations retryTemplate) {
+    /**
+     * <code>setRetryOperations</code>
+     * <p>The set retry operations setter method.</p>
+     * @param retryTemplate {@link org.springframework.retry.RetryOperations} <p>The retry template parameter is <code>RetryOperations</code> type.</p>
+     * @see  org.springframework.retry.RetryOperations
+     */
+    public void setRetryOperations(RetryOperations retryTemplate) {
 		Assert.notNull(retryTemplate, "'retryOperations' cannot be null.");
 		this.retryOperations = retryTemplate;
 	}
 
-	public void setRecoverer(MethodInvocationRecoverer<?> recoverer) {
+    /**
+     * <code>setRecoverer</code>
+     * <p>The set recoverer setter method.</p>
+     * @param recoverer {@link org.springframework.retry.interceptor.MethodInvocationRecoverer} <p>The recoverer parameter is <code>MethodInvocationRecoverer</code> type.</p>
+     * @see  org.springframework.retry.interceptor.MethodInvocationRecoverer
+     */
+    public void setRecoverer(MethodInvocationRecoverer<?> recoverer) {
 		this.recoverer = recoverer;
 	}
 
@@ -146,7 +149,15 @@ public class RetryOperationsInterceptor implements MethodInterceptor {
 		private final Object[] args;
 		private final MethodInvocationRecoverer<?> recoverer;
 
-		public ItemRecovererCallback(Object[] args, MethodInvocationRecoverer<?> recoverer) {
+        /**
+         * <code>ItemRecovererCallback</code>
+         * <p>Instantiates a new item recoverer callback.</p>
+         * @param args {@link java.lang.Object} <p>The args parameter is <code>Object</code> type.</p>
+         * @param recoverer {@link org.springframework.retry.interceptor.MethodInvocationRecoverer} <p>The recoverer parameter is <code>MethodInvocationRecoverer</code> type.</p>
+         * @see  java.lang.Object
+         * @see  org.springframework.retry.interceptor.MethodInvocationRecoverer
+         */
+        public ItemRecovererCallback(Object[] args, MethodInvocationRecoverer<?> recoverer) {
 			this.args = args;
 			this.recoverer = recoverer;
 		}

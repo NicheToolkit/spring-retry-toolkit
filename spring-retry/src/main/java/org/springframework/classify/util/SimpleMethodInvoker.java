@@ -24,14 +24,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 /**
- * Simple implementation of the {@link MethodInvoker} interface that invokes a method on
- * an object. If the method has no arguments, but arguments are provided, they are ignored
- * and the method is invoked anyway. If there are more arguments than there are provided,
- * then an exception is thrown.
- *
- * @author Lucas Ward
- * @author Artem Bilan
- * @since 1.1
+ * <code>SimpleMethodInvoker</code>
+ * <p>The simple method invoker class.</p>
+ * @see  org.springframework.classify.util.MethodInvoker
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class SimpleMethodInvoker implements MethodInvoker {
 
@@ -43,7 +40,15 @@ public class SimpleMethodInvoker implements MethodInvoker {
 
 	private volatile Object target;
 
-	public SimpleMethodInvoker(Object object, Method method) {
+    /**
+     * <code>SimpleMethodInvoker</code>
+     * <p>Instantiates a new simple method invoker.</p>
+     * @param object {@link java.lang.Object} <p>The object parameter is <code>Object</code> type.</p>
+     * @param method {@link java.lang.reflect.Method} <p>The method parameter is <code>Method</code> type.</p>
+     * @see  java.lang.Object
+     * @see  java.lang.reflect.Method
+     */
+    public SimpleMethodInvoker(Object object, Method method) {
 		Assert.notNull(object, "Object to invoke must not be null");
 		Assert.notNull(method, "Method to invoke must not be null");
 		this.method = method;
@@ -52,7 +57,17 @@ public class SimpleMethodInvoker implements MethodInvoker {
 		this.parameterTypes = method.getParameterTypes();
 	}
 
-	public SimpleMethodInvoker(Object object, String methodName, Class<?>... paramTypes) {
+    /**
+     * <code>SimpleMethodInvoker</code>
+     * <p>Instantiates a new simple method invoker.</p>
+     * @param object {@link java.lang.Object} <p>The object parameter is <code>Object</code> type.</p>
+     * @param methodName {@link java.lang.String} <p>The method name parameter is <code>String</code> type.</p>
+     * @param paramTypes {@link java.lang.Class} <p>The param types parameter is <code>Class</code> type.</p>
+     * @see  java.lang.Object
+     * @see  java.lang.String
+     * @see  java.lang.Class
+     */
+    public SimpleMethodInvoker(Object object, String methodName, Class<?>... paramTypes) {
 		Assert.notNull(object, "Object to invoke must not be null");
 		Method method = ClassUtils.getMethodIfAvailable(object.getClass(), methodName, paramTypes);
 		if (method == null) {

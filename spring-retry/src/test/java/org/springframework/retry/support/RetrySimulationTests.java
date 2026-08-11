@@ -27,9 +27,20 @@ import org.springframework.retry.policy.SimpleRetryPolicy;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * <code>RetrySimulationTests</code>
+ * <p>The retry simulation tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class RetrySimulationTests {
 
-	@Test
+    /**
+     * <code>testSimulatorExercisesFixedBackoff</code>
+     * <p>The test simulator exercises fixed backoff method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSimulatorExercisesFixedBackoff() {
 		SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
 		retryPolicy.setMaxAttempts(5);
@@ -50,7 +61,12 @@ public class RetrySimulationTests {
 		assertThat(simulation.getPercentile(0.5)).isEqualTo(400d);
 	}
 
-	@Test
+    /**
+     * <code>testSimulatorExercisesExponentialBackoff</code>
+     * <p>The test simulator exercises exponential backoff method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSimulatorExercisesExponentialBackoff() {
 		SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
 		retryPolicy.setMaxAttempts(5);
@@ -73,7 +89,12 @@ public class RetrySimulationTests {
 		assertThat(simulation.getPercentile(0.5f)).isEqualTo(300d);
 	}
 
-	@Test
+    /**
+     * <code>testSimulatorExercisesRandomExponentialBackoff</code>
+     * <p>The test simulator exercises random exponential backoff method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSimulatorExercisesRandomExponentialBackoff() {
 		SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
 		retryPolicy.setMaxAttempts(5);

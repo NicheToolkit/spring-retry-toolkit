@@ -28,9 +28,11 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Gary Russell
- * @since 1.2.2
- *
+ * <code>PrototypeBeanTests</code>
+ * <p>The prototype bean tests class.</p>
+ * @see  org.springframework.test.context.junit.jupiter.SpringJUnitConfig
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SpringJUnitConfig
 public class PrototypeBeanTests {
@@ -44,23 +46,51 @@ public class PrototypeBeanTests {
 	@Autowired
 	private Foo foo;
 
-	@Test
+    /**
+     * <code>testProtoBean</code>
+     * <p>The test proto bean method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testProtoBean() {
 		this.bar1.foo("one");
 		this.bar2.foo("two");
 		assertThat(this.foo.recovered).isEqualTo("two");
 	}
 
-	@Configuration
+    /**
+     * <code>Config</code>
+     * <p>The config class.</p>
+     * @see  org.springframework.context.annotation.Configuration
+     * @see  org.springframework.retry.annotation.EnableRetry
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    @Configuration
 	@EnableRetry
 	public static class Config {
 
-		@Bean
+        /**
+         * <code>foo</code>
+         * <p>The foo method.</p>
+         * @return  {@link org.springframework.retry.annotation.PrototypeBeanTests.Foo} <p>The foo return object is <code>Foo</code> type.</p>
+         * @see  org.springframework.retry.annotation.PrototypeBeanTests.Foo
+         * @see  org.springframework.context.annotation.Bean
+         */
+        @Bean
 		public Foo foo() {
 			return new Foo();
 		}
 
-		@Bean
+        /**
+         * <code>baz</code>
+         * <p>The baz method.</p>
+         * @return  {@link org.springframework.retry.annotation.PrototypeBeanTests.Baz} <p>The baz return object is <code>Baz</code> type.</p>
+         * @see  org.springframework.retry.annotation.PrototypeBeanTests.Baz
+         * @see  org.springframework.context.annotation.Bean
+         * @see  org.springframework.context.annotation.Scope
+         */
+        @Bean
 		@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 		public Baz baz() {
 			return new Baz();
@@ -68,31 +98,74 @@ public class PrototypeBeanTests {
 
 	}
 
-	public static class Foo {
+    /**
+     * <code>Foo</code>
+     * <p>The foo class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public static class Foo {
 
 		private String recovered;
 
-		void demoRun(Bar bar) {
+        /**
+         * <code>demoRun</code>
+         * <p>The demo run method.</p>
+         * @param bar {@link org.springframework.retry.annotation.PrototypeBeanTests.Bar} <p>The bar parameter is <code>Bar</code> type.</p>
+         * @see  org.springframework.retry.annotation.PrototypeBeanTests.Bar
+         */
+        void demoRun(Bar bar) {
 			throw new RuntimeException();
 		}
 
-		void demoRecover(String instance) {
+        /**
+         * <code>demoRecover</code>
+         * <p>The demo recover method.</p>
+         * @param instance {@link java.lang.String} <p>The instance parameter is <code>String</code> type.</p>
+         * @see  java.lang.String
+         */
+        void demoRecover(String instance) {
 			this.recovered = instance;
 		}
 
 	}
 
-	public interface Bar {
+    /**
+     * <code>Bar</code>
+     * <p>The bar interface.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public interface Bar {
 
-		@Retryable(backoff = @Backoff(0))
+        /**
+         * <code>foo</code>
+         * <p>The foo method.</p>
+         * @param instance {@link java.lang.String} <p>The instance parameter is <code>String</code> type.</p>
+         * @see  java.lang.String
+         * @see  org.springframework.retry.annotation.Retryable
+         */
+        @Retryable(backoff = @Backoff(0))
 		void foo(String instance);
 
-		@Recover
+        /**
+         * <code>bar</code>
+         * <p>The bar method.</p>
+         * @see  org.springframework.retry.annotation.Recover
+         */
+        @Recover
 		void bar();
 
 	}
 
-	public static class Baz implements Bar {
+    /**
+     * <code>Baz</code>
+     * <p>The baz class.</p>
+     * @see  org.springframework.retry.annotation.PrototypeBeanTests.Bar
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public static class Baz implements Bar {
 
 		private String instance;
 

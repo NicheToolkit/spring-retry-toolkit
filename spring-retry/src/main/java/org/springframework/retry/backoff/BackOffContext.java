@@ -19,8 +19,11 @@ package org.springframework.retry.backoff;
 import java.io.Serializable;
 
 /**
- * @author Rob Harrop
- * @since 2.1
+ * <code>BackOffContext</code>
+ * <p>The back off context interface.</p>
+ * @see  java.io.Serializable
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface BackOffContext extends Serializable {
 

@@ -17,20 +17,20 @@
 package org.springframework.retry.interceptor;
 
 /**
- * Strategy interface to distinguish new arguments from ones that have been processed
- * before, e.g. by examining a message flag.
- *
- * @author Dave Syer
- *
+ * <code>NewMethodArgumentsIdentifier</code>
+ * <p>The new method arguments identifier interface.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface NewMethodArgumentsIdentifier {
 
-	/**
-	 * Inspect the arguments and determine if they have never been processed before. The
-	 * safest choice when the answer is indeterminate is 'false'.
-	 * @param args the current method arguments.
-	 * @return true if the item is known to have never been processed before.
-	 */
-	boolean isNew(Object[] args);
+    /**
+     * <code>isNew</code>
+     * <p>The is new method.</p>
+     * @param args {@link java.lang.Object} <p>The args parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     * @return  boolean <p>The is new return object is <code>boolean</code> type.</p>
+     */
+    boolean isNew(Object[] args);
 
 }

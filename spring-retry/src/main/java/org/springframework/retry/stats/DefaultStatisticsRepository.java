@@ -23,8 +23,11 @@ import java.util.concurrent.ConcurrentMap;
 import org.springframework.retry.RetryStatistics;
 
 /**
- * @author Dave Syer
- *
+ * <code>DefaultStatisticsRepository</code>
+ * <p>The default statistics repository class.</p>
+ * @see  org.springframework.retry.stats.StatisticsRepository
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class DefaultStatisticsRepository implements StatisticsRepository {
 
@@ -32,7 +35,13 @@ public class DefaultStatisticsRepository implements StatisticsRepository {
 
 	private RetryStatisticsFactory factory = new DefaultRetryStatisticsFactory();
 
-	public void setRetryStatisticsFactory(RetryStatisticsFactory factory) {
+    /**
+     * <code>setRetryStatisticsFactory</code>
+     * <p>The set retry statistics factory setter method.</p>
+     * @param factory {@link org.springframework.retry.stats.RetryStatisticsFactory} <p>The factory parameter is <code>RetryStatisticsFactory</code> type.</p>
+     * @see  org.springframework.retry.stats.RetryStatisticsFactory
+     */
+    public void setRetryStatisticsFactory(RetryStatisticsFactory factory) {
 		this.factory = factory;
 	}
 

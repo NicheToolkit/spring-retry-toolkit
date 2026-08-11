@@ -43,16 +43,22 @@ import org.springframework.util.SerializationUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Dave Syer
- * @author Gary Russell
- * @author Artem Bilan
- *
+ * <code>RetryContextSerializationTests</code>
+ * <p>The retry context serialization tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RetryContextSerializationTests {
 
 	private static final Log logger = LogFactory.getLog(RetryContextSerializationTests.class);
 
-	public static List<Object[]> policies() {
+    /**
+     * <code>policies</code>
+     * <p>The policies method.</p>
+     * @return  {@link java.util.List} <p>The policies return object is <code>List</code> type.</p>
+     * @see  java.util.List
+     */
+    public static List<Object[]> policies() {
 		List<Object[]> result = new ArrayList<>();
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(true);
 		scanner.addIncludeFilter(new AssignableTypeFilter(RetryPolicy.class));
@@ -74,7 +80,15 @@ public class RetryContextSerializationTests {
 		return result;
 	}
 
-	@ParameterizedTest
+    /**
+     * <code>testSerializationCycleForContext</code>
+     * <p>The test serialization cycle for context method.</p>
+     * @param policy {@link org.springframework.retry.RetryPolicy} <p>The policy parameter is <code>RetryPolicy</code> type.</p>
+     * @see  org.springframework.retry.RetryPolicy
+     * @see  org.junit.jupiter.params.ParameterizedTest
+     * @see  org.junit.jupiter.params.provider.MethodSource
+     */
+    @ParameterizedTest
 	@MethodSource("policies")
 	public void testSerializationCycleForContext(RetryPolicy policy) {
 		RetryContext context = policy.open(null);
@@ -84,7 +98,15 @@ public class RetryContextSerializationTests {
 		assertThat(deserialize(SerializationUtils.serialize(context))).extracting("retryCount").isEqualTo(1);
 	}
 
-	@ParameterizedTest
+    /**
+     * <code>testSerializationCycleForPolicy</code>
+     * <p>The test serialization cycle for policy method.</p>
+     * @param policy {@link org.springframework.retry.RetryPolicy} <p>The policy parameter is <code>RetryPolicy</code> type.</p>
+     * @see  org.springframework.retry.RetryPolicy
+     * @see  org.junit.jupiter.params.ParameterizedTest
+     * @see  org.junit.jupiter.params.provider.MethodSource
+     */
+    @ParameterizedTest
 	@MethodSource("policies")
 	public void testSerializationCycleForPolicy(RetryPolicy policy) {
 		assertThat(deserialize(SerializationUtils.serialize(policy)) instanceof RetryPolicy).isTrue();

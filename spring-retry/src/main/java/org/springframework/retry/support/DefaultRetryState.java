@@ -22,8 +22,11 @@ import org.springframework.retry.RetryOperations;
 import org.springframework.retry.RetryState;
 
 /**
- * @author Dave Syer
- *
+ * <code>DefaultRetryState</code>
+ * <p>The default retry state class.</p>
+ * @see  org.springframework.retry.RetryState
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class DefaultRetryState implements RetryState {
 
@@ -33,50 +36,52 @@ public class DefaultRetryState implements RetryState {
 
 	final private Classifier<? super Throwable, Boolean> rollbackClassifier;
 
-	/**
-	 * Create a {@link DefaultRetryState} representing the state for a new retry attempt.
-	 *
-	 * @see RetryOperations#execute(RetryCallback, RetryState)
-	 * @see RetryOperations#execute(RetryCallback, RecoveryCallback, RetryState)
-	 * @param key the key for the state to allow this retry attempt to be recognised
-	 * @param forceRefresh true if the attempt is known to be a brand new state (could not
-	 * have previously failed)
-	 * @param rollbackClassifier the rollback classifier to set. The rollback classifier
-	 * answers true if the exception provided should cause a rollback.
-	 */
-	public DefaultRetryState(Object key, boolean forceRefresh,
+    /**
+     * <code>DefaultRetryState</code>
+     * <p>Instantiates a new default retry state.</p>
+     * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+     * @param forceRefresh boolean <p>The force refresh parameter is <code>boolean</code> type.</p>
+     * @param rollbackClassifier {@link org.springframework.classify.Classifier} <p>The rollback classifier parameter is <code>Classifier</code> type.</p>
+     * @see  java.lang.Object
+     * @see  org.springframework.classify.Classifier
+     */
+    public DefaultRetryState(Object key, boolean forceRefresh,
 			Classifier<? super Throwable, Boolean> rollbackClassifier) {
 		this.key = key;
 		this.forceRefresh = forceRefresh;
 		this.rollbackClassifier = rollbackClassifier;
 	}
 
-	/**
-	 * Defaults the force refresh flag to false.
-	 * @see DefaultRetryState#DefaultRetryState(Object, boolean, Classifier)
-	 * @param key the key
-	 * @param rollbackClassifier the rollback {@link Classifier}
-	 */
-	public DefaultRetryState(Object key, Classifier<? super Throwable, Boolean> rollbackClassifier) {
+    /**
+     * <code>DefaultRetryState</code>
+     * <p>Instantiates a new default retry state.</p>
+     * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+     * @param rollbackClassifier {@link org.springframework.classify.Classifier} <p>The rollback classifier parameter is <code>Classifier</code> type.</p>
+     * @see  java.lang.Object
+     * @see  org.springframework.classify.Classifier
+     */
+    public DefaultRetryState(Object key, Classifier<? super Throwable, Boolean> rollbackClassifier) {
 		this(key, false, rollbackClassifier);
 	}
 
-	/**
-	 * Defaults the rollback classifier to null.
-	 * @see DefaultRetryState#DefaultRetryState(Object, boolean, Classifier)
-	 * @param key the key
-	 * @param forceRefresh whether to force a refresh
-	 */
-	public DefaultRetryState(Object key, boolean forceRefresh) {
+    /**
+     * <code>DefaultRetryState</code>
+     * <p>Instantiates a new default retry state.</p>
+     * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+     * @param forceRefresh boolean <p>The force refresh parameter is <code>boolean</code> type.</p>
+     * @see  java.lang.Object
+     */
+    public DefaultRetryState(Object key, boolean forceRefresh) {
 		this(key, forceRefresh, null);
 	}
 
-	/**
-	 * Defaults the force refresh flag (to false) and the rollback classifier (to null).
-	 * @param key the key to use
-	 * @see DefaultRetryState#DefaultRetryState(Object, boolean, Classifier)
-	 */
-	public DefaultRetryState(Object key) {
+    /**
+     * <code>DefaultRetryState</code>
+     * <p>Instantiates a new default retry state.</p>
+     * @param key {@link java.lang.Object} <p>The key parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     */
+    public DefaultRetryState(Object key) {
 		this(key, false, null);
 	}
 

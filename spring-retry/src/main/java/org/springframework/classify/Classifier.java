@@ -19,26 +19,22 @@ package org.springframework.classify;
 import java.io.Serializable;
 
 /**
- * Interface for a classifier. At its simplest a {@link Classifier} is just a map from
- * objects of one type to objects of another type.
- *
- * Note that implementations can only be serializable if the parameter types are
- * themselves serializable.
- *
- * @author Dave Syer
- * @param <C> the type of the thing to classify
- * @param <T> the output of the classifier
- *
+ * <code>Classifier</code>
+ * <p>The classifier interface.</p>
+ * @param <C>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @param <T>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @see  java.io.Serializable
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface Classifier<C, T> extends Serializable {
 
-	/**
-	 * Classify the given object and return an object of a different type, possibly an
-	 * enumerated type.
-	 * @param classifiable the input object. Can be null.
-	 * @return an object. Can be null, but implementations should declare if this is the
-	 * case.
-	 */
-	T classify(C classifiable);
+    /**
+     * <code>classify</code>
+     * <p>The classify method.</p>
+     * @param classifiable C <p>The classifiable parameter is <code>C</code> type.</p>
+     * @return  T <p>The classify return object is <code>T</code> type.</p>
+     */
+    T classify(C classifiable);
 
 }

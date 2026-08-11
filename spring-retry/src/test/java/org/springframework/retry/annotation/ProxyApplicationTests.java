@@ -31,11 +31,24 @@ import org.springframework.stereotype.Component;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * <code>ProxyApplicationTests</code>
+ * <p>The proxy application tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
+ */
 public class ProxyApplicationTests {
 
 	private final CountClassesClassLoader classLoader = new CountClassesClassLoader();
 
-	@Test
+    /**
+     * <code>contextLoads</code>
+     * <p>The context loads method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.Exception
+     * @throws Exception {@link java.lang.Exception} <p>The exception is <code>Exception</code> type.</p>
+     */
+    @Test
 	// See gh-53
 	public void contextLoads() throws Exception {
 		int count = count();
@@ -76,7 +89,11 @@ public class ProxyApplicationTests {
 
 		private final Set<Class<?>> classes = new HashSet<>();
 
-		public CountClassesClassLoader() {
+        /**
+         * <code>CountClassesClassLoader</code>
+         * <p>Instantiates a new count classes class loader.</p>
+         */
+        public CountClassesClassLoader() {
 			super(new URL[0], ProxyApplicationTests.class.getClassLoader());
 		}
 
@@ -96,21 +113,48 @@ public class ProxyApplicationTests {
 
 	}
 
-	@Configuration
+    /**
+     * <code>Empty</code>
+     * <p>The empty class.</p>
+     * @see  org.springframework.context.annotation.Configuration
+     * @see  org.springframework.retry.annotation.EnableRetry
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    @Configuration
 	@EnableRetry(proxyTargetClass = true)
 	protected static class Empty {
 
-		@Bean
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         * @return  {@link org.springframework.retry.annotation.ProxyApplicationTests.Service} <p>The service return object is <code>Service</code> type.</p>
+         * @see  org.springframework.retry.annotation.ProxyApplicationTests.Service
+         * @see  org.springframework.context.annotation.Bean
+         */
+        @Bean
 		public Service service() {
 			return new Service();
 		}
 
 	}
 
-	@Component
+    /**
+     * <code>Service</code>
+     * <p>The service class.</p>
+     * @see  org.springframework.stereotype.Component
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    @Component
 	static class Service {
 
-		@Retryable
+        /**
+         * <code>handle</code>
+         * <p>The handle method.</p>
+         * @see  org.springframework.retry.annotation.Retryable
+         */
+        @Retryable
 		public void handle() {
 			System.err.println("Handling");
 		}

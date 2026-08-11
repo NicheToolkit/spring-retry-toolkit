@@ -27,18 +27,21 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 /**
- * @author Rob Harrop
- * @author Dave Syer
- * @author Gary Russell
- * @author Marius Lichtblau
- * @author Anton Aharkau
- * @author Kim Sumin
+ * <code>ExponentialBackOffPolicyTests</code>
+ * <p>The exponential back off policy tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class ExponentialBackOffPolicyTests {
 
 	private final DummySleeper sleeper = new DummySleeper();
 
-	@Test
+    /**
+     * <code>testSetMaxInterval</code>
+     * <p>The test set max interval method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSetMaxInterval() {
 		ExponentialBackOffPolicy strategy = new ExponentialBackOffPolicy();
 		strategy.setMaxInterval(1000);
@@ -48,7 +51,12 @@ public class ExponentialBackOffPolicyTests {
 		assertThat(strategy.toString()).contains("maxInterval=1");
 	}
 
-	@Test
+    /**
+     * <code>testSetInitialInterval</code>
+     * <p>The test set initial interval method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSetInitialInterval() {
 		ExponentialBackOffPolicy strategy = new ExponentialBackOffPolicy();
 		strategy.setInitialInterval(10000);
@@ -57,7 +65,12 @@ public class ExponentialBackOffPolicyTests {
 		assertThat(strategy.toString()).contains("initialInterval=1,");
 	}
 
-	@Test
+    /**
+     * <code>testSetMultiplier</code>
+     * <p>The test set multiplier method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSetMultiplier() {
 		ExponentialBackOffPolicy strategy = new ExponentialBackOffPolicy();
 		strategy.setMultiplier(3.);
@@ -66,7 +79,12 @@ public class ExponentialBackOffPolicyTests {
 		assertThat(strategy.toString()).contains("multiplier=1.");
 	}
 
-	@Test
+    /**
+     * <code>testSingleBackOff</code>
+     * <p>The test single back off method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSingleBackOff() {
 		ExponentialBackOffPolicy strategy = new ExponentialBackOffPolicy();
 		strategy.setSleeper(sleeper);
@@ -75,7 +93,12 @@ public class ExponentialBackOffPolicyTests {
 		assertThat(sleeper.getLastBackOff()).isEqualTo(ExponentialBackOffPolicy.DEFAULT_INITIAL_INTERVAL);
 	}
 
-	@Test
+    /**
+     * <code>testMaximumBackOff</code>
+     * <p>The test maximum back off method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testMaximumBackOff() {
 		ExponentialBackOffPolicy strategy = new ExponentialBackOffPolicy();
 		strategy.setMaxInterval(50);
@@ -85,7 +108,12 @@ public class ExponentialBackOffPolicyTests {
 		assertThat(sleeper.getLastBackOff()).isEqualTo(50);
 	}
 
-	@Test
+    /**
+     * <code>testMultiBackOff</code>
+     * <p>The test multi back off method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testMultiBackOff() {
 		ExponentialBackOffPolicy strategy = new ExponentialBackOffPolicy();
 		long seed = 40;
@@ -101,7 +129,12 @@ public class ExponentialBackOffPolicyTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testMultiBackOffWithInitialDelaySupplier</code>
+     * <p>The test multi back off with initial delay supplier method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testMultiBackOffWithInitialDelaySupplier() {
 		ExponentialBackOffPolicy strategy = new ExponentialBackOffPolicy();
 		long seed = 40;
@@ -117,7 +150,12 @@ public class ExponentialBackOffPolicyTests {
 		}
 	}
 
-	@Test
+    /**
+     * <code>testInterruptedStatusIsRestored</code>
+     * <p>The test interrupted status is restored method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testInterruptedStatusIsRestored() {
 		ExponentialBackOffPolicy strategy = new ExponentialBackOffPolicy();
 		strategy.setSleeper(new Sleeper() {
@@ -131,7 +169,12 @@ public class ExponentialBackOffPolicyTests {
 		assertThat(Thread.interrupted()).isTrue();
 	}
 
-	@Test
+    /**
+     * <code>testSetMultiplierWithWarning</code>
+     * <p>The test set multiplier with warning method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSetMultiplierWithWarning() {
 		Log logMock = mock(Log.class);
 		ExponentialBackOffPolicy strategy = new ExponentialBackOffPolicy();
@@ -147,7 +190,12 @@ public class ExponentialBackOffPolicyTests {
 			.isEqualTo("Multiplier must be > 1.0 for effective exponential backoff, but was 1.0");
 	}
 
-	@Test
+    /**
+     * <code>testSetInitialIntervalWithWarning</code>
+     * <p>The test set initial interval with warning method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSetInitialIntervalWithWarning() {
 		Log logMock = mock(Log.class);
 		ExponentialBackOffPolicy strategy = new ExponentialBackOffPolicy();
@@ -162,7 +210,12 @@ public class ExponentialBackOffPolicyTests {
 		assertThat(captor.getValue()).isEqualTo("Initial interval must be at least 1, but was 0");
 	}
 
-	@Test
+    /**
+     * <code>testSetMaxIntervalWithWarning</code>
+     * <p>The test set max interval with warning method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testSetMaxIntervalWithWarning() {
 		Log logMock = mock(Log.class);
 		ExponentialBackOffPolicy strategy = new ExponentialBackOffPolicy();

@@ -21,7 +21,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The results of a simulation.
+ * <code>RetrySimulation</code>
+ * <p>The retry simulation class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RetrySimulation {
 
@@ -29,23 +32,31 @@ public class RetrySimulation {
 
 	private final List<Long> sleepHistogram = new ArrayList<>();
 
-	public RetrySimulation() {
+    /**
+     * <code>RetrySimulation</code>
+     * <p>Instantiates a new retry simulation.</p>
+     */
+    public RetrySimulation() {
 	}
 
-	/**
-	 * Add a sequence of sleeps to the simulation.
-	 * @param sleeps the times to be created as a {@link SleepSequence}
-	 */
-	public void addSequence(List<Long> sleeps) {
+    /**
+     * <code>addSequence</code>
+     * <p>The add sequence method.</p>
+     * @param sleeps {@link java.util.List} <p>The sleeps parameter is <code>List</code> type.</p>
+     * @see  java.util.List
+     */
+    public void addSequence(List<Long> sleeps) {
 		sleepHistogram.addAll(sleeps);
 		sleepSequences.add(new SleepSequence(sleeps));
 	}
 
-	/**
-	 * @return Returns a list of all the unique sleep values which were executed within
-	 * all simulations.
-	 */
-	public List<Double> getPercentiles() {
+    /**
+     * <code>getPercentiles</code>
+     * <p>The get percentiles getter method.</p>
+     * @return  {@link java.util.List} <p>The get percentiles return object is <code>List</code> type.</p>
+     * @see  java.util.List
+     */
+    public List<Double> getPercentiles() {
 		List<Double> res = new ArrayList<>();
 		for (double percentile : new double[] { 10, 20, 30, 40, 50, 60, 70, 80, 90 }) {
 			res.add(getPercentile(percentile / 100));
@@ -53,7 +64,13 @@ public class RetrySimulation {
 		return res;
 	}
 
-	public double getPercentile(double p) {
+    /**
+     * <code>getPercentile</code>
+     * <p>The get percentile getter method.</p>
+     * @param p double <p>The p parameter is <code>double</code> type.</p>
+     * @return  double <p>The get percentile return object is <code>double</code> type.</p>
+     */
+    public double getPercentile(double p) {
 		Collections.sort(sleepHistogram);
 		int size = sleepHistogram.size();
 		double pos = p * (size - 1);
@@ -64,10 +81,13 @@ public class RetrySimulation {
 
 	}
 
-	/**
-	 * @return the longest total time slept by a retry sequence.
-	 */
-	public SleepSequence getLongestTotalSleepSequence() {
+    /**
+     * <code>getLongestTotalSleepSequence</code>
+     * <p>The get longest total sleep sequence getter method.</p>
+     * @return  {@link org.springframework.retry.support.RetrySimulation.SleepSequence} <p>The get longest total sleep sequence return object is <code>SleepSequence</code> type.</p>
+     * @see  org.springframework.retry.support.RetrySimulation.SleepSequence
+     */
+    public SleepSequence getLongestTotalSleepSequence() {
 		SleepSequence longest = null;
 		for (SleepSequence sequence : sleepSequences) {
 			if (longest == null || sequence.getTotalSleep() > longest.getTotalSleep()) {
@@ -77,7 +97,13 @@ public class RetrySimulation {
 		return longest;
 	}
 
-	public static class SleepSequence {
+    /**
+     * <code>SleepSequence</code>
+     * <p>The sleep sequence class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    public static class SleepSequence {
 
 		private final List<Long> sleeps;
 
@@ -85,7 +111,13 @@ public class RetrySimulation {
 
 		private final long totalSleep;
 
-		public SleepSequence(List<Long> sleeps) {
+        /**
+         * <code>SleepSequence</code>
+         * <p>Instantiates a new sleep sequence.</p>
+         * @param sleeps {@link java.util.List} <p>The sleeps parameter is <code>List</code> type.</p>
+         * @see  java.util.List
+         */
+        public SleepSequence(List<Long> sleeps) {
 			this.sleeps = sleeps;
 			this.longestSleep = Collections.max(sleeps);
 			long totalSleep = 0;
@@ -95,18 +127,31 @@ public class RetrySimulation {
 			this.totalSleep = totalSleep;
 		}
 
-		public List<Long> getSleeps() {
+        /**
+         * <code>getSleeps</code>
+         * <p>The get sleeps getter method.</p>
+         * @return  {@link java.util.List} <p>The get sleeps return object is <code>List</code> type.</p>
+         * @see  java.util.List
+         */
+        public List<Long> getSleeps() {
 			return sleeps;
 		}
 
-		/**
-		 * @return the longest individual sleep within this sequence
-		 */
-		public long getLongestSleep() {
+        /**
+         * <code>getLongestSleep</code>
+         * <p>The get longest sleep getter method.</p>
+         * @return  long <p>The get longest sleep return object is <code>long</code> type.</p>
+         */
+        public long getLongestSleep() {
 			return longestSleep;
 		}
 
-		public long getTotalSleep() {
+        /**
+         * <code>getTotalSleep</code>
+         * <p>The get total sleep getter method.</p>
+         * @return  long <p>The get total sleep return object is <code>long</code> type.</p>
+         */
+        public long getTotalSleep() {
 			return totalSleep;
 		}
 

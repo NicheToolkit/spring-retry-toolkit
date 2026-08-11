@@ -16,19 +16,20 @@
 package org.springframework.retry.interceptor;
 
 /**
- * Interface that allows method parameters to be identified and tagged by a unique key.
- *
- * @author Dave Syer
- *
+ * <code>MethodArgumentsKeyGenerator</code>
+ * <p>The method arguments key generator interface.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface MethodArgumentsKeyGenerator {
 
-	/**
-	 * Get a unique identifier for the item that can be used to cache it between calls if
-	 * necessary, and then identify it later.
-	 * @param item the current method arguments (may be null if there are none).
-	 * @return a unique identifier.
-	 */
-	Object getKey(Object[] item);
+    /**
+     * <code>getKey</code>
+     * <p>The get key getter method.</p>
+     * @param item {@link java.lang.Object} <p>The item parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     * @return  {@link java.lang.Object} <p>The get key return object is <code>Object</code> type.</p>
+     */
+    Object getKey(Object[] item);
 
 }

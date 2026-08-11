@@ -30,13 +30,19 @@ import org.springframework.retry.backoff.Sleeper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Dave Syer
- * @author Artem Bilan
- *
+ * <code>EnableRetryWithBackoffTests</code>
+ * <p>The enable retry with backoff tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class EnableRetryWithBackoffTests {
 
-	@Test
+    /**
+     * <code>vanilla</code>
+     * <p>The vanilla method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void vanilla() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfiguration.class);
 		Service service = context.getBean(Service.class);
@@ -46,7 +52,12 @@ public class EnableRetryWithBackoffTests {
 		context.close();
 	}
 
-	@Test
+    /**
+     * <code>type</code>
+     * <p>The type method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void type() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfiguration.class);
 		RandomService service = context.getBean(RandomService.class);
@@ -57,7 +68,12 @@ public class EnableRetryWithBackoffTests {
 		context.close();
 	}
 
-	@Test
+    /**
+     * <code>exponential</code>
+     * <p>The exponential method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void exponential() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfiguration.class);
 		ExponentialService service = context.getBean(ExponentialService.class);
@@ -67,7 +83,12 @@ public class EnableRetryWithBackoffTests {
 		context.close();
 	}
 
-	@Test
+    /**
+     * <code>randomExponential</code>
+     * <p>The random exponential method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void randomExponential() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfiguration.class);
 		ExponentialRandomService service = context.getBean(ExponentialRandomService.class);
@@ -80,7 +101,12 @@ public class EnableRetryWithBackoffTests {
 		context.close();
 	}
 
-	@Test
+    /**
+     * <code>randomExponentialExpression</code>
+     * <p>The random exponential expression method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void randomExponentialExpression() {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfiguration.class);
 		ExponentialRandomExpressionService service = context.getBean(ExponentialRandomExpressionService.class);
@@ -93,44 +119,102 @@ public class EnableRetryWithBackoffTests {
 		context.close();
 	}
 
-	@Configuration
+    /**
+     * <code>TestConfiguration</code>
+     * <p>The test configuration class.</p>
+     * @see  org.springframework.context.annotation.Configuration
+     * @see  org.springframework.context.annotation.EnableAspectJAutoProxy
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    @Configuration
 	@EnableRetry
 	@EnableAspectJAutoProxy(proxyTargetClass = true)
 	protected static class TestConfiguration {
 
-		@Bean
+        /**
+         * <code>sleeper</code>
+         * <p>The sleeper method.</p>
+         * @return  {@link org.springframework.retry.annotation.EnableRetryWithBackoffTests.PeriodSleeper} <p>The sleeper return object is <code>PeriodSleeper</code> type.</p>
+         * @see  org.springframework.retry.annotation.EnableRetryWithBackoffTests.PeriodSleeper
+         * @see  org.springframework.context.annotation.Bean
+         */
+        @Bean
 		public PeriodSleeper sleeper() {
 			return new PeriodSleeper();
 		}
 
-		@Bean
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         * @return  {@link org.springframework.retry.annotation.EnableRetryWithBackoffTests.Service} <p>The service return object is <code>Service</code> type.</p>
+         * @see  org.springframework.retry.annotation.EnableRetryWithBackoffTests.Service
+         * @see  org.springframework.context.annotation.Bean
+         */
+        @Bean
 		public Service service() {
 			return new Service();
 		}
 
-		@Bean
+        /**
+         * <code>retryable</code>
+         * <p>The retryable method.</p>
+         * @return  {@link org.springframework.retry.annotation.EnableRetryWithBackoffTests.RandomService} <p>The retryable return object is <code>RandomService</code> type.</p>
+         * @see  org.springframework.retry.annotation.EnableRetryWithBackoffTests.RandomService
+         * @see  org.springframework.context.annotation.Bean
+         */
+        @Bean
 		public RandomService retryable() {
 			return new RandomService();
 		}
 
-		@Bean
+        /**
+         * <code>stateful</code>
+         * <p>The stateful method.</p>
+         * @return  {@link org.springframework.retry.annotation.EnableRetryWithBackoffTests.ExponentialRandomService} <p>The stateful return object is <code>ExponentialRandomService</code> type.</p>
+         * @see  org.springframework.retry.annotation.EnableRetryWithBackoffTests.ExponentialRandomService
+         * @see  org.springframework.context.annotation.Bean
+         */
+        @Bean
 		public ExponentialRandomService stateful() {
 			return new ExponentialRandomService();
 		}
 
-		@Bean
+        /**
+         * <code>excludes</code>
+         * <p>The excludes method.</p>
+         * @return  {@link org.springframework.retry.annotation.EnableRetryWithBackoffTests.ExponentialService} <p>The excludes return object is <code>ExponentialService</code> type.</p>
+         * @see  org.springframework.retry.annotation.EnableRetryWithBackoffTests.ExponentialService
+         * @see  org.springframework.context.annotation.Bean
+         */
+        @Bean
 		public ExponentialService excludes() {
 			return new ExponentialService();
 		}
 
-		@Bean
+        /**
+         * <code>statefulExpression</code>
+         * <p>The stateful expression method.</p>
+         * @return  {@link org.springframework.retry.annotation.EnableRetryWithBackoffTests.ExponentialRandomExpressionService} <p>The stateful expression return object is <code>ExponentialRandomExpressionService</code> type.</p>
+         * @see  org.springframework.retry.annotation.EnableRetryWithBackoffTests.ExponentialRandomExpressionService
+         * @see  org.springframework.context.annotation.Bean
+         */
+        @Bean
 		public ExponentialRandomExpressionService statefulExpression() {
 			return new ExponentialRandomExpressionService();
 		}
 
 	}
 
-	@SuppressWarnings("serial")
+    /**
+     * <code>PeriodSleeper</code>
+     * <p>The period sleeper class.</p>
+     * @see  org.springframework.retry.backoff.Sleeper
+     * @see  java.lang.SuppressWarnings
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    @SuppressWarnings("serial")
 	protected static class PeriodSleeper implements Sleeper {
 
 		private final List<Long> periods = new ArrayList<>();
@@ -146,86 +230,168 @@ public class EnableRetryWithBackoffTests {
 
 	}
 
-	protected static class Service {
+    /**
+     * <code>Service</code>
+     * <p>The service class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    protected static class Service {
 
 		private int count = 0;
 
-		@Retryable(backoff = @Backoff(delay = 1000))
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         * @see  org.springframework.retry.annotation.Retryable
+         */
+        @Retryable(backoff = @Backoff(delay = 1000))
 		public void service() {
 			if (count++ < 2) {
 				throw new RuntimeException("Planned");
 			}
 		}
 
-		public int getCount() {
+        /**
+         * <code>getCount</code>
+         * <p>The get count getter method.</p>
+         * @return  int <p>The get count return object is <code>int</code> type.</p>
+         */
+        public int getCount() {
 			return count;
 		}
 
 	}
 
-	@Retryable(backoff = @Backoff(delay = 1000, maxDelay = 2000))
+    /**
+     * <code>RandomService</code>
+     * <p>The random service class.</p>
+     * @see  org.springframework.retry.annotation.Retryable
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    @Retryable(backoff = @Backoff(delay = 1000, maxDelay = 2000))
 	protected static class RandomService {
 
 		private int count = 0;
 
-		public void service() {
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         */
+        public void service() {
 			if (count++ < 2) {
 				throw new RuntimeException("Planned");
 			}
 		}
 
-		public int getCount() {
+        /**
+         * <code>getCount</code>
+         * <p>The get count getter method.</p>
+         * @return  int <p>The get count return object is <code>int</code> type.</p>
+         */
+        public int getCount() {
 			return count;
 		}
 
 	}
 
-	protected static class ExponentialService {
+    /**
+     * <code>ExponentialService</code>
+     * <p>The exponential service class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    protected static class ExponentialService {
 
 		private int count = 0;
 
-		@Retryable(backoff = @Backoff(delay = 1000, maxDelay = 2000, multiplier = 1.1))
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         * @see  org.springframework.retry.annotation.Retryable
+         */
+        @Retryable(backoff = @Backoff(delay = 1000, maxDelay = 2000, multiplier = 1.1))
 		public void service() {
 			if (count++ < 2) {
 				throw new IllegalStateException("Planned");
 			}
 		}
 
-		public int getCount() {
+        /**
+         * <code>getCount</code>
+         * <p>The get count getter method.</p>
+         * @return  int <p>The get count return object is <code>int</code> type.</p>
+         */
+        public int getCount() {
 			return count;
 		}
 
 	}
 
-	protected static class ExponentialRandomService {
+    /**
+     * <code>ExponentialRandomService</code>
+     * <p>The exponential random service class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    protected static class ExponentialRandomService {
 
 		private int count = 0;
 
-		@Retryable(backoff = @Backoff(delay = 1000, maxDelay = 2000, multiplier = 1.1, random = true))
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         * @param value int <p>The value parameter is <code>int</code> type.</p>
+         * @see  org.springframework.retry.annotation.Retryable
+         */
+        @Retryable(backoff = @Backoff(delay = 1000, maxDelay = 2000, multiplier = 1.1, random = true))
 		public void service(int value) {
 			if (count++ < 2) {
 				throw new RuntimeException("Planned");
 			}
 		}
 
-		public int getCount() {
+        /**
+         * <code>getCount</code>
+         * <p>The get count getter method.</p>
+         * @return  int <p>The get count return object is <code>int</code> type.</p>
+         */
+        public int getCount() {
 			return count;
 		}
 
 	}
 
-	protected static class ExponentialRandomExpressionService {
+    /**
+     * <code>ExponentialRandomExpressionService</code>
+     * <p>The exponential random expression service class.</p>
+     * @author  Cyan (snow22314@outlook.com)
+     * @since Jdk1.8
+     */
+    protected static class ExponentialRandomExpressionService {
 
 		private int count = 0;
 
-		@Retryable(backoff = @Backoff(delay = 1000, maxDelay = 2000, multiplier = 1.1, randomExpression = "#{true}"))
+        /**
+         * <code>service</code>
+         * <p>The service method.</p>
+         * @param value int <p>The value parameter is <code>int</code> type.</p>
+         * @see  org.springframework.retry.annotation.Retryable
+         */
+        @Retryable(backoff = @Backoff(delay = 1000, maxDelay = 2000, multiplier = 1.1, randomExpression = "#{true}"))
 		public void service(int value) {
 			if (count++ < 2) {
 				throw new RuntimeException("Planned");
 			}
 		}
 
-		public int getCount() {
+        /**
+         * <code>getCount</code>
+         * <p>The get count getter method.</p>
+         * @return  int <p>The get count return object is <code>int</code> type.</p>
+         */
+        public int getCount() {
 			return count;
 		}
 

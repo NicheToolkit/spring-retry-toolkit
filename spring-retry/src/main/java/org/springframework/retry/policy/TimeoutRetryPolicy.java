@@ -21,60 +21,59 @@ import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.context.RetryContextSupport;
 
 /**
- * A {@link RetryPolicy} that allows a retry only if it hasn't timed out. The clock is
- * started on a call to {@link #open(RetryContext)}.
- *
- * @author Dave Syer
- *
+ * <code>TimeoutRetryPolicy</code>
+ * <p>The timeout retry policy class.</p>
+ * @see  org.springframework.retry.RetryPolicy
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class TimeoutRetryPolicy implements RetryPolicy {
 
-	/**
-	 * Default value for timeout (milliseconds).
-	 */
-	public static final long DEFAULT_TIMEOUT = 1000;
+    /**
+     * <code>DEFAULT_TIMEOUT</code>
+     * <p>The constant <code>DEFAULT_TIMEOUT</code> field.</p>
+     */
+    public static final long DEFAULT_TIMEOUT = 1000;
 
 	private long timeout;
 
-	/**
-	 * Create a new instance with the timeout set to {@link #DEFAULT_TIMEOUT}.
-	 */
-	public TimeoutRetryPolicy() {
+    /**
+     * <code>TimeoutRetryPolicy</code>
+     * <p>Instantiates a new timeout retry policy.</p>
+     */
+    public TimeoutRetryPolicy() {
 		this(DEFAULT_TIMEOUT);
 	}
 
-	/**
-	 * Create a new instance with a configurable timeout.
-	 * @param timeout timeout in milliseconds
-	 * @since 2.0.2
-	 */
-	public TimeoutRetryPolicy(long timeout) {
+    /**
+     * <code>TimeoutRetryPolicy</code>
+     * <p>Instantiates a new timeout retry policy.</p>
+     * @param timeout long <p>The timeout parameter is <code>long</code> type.</p>
+     */
+    public TimeoutRetryPolicy(long timeout) {
 		this.timeout = timeout;
 	}
 
-	/**
-	 * Setter for timeout in milliseconds. Default is {@link #DEFAULT_TIMEOUT}.
-	 * @param timeout how long to wait until a timeout
-	 */
-	public void setTimeout(long timeout) {
+    /**
+     * <code>setTimeout</code>
+     * <p>The set timeout setter method.</p>
+     * @param timeout long <p>The timeout parameter is <code>long</code> type.</p>
+     */
+    public void setTimeout(long timeout) {
 		this.timeout = timeout;
 	}
 
-	/**
-	 * The value of the timeout.
-	 * @return the timeout in milliseconds
-	 */
-	public long getTimeout() {
+    /**
+     * <code>getTimeout</code>
+     * <p>The get timeout getter method.</p>
+     * @return  long <p>The get timeout return object is <code>long</code> type.</p>
+     */
+    public long getTimeout() {
 		return timeout;
 	}
 
-	/**
-	 * Only permits a retry if the timeout has not expired. Does not check the exception
-	 * at all.
-	 *
-	 * @see RetryPolicy#canRetry(RetryContext)
-	 */
 	public boolean canRetry(RetryContext context) {
 		return ((TimeoutRetryContext) context).isAlive();
 	}
@@ -97,13 +96,25 @@ public class TimeoutRetryPolicy implements RetryPolicy {
 
 		private final long start;
 
-		public TimeoutRetryContext(RetryContext parent, long timeout) {
+        /**
+         * <code>TimeoutRetryContext</code>
+         * <p>Instantiates a new timeout retry context.</p>
+         * @param parent {@link org.springframework.retry.RetryContext} <p>The parent parameter is <code>RetryContext</code> type.</p>
+         * @param timeout long <p>The timeout parameter is <code>long</code> type.</p>
+         * @see  org.springframework.retry.RetryContext
+         */
+        public TimeoutRetryContext(RetryContext parent, long timeout) {
 			super(parent);
 			this.start = System.currentTimeMillis();
 			this.timeout = timeout;
 		}
 
-		public boolean isAlive() {
+        /**
+         * <code>isAlive</code>
+         * <p>The is alive method.</p>
+         * @return  boolean <p>The is alive return object is <code>boolean</code> type.</p>
+         */
+        public boolean isAlive() {
 			return (System.currentTimeMillis() - start) <= timeout;
 		}
 

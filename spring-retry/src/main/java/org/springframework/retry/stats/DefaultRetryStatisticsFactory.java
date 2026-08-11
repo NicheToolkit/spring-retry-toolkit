@@ -17,18 +17,22 @@
 package org.springframework.retry.stats;
 
 /**
- * @author Dave Syer
- *
+ * <code>DefaultRetryStatisticsFactory</code>
+ * <p>The default retry statistics factory class.</p>
+ * @see  org.springframework.retry.stats.RetryStatisticsFactory
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class DefaultRetryStatisticsFactory implements RetryStatisticsFactory {
 
 	private long window = 15000;
 
-	/**
-	 * Window in milliseconds for exponential decay factor in rolling averages.
-	 * @param window the window to set
-	 */
-	public void setWindow(long window) {
+    /**
+     * <code>setWindow</code>
+     * <p>The set window setter method.</p>
+     * @param window long <p>The window parameter is <code>long</code> type.</p>
+     */
+    public void setWindow(long window) {
 		this.window = window;
 	}
 

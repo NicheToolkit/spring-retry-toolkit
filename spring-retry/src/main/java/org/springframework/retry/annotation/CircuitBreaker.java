@@ -25,13 +25,15 @@ import java.lang.annotation.Target;
 import org.springframework.core.annotation.AliasFor;
 
 /**
- * Annotation for a method invocation that is retryable.
- *
- * @author Dave Syer
- * @author Artem Bilan
- * @author Gary Russell
- * @since 1.2
- *
+ * <code>CircuitBreaker</code>
+ * <p>The circuit breaker interface.</p>
+ * @see  java.lang.annotation.Annotation
+ * @see  java.lang.annotation.Target
+ * @see  java.lang.annotation.Retention
+ * @see  java.lang.annotation.Documented
+ * @see  org.springframework.retry.annotation.Retryable
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
@@ -39,164 +41,159 @@ import org.springframework.core.annotation.AliasFor;
 @Retryable(stateful = true)
 public @interface CircuitBreaker {
 
-	/**
-	 * Exception types that are retryable. Defaults to empty (and if excludes is also
-	 * empty all exceptions are retried).
-	 * @return exception types to retry
-	 * @deprecated in favor of {@link #retryFor()}
-	 */
-	@AliasFor(annotation = Retryable.class)
+    /**
+     * <code>value</code>
+     * <p>The value method.</p>
+     * @deprecated  <p>The value method has be deprecated.</p>
+     * @return  {@link java.lang.Class} <p>The value return object is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  org.springframework.core.annotation.AliasFor
+     * @see  java.lang.Deprecated
+     */
+    @AliasFor(annotation = Retryable.class)
 	@Deprecated
 	Class<? extends Throwable>[] value() default {};
 
-	/**
-	 * Exception types that are retryable. Defaults to empty (and if excludes is also
-	 * empty all exceptions are retried).
-	 * @return exception types to retry
-	 * @deprecated in favor of {@link #retryFor()}.
-	 */
-	@AliasFor(annotation = Retryable.class)
+    /**
+     * <code>include</code>
+     * <p>The include method.</p>
+     * @deprecated  <p>The include method has be deprecated.</p>
+     * @return  {@link java.lang.Class} <p>The include return object is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  org.springframework.core.annotation.AliasFor
+     * @see  java.lang.Deprecated
+     */
+    @AliasFor(annotation = Retryable.class)
 	@Deprecated
 	Class<? extends Throwable>[] include() default {};
 
-	/**
-	 * Exception types that are retryable. Defaults to empty (and, if noRetryFor is also
-	 * empty, all exceptions are retried).
-	 * @return exception types to retry
-	 * @since 2.0
-	 */
-	@AliasFor(annotation = Retryable.class)
+    /**
+     * <code>retryFor</code>
+     * <p>The retry for method.</p>
+     * @return  {@link java.lang.Class} <p>The retry for return object is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor(annotation = Retryable.class)
 	Class<? extends Throwable>[] retryFor() default {};
 
-	/**
-	 * Exception types that are not retryable. Defaults to empty (and if includes is also
-	 * empty all exceptions are retried). If includes is empty but excludes is not, all
-	 * not excluded exceptions are retried
-	 * @return exception types not to retry
-	 * @deprecated in favor of {@link #noRetryFor()}.
-	 */
-	@Deprecated
+    /**
+     * <code>exclude</code>
+     * <p>The exclude method.</p>
+     * @deprecated  <p>The exclude method has be deprecated.</p>
+     * @return  {@link java.lang.Class} <p>The exclude return object is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  java.lang.Deprecated
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @Deprecated
 	@AliasFor(annotation = Retryable.class)
 	Class<? extends Throwable>[] exclude() default {};
 
-	/**
-	 * Exception types that are not retryable. Defaults to empty (and, if retryFor is also
-	 * empty, all exceptions are retried). If retryFor is empty but excludes is not, all
-	 * other exceptions are retried
-	 * @return exception types not to retry
-	 * @since 2.0
-	 */
-	@AliasFor(annotation = Retryable.class)
+    /**
+     * <code>noRetryFor</code>
+     * <p>The no retry for method.</p>
+     * @return  {@link java.lang.Class} <p>The no retry for return object is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor(annotation = Retryable.class)
 	Class<? extends Throwable>[] noRetryFor() default {};
 
-	/**
-	 * Exception types that are not recoverable; these exceptions are thrown to the caller
-	 * without calling any recoverer (immediately if also in {@link #noRetryFor()}).
-	 * Defaults to empty.
-	 * @return exception types not to retry
-	 * @since 2.0
-	 */
-	@AliasFor(annotation = Retryable.class)
+    /**
+     * <code>notRecoverable</code>
+     * <p>The not recoverable method.</p>
+     * @return  {@link java.lang.Class} <p>The not recoverable return object is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor(annotation = Retryable.class)
 	Class<? extends Throwable>[] notRecoverable() default {};
 
-	/**
-	 * @return the maximum number of attempts (including the first failure), defaults to 3
-	 */
-	@AliasFor(annotation = Retryable.class)
+    /**
+     * <code>maxAttempts</code>
+     * <p>The max attempts method.</p>
+     * @return  int <p>The max attempts return object is <code>int</code> type.</p>
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor(annotation = Retryable.class)
 	int maxAttempts() default 3;
 
-	/**
-	 * @return an expression evaluated to the maximum number of attempts (including the
-	 * first failure), defaults to 3 Overrides {@link #maxAttempts()}. Use {@code #{...}}
-	 * for one-time evaluation during initialization, omit the delimiters for evaluation
-	 * at runtime.
-	 * @since 1.2.3
-	 */
-	@AliasFor(annotation = Retryable.class)
+    /**
+     * <code>maxAttemptsExpression</code>
+     * <p>The max attempts expression method.</p>
+     * @return  {@link java.lang.String} <p>The max attempts expression return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor(annotation = Retryable.class)
 	String maxAttemptsExpression() default "";
 
-	/**
-	 * A unique label for the circuit for reporting and state management. Defaults to the
-	 * method signature where the annotation is declared.
-	 * @return the label for the circuit
-	 */
-	@AliasFor(annotation = Retryable.class)
+    /**
+     * <code>label</code>
+     * <p>The label method.</p>
+     * @return  {@link java.lang.String} <p>The label return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor(annotation = Retryable.class)
 	String label() default "";
 
-	/**
-	 * If the circuit is open for longer than this timeout then it resets on the next call
-	 * to give the downstream component a chance to respond again.
-	 * @return the timeout before an open circuit is reset in milliseconds, defaults to
-	 * 20000
-	 */
-	long resetTimeout() default 20000;
+    /**
+     * <code>resetTimeout</code>
+     * <p>The reset timeout method.</p>
+     * @return  long <p>The reset timeout return object is <code>long</code> type.</p>
+     */
+    long resetTimeout() default 20000;
 
-	/**
-	 * If the circuit is open for longer than this timeout then it resets on the next call
-	 * to give the downstream component a chance to respond again. Overrides
-	 * {@link #resetTimeout()}. Use {@code #{...}} for one-time evaluation during
-	 * initialization, omit the delimiters for evaluation at runtime.
-	 * @return the timeout before an open circuit is reset in milliseconds, no default.
-	 * @since 1.2.3
-	 */
-	String resetTimeoutExpression() default "";
+    /**
+     * <code>resetTimeoutExpression</code>
+     * <p>The reset timeout expression method.</p>
+     * @return  {@link java.lang.String} <p>The reset timeout expression return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String resetTimeoutExpression() default "";
 
-	/**
-	 * When {@link #maxAttempts()} failures are reached within this timeout, the circuit
-	 * is opened automatically, preventing access to the downstream component.
-	 * @return the timeout before a closed circuit is opened in milliseconds, defaults to
-	 * 5000
-	 */
-	long openTimeout() default 5000;
+    /**
+     * <code>openTimeout</code>
+     * <p>The open timeout method.</p>
+     * @return  long <p>The open timeout return object is <code>long</code> type.</p>
+     */
+    long openTimeout() default 5000;
 
-	/**
-	 * When {@link #maxAttempts()} failures are reached within this timeout, the circuit
-	 * is opened automatically, preventing access to the downstream component. Overrides
-	 * {@link #openTimeout()}. Use {@code #{...}} for one-time evaluation during
-	 * initialization, omit the delimiters for evaluation at runtime.
-	 * @return the timeout before a closed circuit is opened in milliseconds, no default.
-	 * @since 1.2.3
-	 */
-	String openTimeoutExpression() default "";
+    /**
+     * <code>openTimeoutExpression</code>
+     * <p>The open timeout expression method.</p>
+     * @return  {@link java.lang.String} <p>The open timeout expression return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     */
+    String openTimeoutExpression() default "";
 
-	/**
-	 * Specify an expression to be evaluated after the
-	 * {@code SimpleRetryPolicy.canRetry()} returns true - can be used to conditionally
-	 * suppress the retry. Only invoked after an exception is thrown. The root object for
-	 * the evaluation is the last {@code Throwable}. Other beans in the context can be
-	 * referenced. For example:
-	 *
-	 * <pre class=code>
-	 *  {@code "message.contains('you can retry this')"}.
-	 * </pre>
-	 *
-	 * and
-	 *
-	 * <pre class=code>
-	 *  {@code "@someBean.shouldRetry(#root)"}.
-	 * </pre>
-	 * @return the expression.
-	 * @since 1.2.3
-	 */
-	@AliasFor(annotation = Retryable.class)
+    /**
+     * <code>exceptionExpression</code>
+     * <p>The exception expression method.</p>
+     * @return  {@link java.lang.String} <p>The exception expression return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor(annotation = Retryable.class)
 	String exceptionExpression() default "";
 
-	/**
-	 * Set to {@code true} to not wrap last exception to the
-	 * {@link org.springframework.retry.ExhaustedRetryException} when retry is exhausted.
-	 * @return the boolean flag to whether wrap the last exception to the
-	 * {@link org.springframework.retry.ExhaustedRetryException}
-	 * @since 2.0.6
-	 */
-	boolean throwLastExceptionOnExhausted() default false;
+    /**
+     * <code>throwLastExceptionOnExhausted</code>
+     * <p>The throw last exception on exhausted method.</p>
+     * @return  boolean <p>The throw last exception on exhausted return object is <code>boolean</code> type.</p>
+     */
+    boolean throwLastExceptionOnExhausted() default false;
 
-	/**
-	 * Name of method in this class to use for recover. Method had to be marked with
-	 * {@link Recover} annotation.
-	 * @return the name of recover method
-	 * @since 2.0.9
-	 */
-	@AliasFor(annotation = Retryable.class)
+    /**
+     * <code>recover</code>
+     * <p>The recover method.</p>
+     * @return  {@link java.lang.String} <p>The recover return object is <code>String</code> type.</p>
+     * @see  java.lang.String
+     * @see  org.springframework.core.annotation.AliasFor
+     */
+    @AliasFor(annotation = Retryable.class)
 	String recover() default "";
 
 }

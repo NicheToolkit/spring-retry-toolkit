@@ -28,73 +28,52 @@ import org.springframework.retry.context.RetryContextSupport;
 import org.springframework.util.Assert;
 
 /**
- * A {@link RetryPolicy} that dynamically adapts to one of a set of injected policies
- * according to the value of the latest exception.
- *
- * @author Dave Syer
- *
+ * <code>ExceptionClassifierRetryPolicy</code>
+ * <p>The exception classifier retry policy class.</p>
+ * @see  org.springframework.retry.RetryPolicy
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class ExceptionClassifierRetryPolicy implements RetryPolicy {
 
 	private Classifier<Throwable, RetryPolicy> exceptionClassifier = new ClassifierSupport<>(new NeverRetryPolicy());
 
-	/**
-	 * Setter for policy map used to create a classifier. Either this property or the
-	 * exception classifier directly should be set, but not both.
-	 * @param policyMap a map of Throwable class to {@link RetryPolicy} that will be used
-	 * to create a {@link Classifier} to locate a policy.
-	 */
-	public void setPolicyMap(Map<Class<? extends Throwable>, RetryPolicy> policyMap) {
+    /**
+     * <code>setPolicyMap</code>
+     * <p>The set policy map setter method.</p>
+     * @param policyMap {@link java.util.Map} <p>The policy map parameter is <code>Map</code> type.</p>
+     * @see  java.util.Map
+     */
+    public void setPolicyMap(Map<Class<? extends Throwable>, RetryPolicy> policyMap) {
 		this.exceptionClassifier = new SubclassClassifier<>(policyMap, new NeverRetryPolicy());
 	}
 
-	/**
-	 * Setter for an exception classifier. The classifier is responsible for translating
-	 * exceptions to concrete retry policies. Either this property or the policy map
-	 * should be used, but not both.
-	 * @param exceptionClassifier ExceptionClassifier to use
-	 */
-	public void setExceptionClassifier(Classifier<Throwable, RetryPolicy> exceptionClassifier) {
+    /**
+     * <code>setExceptionClassifier</code>
+     * <p>The set exception classifier setter method.</p>
+     * @param exceptionClassifier {@link org.springframework.classify.Classifier} <p>The exception classifier parameter is <code>Classifier</code> type.</p>
+     * @see  org.springframework.classify.Classifier
+     */
+    public void setExceptionClassifier(Classifier<Throwable, RetryPolicy> exceptionClassifier) {
 		this.exceptionClassifier = exceptionClassifier;
 	}
 
-	/**
-	 * Delegate to the policy currently activated in the context.
-	 *
-	 * @see RetryPolicy#canRetry(RetryContext)
-	 */
 	public boolean canRetry(RetryContext context) {
 		RetryPolicy policy = (RetryPolicy) context;
 		return policy.canRetry(context);
 	}
 
-	/**
-	 * Delegate to the policy currently activated in the context.
-	 *
-	 * @see RetryPolicy#close(RetryContext)
-	 */
 	public void close(RetryContext context) {
 		RetryPolicy policy = (RetryPolicy) context;
 		policy.close(context);
 	}
 
-	/**
-	 * Create an active context that proxies a retry policy by choosing a target from the
-	 * policy map.
-	 *
-	 * @see RetryPolicy#open(RetryContext)
-	 */
 	public RetryContext open(RetryContext parent) {
 		return new ExceptionClassifierRetryContext(parent, exceptionClassifier).open(parent);
 	}
 
-	/**
-	 * Delegate to the policy currently activated in the context.
-	 *
-	 * @see RetryPolicy#registerThrowable(RetryContext,
-	 * Throwable)
-	 */
 	public void registerThrowable(RetryContext context, Throwable throwable) {
 		RetryPolicy policy = (RetryPolicy) context;
 		policy.registerThrowable(context, throwable);
@@ -113,7 +92,15 @@ public class ExceptionClassifierRetryPolicy implements RetryPolicy {
 
 		final private Map<RetryPolicy, RetryContext> contexts = new HashMap<>();
 
-		public ExceptionClassifierRetryContext(RetryContext parent,
+        /**
+         * <code>ExceptionClassifierRetryContext</code>
+         * <p>Instantiates a new exception classifier retry context.</p>
+         * @param parent {@link org.springframework.retry.RetryContext} <p>The parent parameter is <code>RetryContext</code> type.</p>
+         * @param exceptionClassifier {@link org.springframework.classify.Classifier} <p>The exception classifier parameter is <code>Classifier</code> type.</p>
+         * @see  org.springframework.retry.RetryContext
+         * @see  org.springframework.classify.Classifier
+         */
+        public ExceptionClassifierRetryContext(RetryContext parent,
 				Classifier<Throwable, RetryPolicy> exceptionClassifier) {
 			super(parent);
 			this.exceptionClassifier = exceptionClassifier;

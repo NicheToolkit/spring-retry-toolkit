@@ -24,18 +24,23 @@ import org.springframework.retry.context.RetryContextSupport;
 import org.springframework.util.Assert;
 
 /**
- * A policy, that is based on {@link Predicate<Throwable>}. Usually, binary classification
- * is enough for retry purposes. If you need more flexible classification, use
- * {@link ExceptionClassifierRetryPolicy}.
- *
- * @author Morulai Planinski
- * @since 2.0.7
+ * <code>PredicateRetryPolicy</code>
+ * <p>The predicate retry policy class.</p>
+ * @see  org.springframework.retry.RetryPolicy
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class PredicateRetryPolicy implements RetryPolicy {
 
 	private final Predicate<Throwable> predicate;
 
-	public PredicateRetryPolicy(Predicate<Throwable> predicate) {
+    /**
+     * <code>PredicateRetryPolicy</code>
+     * <p>Instantiates a new predicate retry policy.</p>
+     * @param predicate {@link java.util.function.Predicate} <p>The predicate parameter is <code>Predicate</code> type.</p>
+     * @see  java.util.function.Predicate
+     */
+    public PredicateRetryPolicy(Predicate<Throwable> predicate) {
 		Assert.notNull(predicate, "'predicate' must not be null");
 		this.predicate = predicate;
 	}

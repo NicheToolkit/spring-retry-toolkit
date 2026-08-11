@@ -23,9 +23,11 @@ import java.util.Map;
 import org.springframework.util.Assert;
 
 /**
- * @author Dave Syer
- * @author Dan Garrette
- * @param <S> the type of the thing to match a pattern on
+ * <code>PatternMatcher</code>
+ * <p>The pattern matcher class.</p>
+ * @param <S>  {@link java.lang.Object} <p>The parameter can be of any type.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class PatternMatcher<S> {
 
@@ -33,11 +35,13 @@ public class PatternMatcher<S> {
 
 	private List<String> sorted = new ArrayList<>();
 
-	/**
-	 * Initialize a new {@link PatternMatcher} with a map of patterns to values
-	 * @param map a map from String patterns to values
-	 */
-	public PatternMatcher(Map<String, S> map) {
+    /**
+     * <code>PatternMatcher</code>
+     * <p>Instantiates a new pattern matcher.</p>
+     * @param map {@link java.util.Map} <p>The map parameter is <code>Map</code> type.</p>
+     * @see  java.util.Map
+     */
+    public PatternMatcher(Map<String, S> map) {
 		super();
 		this.map = map;
 		// Sort keys to start with the most specific
@@ -49,18 +53,15 @@ public class PatternMatcher<S> {
 		});
 	}
 
-	/**
-	 * Lifted from AntPathMatcher in Spring Core. Tests whether or not a string matches
-	 * against a pattern. The pattern may contain two special characters:<br>
-	 * '*' means zero or more characters<br>
-	 * '?' means one and only one character
-	 * @param pattern pattern to match against. Must not be <code>null</code>.
-	 * @param str string which must be matched against the pattern. Must not be
-	 * <code>null</code>.
-	 * @return <code>true</code> if the string matches against the pattern, or
-	 * <code>false</code> otherwise.
-	 */
-	public static boolean match(String pattern, String str) {
+    /**
+     * <code>match</code>
+     * <p>The match method.</p>
+     * @param pattern {@link java.lang.String} <p>The pattern parameter is <code>String</code> type.</p>
+     * @param str {@link java.lang.String} <p>The str parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     * @return  boolean <p>The match return object is <code>boolean</code> type.</p>
+     */
+    public static boolean match(String pattern, String str) {
 		char[] patArr = pattern.toCharArray();
 		char[] strArr = str.toCharArray();
 		int patIdxStart = 0;
@@ -186,23 +187,14 @@ public class PatternMatcher<S> {
 		return true;
 	}
 
-	/**
-	 * <p>
-	 * This method takes a String key and a map from Strings to values of any type. During
-	 * processing, the method will identify the most specific key in the map that matches
-	 * the line. Once the correct is identified, its value is returned. Note that if the
-	 * map contains the wildcard string "*" as a key, then it will serve as the "default"
-	 * case, matching every line that does not match anything else.
-	 *
-	 * <p>
-	 * If no matching prefix is found, a {@link IllegalStateException} will be thrown.
-	 *
-	 * <p>
-	 * Null keys are not allowed in the map.
-	 * @param line An input string
-	 * @return the value whose prefix matches the given line
-	 */
-	public S match(String line) {
+    /**
+     * <code>match</code>
+     * <p>The match method.</p>
+     * @param line {@link java.lang.String} <p>The line parameter is <code>String</code> type.</p>
+     * @see  java.lang.String
+     * @return  S <p>The match return object is <code>S</code> type.</p>
+     */
+    public S match(String line) {
 
 		S value = null;
 		Assert.notNull(line, "A non-null key must be provided to match against.");

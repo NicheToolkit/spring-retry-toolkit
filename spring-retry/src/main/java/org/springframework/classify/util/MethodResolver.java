@@ -19,31 +19,33 @@ package org.springframework.classify.util;
 import java.lang.reflect.Method;
 
 /**
- * Strategy interface for detecting a single Method on a Class.
- *
- * @author Mark Fisher
+ * <code>MethodResolver</code>
+ * <p>The method resolver interface.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface MethodResolver {
 
-	/**
-	 * Find a single Method on the provided Object that matches this resolver's criteria.
-	 * @param candidate the candidate Object whose Class should be searched for a Method
-	 * @return a single Method or <code>null</code> if no Method matching this resolver's
-	 * criteria can be found.
-	 * @throws IllegalArgumentException if more than one Method defined on the given
-	 * candidate's Class matches this resolver's criteria
-	 */
-	Method findMethod(Object candidate) throws IllegalArgumentException;
+    /**
+     * <code>findMethod</code>
+     * <p>The find method method.</p>
+     * @param candidate {@link java.lang.Object} <p>The candidate parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     * @see  java.lang.reflect.Method
+     * @see  java.lang.IllegalArgumentException
+     * @return  {@link java.lang.reflect.Method} <p>The find method return object is <code>Method</code> type.</p>
+     * @throws IllegalArgumentException {@link java.lang.IllegalArgumentException} <p>The illegal argument exception is <code>IllegalArgumentException</code> type.</p>
+     */
+    Method findMethod(Object candidate) throws IllegalArgumentException;
 
-	/**
-	 * Find a <em>single</em> Method on the given Class that matches this resolver's
-	 * criteria.
-	 * @param clazz the Class instance on which to search for a Method
-	 * @return a single Method or <code>null</code> if no Method matching this resolver's
-	 * criteria can be found.
-	 * @throws IllegalArgumentException if more than one Method defined on the given Class
-	 * matches this resolver's criteria
-	 */
-	Method findMethod(Class<?> clazz);
+    /**
+     * <code>findMethod</code>
+     * <p>The find method method.</p>
+     * @param clazz {@link java.lang.Class} <p>The clazz parameter is <code>Class</code> type.</p>
+     * @see  java.lang.Class
+     * @see  java.lang.reflect.Method
+     * @return  {@link java.lang.reflect.Method} <p>The find method return object is <code>Method</code> type.</p>
+     */
+    Method findMethod(Class<?> clazz);
 
 }

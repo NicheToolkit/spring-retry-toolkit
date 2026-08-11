@@ -20,19 +20,43 @@ import org.springframework.core.AttributeAccessor;
 import org.springframework.retry.RetryStatistics;
 
 /**
- * @author Dave Syer
- *
+ * <code>MutableRetryStatistics</code>
+ * <p>The mutable retry statistics interface.</p>
+ * @see  org.springframework.retry.RetryStatistics
+ * @see  org.springframework.core.AttributeAccessor
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface MutableRetryStatistics extends RetryStatistics, AttributeAccessor {
 
-	void incrementStartedCount();
+    /**
+     * <code>incrementStartedCount</code>
+     * <p>The increment started count method.</p>
+     */
+    void incrementStartedCount();
 
-	void incrementCompleteCount();
+    /**
+     * <code>incrementCompleteCount</code>
+     * <p>The increment complete count method.</p>
+     */
+    void incrementCompleteCount();
 
-	void incrementRecoveryCount();
+    /**
+     * <code>incrementRecoveryCount</code>
+     * <p>The increment recovery count method.</p>
+     */
+    void incrementRecoveryCount();
 
-	void incrementErrorCount();
+    /**
+     * <code>incrementErrorCount</code>
+     * <p>The increment error count method.</p>
+     */
+    void incrementErrorCount();
 
-	void incrementAbortCount();
+    /**
+     * <code>incrementAbortCount</code>
+     * <p>The increment abort count method.</p>
+     */
+    void incrementAbortCount();
 
 }

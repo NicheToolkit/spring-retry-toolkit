@@ -25,21 +25,38 @@ import org.springframework.retry.context.RetryContextSupport;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Dave Syer
- * @author Gary Russell
+ * <code>RetrySynchronizationManagerTests</code>
+ * <p>The retry synchronization manager tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RetrySynchronizationManagerTests {
 
-	RetryTemplate template = new RetryTemplate();
+    /**
+     * <code>template</code>
+     * {@link org.springframework.retry.support.RetryTemplate} <p>The <code>template</code> field.</p>
+     * @see  org.springframework.retry.support.RetryTemplate
+     */
+    RetryTemplate template = new RetryTemplate();
 
-	@BeforeEach
+    /**
+     * <code>setUp</code>
+     * <p>The set up setter method.</p>
+     * @see  org.junit.jupiter.api.BeforeEach
+     */
+    @BeforeEach
 	public void setUp() {
 		RetrySynchronizationManagerTests.clearAll();
 		RetryContext status = RetrySynchronizationManager.getContext();
 		assertThat(status).isNull();
 	}
 
-	@Test
+    /**
+     * <code>testStatusIsStoredByTemplate</code>
+     * <p>The test status is stored by template method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testStatusIsStoredByTemplate() {
 
 		RetryContext status = RetrySynchronizationManager.getContext();
@@ -56,7 +73,12 @@ public class RetrySynchronizationManagerTests {
 		assertThat(status).isNull();
 	}
 
-	@Test
+    /**
+     * <code>testStatusRegistration</code>
+     * <p>The test status registration method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testStatusRegistration() {
 		RetryContext status = new RetryContextSupport(null);
 		RetryContext value = RetrySynchronizationManager.register(status);
@@ -65,7 +87,12 @@ public class RetrySynchronizationManagerTests {
 		assertThat(value).isEqualTo(status);
 	}
 
-	@Test
+    /**
+     * <code>testClear</code>
+     * <p>The test clear method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testClear() {
 		RetryContext status = new RetryContextSupport(null);
 		RetryContext value = RetrySynchronizationManager.register(status);
@@ -75,19 +102,25 @@ public class RetrySynchronizationManagerTests {
 		assertThat(value).isNull();
 	}
 
-	@Test
+    /**
+     * <code>testParent</code>
+     * <p>The test parent method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testParent() {
 		RetryContext parent = new RetryContextSupport(null);
 		RetryContext child = new RetryContextSupport(parent);
 		assertThat(child.getParent()).isSameAs(parent);
 	}
 
-	/**
-	 * Clear all contexts starting with the current one and continuing until
-	 * {@link RetrySynchronizationManager#clear()} returns null.
-	 * @return a retry context
-	 */
-	public static RetryContext clearAll() {
+    /**
+     * <code>clearAll</code>
+     * <p>The clear all method.</p>
+     * @return  {@link org.springframework.retry.RetryContext} <p>The clear all return object is <code>RetryContext</code> type.</p>
+     * @see  org.springframework.retry.RetryContext
+     */
+    public static RetryContext clearAll() {
 		RetryContext result = null;
 		RetryContext context = RetrySynchronizationManager.clear();
 		while (context != null) {

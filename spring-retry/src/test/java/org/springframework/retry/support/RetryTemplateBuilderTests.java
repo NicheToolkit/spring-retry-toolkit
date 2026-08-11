@@ -37,11 +37,9 @@ import org.springframework.retry.backoff.UniformRandomBackOffPolicy;
 import org.springframework.retry.policy.AlwaysRetryPolicy;
 import org.springframework.retry.policy.BinaryExceptionClassifierRetryPolicy;
 import org.springframework.retry.policy.CompositeRetryPolicy;
-import org.springframework.retry.policy.MapRetryContextCache;
 import org.springframework.retry.policy.MaxAttemptsRetryPolicy;
 import org.springframework.retry.policy.PredicateRetryPolicy;
 import org.springframework.retry.policy.TimeoutRetryPolicy;
-import org.springframework.retry.util.test.TestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -49,23 +47,21 @@ import static org.mockito.Mockito.mock;
 import static org.springframework.retry.util.test.TestUtils.getPropertyValue;
 
 /**
- * The goal of the builder is to build proper instance. So, this test inspects instance
- * structure instead behaviour. Writing more integrative test is also encouraged.
- * Accessing of private fields is performed via {@link TestUtils#getPropertyValue} to
- * follow project's style.
- *
- * @author Aleksandr Shamukov
- * @author Kim In Hoi
- * @author Gary Russell
- * @author Andreas Ahlenstorf
- * @author Morulai Planinski
- * @author Tobias Soloschenko
+ * <code>RetryTemplateBuilderTests</code>
+ * <p>The retry template builder tests class.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public class RetryTemplateBuilderTests {
 
 	/* ---------------- Mixed tests -------------- */
 
-	@Test
+    /**
+     * <code>testDefaultBehavior</code>
+     * <p>The test default behavior method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testDefaultBehavior() {
 		RetryTemplate template = RetryTemplate.builder().build();
 
@@ -81,7 +77,12 @@ public class RetryTemplateBuilderTests {
 		assertThat(getPropertyValue(template, "backOffPolicy")).isInstanceOf(NoBackOffPolicy.class);
 	}
 
-	@Test
+    /**
+     * <code>testBasicCustomization</code>
+     * <p>The test basic customization method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testBasicCustomization() {
 		RetryListener listener1 = mock(RetryListener.class);
 		RetryListener listener2 = mock(RetryListener.class);
@@ -118,16 +119,27 @@ public class RetryTemplateBuilderTests {
 
 	/* ---------------- Retry policy -------------- */
 
-	@Test
+    /**
+     * <code>testFailOnRetryPoliciesConflict</code>
+     * <p>The test fail on retry policies conflict method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFailOnRetryPoliciesConflict() {
 		assertThatIllegalArgumentException()
 			.isThrownBy(() -> RetryTemplate.builder().maxAttempts(3).withTimeout(1000).build());
 	}
 
-	@Test
+    /**
+     * <code>testTimeoutPolicy</code>
+     * <p>The test timeout policy method.</p>
+     * @see  org.junit.jupiter.api.Test
+     * @see  java.lang.SuppressWarnings
+     */
+    @Test
 	@SuppressWarnings("removal")
 	public void testTimeoutPolicy() {
-		RetryTemplate template = RetryTemplate.builder().withinMillis(10000).build();
+		RetryTemplate template = RetryTemplate.builder().withTimeout(10000).build();
 
 		PolicyTuple policyTuple = PolicyTuple.extractWithAsserts(template);
 		assertDefaultClassifier(policyTuple);
@@ -136,7 +148,12 @@ public class RetryTemplateBuilderTests {
 		assertThat(((TimeoutRetryPolicy) policyTuple.baseRetryPolicy).getTimeout()).isEqualTo(10000);
 	}
 
-	@Test
+    /**
+     * <code>testTimeoutMillis</code>
+     * <p>The test timeout millis method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testTimeoutMillis() {
 		RetryTemplate template = RetryTemplate.builder().withTimeout(10000).build();
 
@@ -147,7 +164,12 @@ public class RetryTemplateBuilderTests {
 		assertThat(((TimeoutRetryPolicy) policyTuple.baseRetryPolicy).getTimeout()).isEqualTo(10000);
 	}
 
-	@Test
+    /**
+     * <code>testTimeoutDuration</code>
+     * <p>The test timeout duration method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testTimeoutDuration() {
 		RetryTemplate template = RetryTemplate.builder().withTimeout(Duration.ofSeconds(3)).build();
 
@@ -158,7 +180,12 @@ public class RetryTemplateBuilderTests {
 		assertThat(((TimeoutRetryPolicy) policyTuple.baseRetryPolicy).getTimeout()).isEqualTo(3000);
 	}
 
-	@Test
+    /**
+     * <code>testInfiniteRetry</code>
+     * <p>The test infinite retry method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testInfiniteRetry() {
 		RetryTemplate template = RetryTemplate.builder().infiniteRetry().build();
 
@@ -168,7 +195,12 @@ public class RetryTemplateBuilderTests {
 		assertThat(policyTuple.baseRetryPolicy).isInstanceOf(AlwaysRetryPolicy.class);
 	}
 
-	@Test
+    /**
+     * <code>testCustomPolicy</code>
+     * <p>The test custom policy method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testCustomPolicy() {
 		RetryPolicy customPolicy = mock(RetryPolicy.class);
 
@@ -192,32 +224,57 @@ public class RetryTemplateBuilderTests {
 
 	/* ---------------- Exception classification -------------- */
 
-	@Test
+    /**
+     * <code>testFailOnEmptyExceptionClassifierRules</code>
+     * <p>The test fail on empty exception classifier rules method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFailOnEmptyExceptionClassifierRules() {
 		assertThatIllegalArgumentException().isThrownBy(() -> RetryTemplate.builder().traversingCauses().build());
 	}
 
-	@Test
+    /**
+     * <code>testFailOnNotationMix</code>
+     * <p>The test fail on notation mix method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFailOnNotationMix() {
 		assertThatIllegalArgumentException()
 			.isThrownBy(() -> RetryTemplate.builder().retryOn(IOException.class).notRetryOn(OutOfMemoryError.class));
 	}
 
-	@Test
+    /**
+     * <code>testFailOnNotationsMix</code>
+     * <p>The test fail on notations mix method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFailOnNotationsMix() {
 		assertThatIllegalArgumentException().isThrownBy(() -> RetryTemplate.builder()
 			.retryOn(Collections.<Class<? extends Throwable>>singletonList(IOException.class))
 			.notRetryOn(Collections.<Class<? extends Throwable>>singletonList(OutOfMemoryError.class)));
 	}
 
-	@Test
+    /**
+     * <code>testFailOnPredicateWithOtherMix</code>
+     * <p>The test fail on predicate with other mix method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFailOnPredicateWithOtherMix() {
 		assertThatIllegalArgumentException().isThrownBy(() -> RetryTemplate.builder()
 			.retryOn(Collections.<Class<? extends Throwable>>singletonList(IOException.class))
 			.retryOn(classifiable -> true));
 	}
 
-	@Test
+    /**
+     * <code>testRetryOnPredicate</code>
+     * <p>The test retry on predicate method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testRetryOnPredicate() {
 		Predicate<Throwable> predicate = classifiable -> classifiable instanceof IllegalAccessError;
 		RetryTemplate template = RetryTemplate.builder().maxAttempts(10).retryOn(predicate).build();
@@ -234,18 +291,33 @@ public class RetryTemplateBuilderTests {
 
 	/* ---------------- BackOff -------------- */
 
-	@Test
+    /**
+     * <code>testFailOnBackOffPolicyNull</code>
+     * <p>The test fail on back off policy null method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFailOnBackOffPolicyNull() {
 		assertThatIllegalArgumentException().isThrownBy(() -> RetryTemplate.builder().customBackoff(null).build());
 	}
 
-	@Test
+    /**
+     * <code>testFailOnBackOffPolicyConflict</code>
+     * <p>The test fail on back off policy conflict method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFailOnBackOffPolicyConflict() {
 		assertThatIllegalArgumentException()
 			.isThrownBy(() -> RetryTemplate.builder().noBackoff().fixedBackoff(1000).build());
 	}
 
-	@Test
+    /**
+     * <code>testFixedBackoff</code>
+     * <p>The test fixed backoff method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFixedBackoff() {
 		RetryTemplate template = RetryTemplate.builder().fixedBackoff(200).build();
 		FixedBackOffPolicy policy = getPropertyValue(template, "backOffPolicy", FixedBackOffPolicy.class);
@@ -253,7 +325,12 @@ public class RetryTemplateBuilderTests {
 		assertThat(policy.getBackOffPeriod()).isEqualTo(200);
 	}
 
-	@Test
+    /**
+     * <code>testFixedBackoffDuration</code>
+     * <p>The test fixed backoff duration method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testFixedBackoffDuration() {
 		RetryTemplate template = RetryTemplate.builder().fixedBackoff(Duration.ofSeconds(1)).build();
 		FixedBackOffPolicy policy = getPropertyValue(template, "backOffPolicy", FixedBackOffPolicy.class);
@@ -261,13 +338,23 @@ public class RetryTemplateBuilderTests {
 		assertThat(policy.getBackOffPeriod()).isEqualTo(1000);
 	}
 
-	@Test
+    /**
+     * <code>testUniformRandomBackOff</code>
+     * <p>The test uniform random back off method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testUniformRandomBackOff() {
 		RetryTemplate template = RetryTemplate.builder().uniformRandomBackoff(10, 100).build();
 		assertThat(getPropertyValue(template, "backOffPolicy")).isInstanceOf(UniformRandomBackOffPolicy.class);
 	}
 
-	@Test
+    /**
+     * <code>testUniformRandomBackOffDuration</code>
+     * <p>The test uniform random back off duration method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testUniformRandomBackOffDuration() {
 		RetryTemplate template = RetryTemplate.builder()
 			.uniformRandomBackoff(Duration.ofSeconds(1), Duration.ofSeconds(2))
@@ -280,13 +367,23 @@ public class RetryTemplateBuilderTests {
 		assertThat(policy.getMaxBackOffPeriod()).isEqualTo(2000);
 	}
 
-	@Test
+    /**
+     * <code>testNoBackOff</code>
+     * <p>The test no back off method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testNoBackOff() {
 		RetryTemplate template = RetryTemplate.builder().noBackoff().build();
 		assertThat(getPropertyValue(template, "backOffPolicy")).isInstanceOf(NoBackOffPolicy.class);
 	}
 
-	@Test
+    /**
+     * <code>testExponentialBackoff</code>
+     * <p>The test exponential backoff method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testExponentialBackoff() {
 		RetryTemplate template = RetryTemplate.builder().exponentialBackoff(10, 2, 500).build();
 		ExponentialBackOffPolicy policy = getPropertyValue(template, "backOffPolicy", ExponentialBackOffPolicy.class);
@@ -296,7 +393,12 @@ public class RetryTemplateBuilderTests {
 		assertThat(policy.getMaxInterval()).isEqualTo(500);
 	}
 
-	@Test
+    /**
+     * <code>testExponentialBackoffDuration</code>
+     * <p>The test exponential backoff duration method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testExponentialBackoffDuration() {
 		RetryTemplate template = RetryTemplate.builder()
 			.exponentialBackoff(Duration.ofSeconds(2), 2, Duration.ofSeconds(3))
@@ -310,13 +412,23 @@ public class RetryTemplateBuilderTests {
 		assertThat(policy.getMaxInterval()).isEqualTo(3000);
 	}
 
-	@Test
+    /**
+     * <code>testExpBackOffWithRandom</code>
+     * <p>The test exp back off with random method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testExpBackOffWithRandom() {
 		RetryTemplate template = RetryTemplate.builder().exponentialBackoff(10, 2, 500, true).build();
 		assertThat(getPropertyValue(template, "backOffPolicy")).isInstanceOf(ExponentialRandomBackOffPolicy.class);
 	}
 
-	@Test
+    /**
+     * <code>testExponentialRandomBackoffDuration</code>
+     * <p>The test exponential random backoff duration method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testExponentialRandomBackoffDuration() {
 		RetryTemplate template = RetryTemplate.builder()
 			.exponentialBackoff(Duration.ofSeconds(2), 2, Duration.ofSeconds(3), true)
@@ -330,25 +442,45 @@ public class RetryTemplateBuilderTests {
 		assertThat(policy.getMaxInterval()).isEqualTo(3000);
 	}
 
-	@Test
+    /**
+     * <code>testValidateInitAndMax</code>
+     * <p>The test validate init and max method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testValidateInitAndMax() {
 		assertThatIllegalArgumentException()
 			.isThrownBy(() -> RetryTemplate.builder().exponentialBackoff(100, 2, 100).build());
 	}
 
-	@Test
+    /**
+     * <code>testValidateMeaninglessMultiplier</code>
+     * <p>The test validate meaningless multiplier method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testValidateMeaninglessMultiplier() {
 		assertThatIllegalArgumentException()
 			.isThrownBy(() -> RetryTemplate.builder().exponentialBackoff(100, 1, 200).build());
 	}
 
-	@Test
+    /**
+     * <code>testValidateZeroInitInterval</code>
+     * <p>The test validate zero init interval method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testValidateZeroInitInterval() {
 		assertThatIllegalArgumentException()
 			.isThrownBy(() -> RetryTemplate.builder().exponentialBackoff(0, 2, 200).build());
 	}
 
-	@Test
+    /**
+     * <code>testBuilderWithLogger</code>
+     * <p>The test builder with logger method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testBuilderWithLogger() {
 		Log logMock = mock(Log.class);
 		RetryTemplate retryTemplate = RetryTemplate.builder().withLogger(logMock).build();
@@ -356,7 +488,12 @@ public class RetryTemplateBuilderTests {
 		assertThat(logger).isEqualTo(logMock);
 	}
 
-	@Test
+    /**
+     * <code>testBuilderWithDefaultLogger</code>
+     * <p>The test builder with default logger method.</p>
+     * @see  org.junit.jupiter.api.Test
+     */
+    @Test
 	public void testBuilderWithDefaultLogger() {
 		RetryTemplate retryTemplate = RetryTemplate.builder().build();
 		Log logger = getPropertyValue(retryTemplate, "logger", Log.class);
@@ -367,11 +504,27 @@ public class RetryTemplateBuilderTests {
 
 	private static class PolicyTuple {
 
-		RetryPolicy baseRetryPolicy;
+        /**
+         * <code>baseRetryPolicy</code>
+         * {@link org.springframework.retry.RetryPolicy} <p>The <code>baseRetryPolicy</code> field.</p>
+         * @see  org.springframework.retry.RetryPolicy
+         */
+        RetryPolicy baseRetryPolicy;
 
-		RetryPolicy exceptionClassifierRetryPolicy;
+        /**
+         * <code>exceptionClassifierRetryPolicy</code>
+         * {@link org.springframework.retry.RetryPolicy} <p>The <code>exceptionClassifierRetryPolicy</code> field.</p>
+         * @see  org.springframework.retry.RetryPolicy
+         */
+        RetryPolicy exceptionClassifierRetryPolicy;
 
-		static PolicyTuple extractWithAsserts(RetryTemplate template) {
+        /**
+         * <code>extractWithAsserts</code>
+         * <p>The extract with asserts method.</p>
+         * @param template {@link org.springframework.retry.support.RetryTemplate} <p>The template parameter is <code>RetryTemplate</code> type.</p>
+         * @return  {@link org.springframework.retry.support.RetryTemplateBuilderTests.PolicyTuple} <p>The extract with asserts return object is <code>PolicyTuple</code> type.</p>
+         */
+        static PolicyTuple extractWithAsserts(RetryTemplate template) {
 			CompositeRetryPolicy compositeRetryPolicy = getPropertyValue(template, "retryPolicy",
 					CompositeRetryPolicy.class);
 			PolicyTuple res = new PolicyTuple();

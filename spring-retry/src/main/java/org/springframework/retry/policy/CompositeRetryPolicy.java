@@ -25,43 +25,44 @@ import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.context.RetryContextSupport;
 
 /**
- * A {@link RetryPolicy} that composes a list of other policies and delegates calls to
- * them in order.
- *
- * @author Dave Syer
- * @author Michael Minella
- * @author Emanuele Ivaldi
- *
+ * <code>CompositeRetryPolicy</code>
+ * <p>The composite retry policy class.</p>
+ * @see  org.springframework.retry.RetryPolicy
+ * @see  java.lang.SuppressWarnings
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 @SuppressWarnings("serial")
 public class CompositeRetryPolicy implements RetryPolicy {
 
-	RetryPolicy[] policies = new RetryPolicy[0];
+    /**
+     * <code>policies</code>
+     * {@link org.springframework.retry.RetryPolicy} <p>The <code>policies</code> field.</p>
+     * @see  org.springframework.retry.RetryPolicy
+     */
+    RetryPolicy[] policies = new RetryPolicy[0];
 
 	private boolean optimistic = false;
 
-	/**
-	 * Setter for optimistic.
-	 * @param optimistic should this retry policy be optimistic
-	 */
-	public void setOptimistic(boolean optimistic) {
+    /**
+     * <code>setOptimistic</code>
+     * <p>The set optimistic setter method.</p>
+     * @param optimistic boolean <p>The optimistic parameter is <code>boolean</code> type.</p>
+     */
+    public void setOptimistic(boolean optimistic) {
 		this.optimistic = optimistic;
 	}
 
-	/**
-	 * Setter for policies.
-	 * @param policies the {@link RetryPolicy} policies
-	 */
-	public void setPolicies(RetryPolicy[] policies) {
+    /**
+     * <code>setPolicies</code>
+     * <p>The set policies setter method.</p>
+     * @param policies {@link org.springframework.retry.RetryPolicy} <p>The policies parameter is <code>RetryPolicy</code> type.</p>
+     * @see  org.springframework.retry.RetryPolicy
+     */
+    public void setPolicies(RetryPolicy[] policies) {
 		this.policies = Arrays.asList(policies).toArray(new RetryPolicy[policies.length]);
 	}
 
-	/**
-	 * Delegate to the policies that were in operation when the context was created. If
-	 * any of them cannot retry then return false, otherwise return true.
-	 * @param context the {@link RetryContext}
-	 * @see RetryPolicy#canRetry(RetryContext)
-	 */
 	@Override
 	public boolean canRetry(RetryContext context) {
 		RetryContext[] contexts = ((CompositeRetryContext) context).contexts;
@@ -88,14 +89,6 @@ public class CompositeRetryPolicy implements RetryPolicy {
 		return retryable;
 	}
 
-	/**
-	 * Delegate to the policies that were in operation when the context was created. If
-	 * any of them fails to close the exception is propagated (and those later in the
-	 * chain are closed before re-throwing).
-	 *
-	 * @see RetryPolicy#close(RetryContext)
-	 * @param context the {@link RetryContext}
-	 */
 	@Override
 	public void close(RetryContext context) {
 		RetryContext[] contexts = ((CompositeRetryContext) context).contexts;
@@ -116,12 +109,6 @@ public class CompositeRetryPolicy implements RetryPolicy {
 		}
 	}
 
-	/**
-	 * Creates a new context that copies the existing policies and keeps a list of the
-	 * contexts from each one.
-	 *
-	 * @see RetryPolicy#open(RetryContext)
-	 */
 	@Override
 	public RetryContext open(RetryContext parent) {
 		List<RetryContext> list = new ArrayList<>();
@@ -131,11 +118,6 @@ public class CompositeRetryPolicy implements RetryPolicy {
 		return new CompositeRetryContext(parent, list, this.policies);
 	}
 
-	/**
-	 * Delegate to the policies that were in operation when the context was created.
-	 *
-	 * @see RetryPolicy#close(RetryContext)
-	 */
 	@Override
 	public void registerThrowable(RetryContext context, Throwable throwable) {
 		RetryContext[] contexts = ((CompositeRetryContext) context).contexts;
@@ -146,12 +128,6 @@ public class CompositeRetryPolicy implements RetryPolicy {
 		((RetryContextSupport) context).registerThrowable(throwable);
 	}
 
-	/**
-	 * @return the lower 'maximum number of attempts before failure' between all policies
-	 * that have a 'maximum number of attempts before failure' set, if at least one is
-	 * present among the policies, return {@link RetryPolicy#NO_MAXIMUM_ATTEMPTS_SET}
-	 * otherwise
-	 */
 	@Override
 	public int getMaxAttempts() {
 		return Arrays.stream(policies)
@@ -164,11 +140,31 @@ public class CompositeRetryPolicy implements RetryPolicy {
 
 	private static class CompositeRetryContext extends RetryContextSupport {
 
-		RetryContext[] contexts;
+        /**
+         * <code>contexts</code>
+         * <p>The contexts field.</p>
+         * @see  org.springframework.retry.RetryContext
+         */
+        RetryContext[] contexts;
 
-		RetryPolicy[] policies;
+        /**
+         * <code>policies</code>
+         * <p>The policies field.</p>
+         * @see  org.springframework.retry.RetryPolicy
+         */
+        RetryPolicy[] policies;
 
-		public CompositeRetryContext(RetryContext parent, List<RetryContext> contexts, RetryPolicy[] policies) {
+        /**
+         * <code>CompositeRetryContext</code>
+         * <p>Instantiates a new composite retry context.</p>
+         * @param parent {@link org.springframework.retry.RetryContext} <p>The parent parameter is <code>RetryContext</code> type.</p>
+         * @param contexts {@link java.util.List} <p>The contexts parameter is <code>List</code> type.</p>
+         * @param policies {@link org.springframework.retry.RetryPolicy} <p>The policies parameter is <code>RetryPolicy</code> type.</p>
+         * @see  org.springframework.retry.RetryContext
+         * @see  java.util.List
+         * @see  org.springframework.retry.RetryPolicy
+         */
+        public CompositeRetryContext(RetryContext parent, List<RetryContext> contexts, RetryPolicy[] policies) {
 			super(parent);
 			this.contexts = contexts.toArray(new RetryContext[contexts.size()]);
 			this.policies = policies;

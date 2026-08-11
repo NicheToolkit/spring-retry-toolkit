@@ -17,12 +17,20 @@
 package org.springframework.classify.util;
 
 /**
- * A strategy interface for invoking a method. Typically used by adapters.
- *
- * @author Mark Fisher
+ * <code>MethodInvoker</code>
+ * <p>The method invoker interface.</p>
+ * @author  Cyan (snow22314@outlook.com)
+ * @since Jdk1.8
  */
 public interface MethodInvoker {
 
-	Object invokeMethod(Object... args);
+    /**
+     * <code>invokeMethod</code>
+     * <p>The invoke method method.</p>
+     * @param args {@link java.lang.Object} <p>The args parameter is <code>Object</code> type.</p>
+     * @see  java.lang.Object
+     * @return  {@link java.lang.Object} <p>The invoke method return object is <code>Object</code> type.</p>
+     */
+    Object invokeMethod(Object... args);
 
 }
